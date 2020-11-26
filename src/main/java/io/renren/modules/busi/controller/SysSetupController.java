@@ -1,25 +1,22 @@
 package io.renren.modules.busi.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.busi.entity.SysSetupEntity;
-import io.renren.modules.busi.service.SysSetupService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.SysSetupEntity;
+import io.renren.modules.busi.service.SysSetupService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
 /**
- * 
+ *
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
@@ -30,6 +27,18 @@ import io.renren.common.utils.R;
 public class SysSetupController {
     @Autowired
     private SysSetupService sysSetupService;
+
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listByKey")
+    public R listByKey(@RequestParam Map<String, String> params){
+        String key = params.get("key");
+        List<SysSetupEntity> rs = sysSetupService.list(new QueryWrapper<SysSetupEntity>().eq("key_n", key));
+        return R.ok().put("list", rs);
+    }
+
 
     /**
      * 列表

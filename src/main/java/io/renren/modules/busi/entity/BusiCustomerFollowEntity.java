@@ -2,14 +2,14 @@ package io.renren.modules.busi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
- * 
- * 
+ *
+ *
  * @author æå¤§é¾
  * @email 870455116@qq.com
  * @date 2020-11-22 23:09:02
@@ -44,5 +44,15 @@ public class BusiCustomerFollowEntity implements Serializable {
 	 * 下次跟进时间
 	 */
 	private Date nextDate;
+
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+
+	/**
+	 * 跟进内容
+	 */
+	private String createName;
 
 }

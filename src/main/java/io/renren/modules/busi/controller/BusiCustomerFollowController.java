@@ -1,25 +1,25 @@
 package io.renren.modules.busi.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
-import io.renren.modules.busi.service.BusiCustomerFollowService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
+import io.renren.modules.busi.service.BusiCustomerFollowService;
+import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.entity.SysUserEntity;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 
 /**
- * 
+ *
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
@@ -27,7 +27,7 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("busi/busicustomerfollow")
-public class BusiCustomerFollowController {
+public class BusiCustomerFollowController extends AbstractController {
     @Autowired
     private BusiCustomerFollowService busiCustomerFollowService;
 
@@ -44,6 +44,16 @@ public class BusiCustomerFollowController {
 
 
     /**
+     * 列表
+     */
+    @RequestMapping("/listByCid")
+    public R listByCid(@RequestParam Map<String, String> params){
+        Integer cid = Integer.parseInt(params.get("cid"));
+        List<BusiCustomerFollowEntity> rs = busiCustomerFollowService.list(new QueryWrapper<BusiCustomerFollowEntity>().eq("customer_id", cid));
+        return R.ok().put("list", rs);
+    }
+
+    /**
      * 信息
      */
     @RequestMapping("/info/{id}")
@@ -58,10 +68,11 @@ public class BusiCustomerFollowController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("busi:busicustomerfollow:save")
     public R save(@RequestBody BusiCustomerFollowEntity busiCustomerFollow){
-		busiCustomerFollowService.save(busiCustomerFollow);
-
+        SysUserEntity user = getUser();
+        busiCustomerFollow.setCreateName(user.getUsername());
+        busiCustomerFollow.setCreateTime(new Date());
+        busiCustomerFollowService.save(busiCustomerFollow);
         return R.ok();
     }
 
