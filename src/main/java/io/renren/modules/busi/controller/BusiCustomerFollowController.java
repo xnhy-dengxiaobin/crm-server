@@ -3,8 +3,10 @@ package io.renren.modules.busi.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
 import io.renren.modules.busi.service.BusiCustomerFollowService;
+import io.renren.modules.busi.service.BusiCustomerService;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -30,6 +32,8 @@ import java.util.Map;
 public class BusiCustomerFollowController extends AbstractController {
     @Autowired
     private BusiCustomerFollowService busiCustomerFollowService;
+    @Autowired
+    private BusiCustomerService busiCustomerService;
 
     /**
      * 列表
@@ -49,7 +53,9 @@ public class BusiCustomerFollowController extends AbstractController {
     @RequestMapping("/listByCid")
     public R listByCid(@RequestParam Map<String, String> params){
         Integer cid = Integer.parseInt(params.get("cid"));
-        List<BusiCustomerFollowEntity> rs = busiCustomerFollowService.list(new QueryWrapper<BusiCustomerFollowEntity>().eq("customer_id", cid));
+        List<BusiCustomerFollowEntity> rs = busiCustomerFollowService.list(new QueryWrapper<BusiCustomerFollowEntity>()
+                .eq("customer_id", cid)
+                .orderByDesc("create_time"));
         return R.ok().put("list", rs);
     }
 
@@ -73,6 +79,12 @@ public class BusiCustomerFollowController extends AbstractController {
         busiCustomerFollow.setCreateName(user.getUsername());
         busiCustomerFollow.setCreateTime(new Date());
         busiCustomerFollowService.save(busiCustomerFollow);
+        BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
+        busiCustomerEntity.setId(busiCustomerFollow.getCustomerId());
+        busiCustomerEntity.setUpdateTime(new Date());
+        busiCustomerEntity.setFollowLast(busiCustomerFollow.getContent());
+        busiCustomerEntity.setFollowMode(busiCustomerFollow.getMode());
+        busiCustomerService.updateById(busiCustomerEntity);
         return R.ok();
     }
 

@@ -2,15 +2,15 @@ package io.renren.modules.busi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.math.BigDecimal;
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 房源
- * 
+ *
  * @author æå¤§é¾
  * @email 870455116@qq.com
  * @date 2020-11-22 23:09:02
@@ -73,6 +73,9 @@ public class BusiHouseEntity implements Serializable {
 	 * 项目id
 	 */
 	private Integer projectId;
+
+	
+	private Integer groupId;
 	/**
 	 * 创建时间
 	 */
