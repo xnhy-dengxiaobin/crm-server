@@ -92,6 +92,12 @@ public class BusiCustomerEntity implements Serializable {
 	 * 最后跟进文本
 	 */
 	private String followLast;
+
+	private Date followNextDate;
+
+	private Date followDate;
+
+
 	/**
 	 * 认知途径
 	 */
