@@ -5,8 +5,12 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
+import io.renren.modules.busi.entity.BusiCustomerProjectEntity;
+import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.service.BusiCustomerFollowService;
+import io.renren.modules.busi.service.BusiCustomerProjectService;
 import io.renren.modules.busi.service.BusiCustomerService;
+import io.renren.modules.busi.service.BusiProjectService;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -34,6 +38,10 @@ public class BusiCustomerFollowController extends AbstractController {
     private BusiCustomerFollowService busiCustomerFollowService;
     @Autowired
     private BusiCustomerService busiCustomerService;
+    @Autowired
+    private BusiProjectService busiProjectService;
+    @Autowired
+    private BusiCustomerProjectService busiCustomerProjectService;
 
     /**
      * 列表
@@ -85,6 +93,14 @@ public class BusiCustomerFollowController extends AbstractController {
         busiCustomerEntity.setFollowLast(busiCustomerFollow.getContent());
         busiCustomerEntity.setFollowMode(busiCustomerFollow.getMode());
         busiCustomerService.updateById(busiCustomerEntity);
+        if(busiCustomerFollow.getProjectId() != null){
+            BusiProjectEntity byId = busiProjectService.getById(busiCustomerFollow.getProjectId());
+            BusiCustomerProjectEntity entity = new BusiCustomerProjectEntity();
+            entity.setCustomerId(busiCustomerFollow.getCustomerId());
+            entity.setProjectId(byId.getId());
+            entity.setProject(byId.getName());
+            busiCustomerProjectService.save(entity);
+        }
         return R.ok();
     }
 

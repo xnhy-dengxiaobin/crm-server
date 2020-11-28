@@ -33,6 +33,8 @@
         <result property="address" column="address"/>
         <result property="situation" column="situation"/>
         <result property="status" column="status"/>
+        <result property="followNextDate" column="follow_next_date"/>
+        <result property="followDate" column="follow_date"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>

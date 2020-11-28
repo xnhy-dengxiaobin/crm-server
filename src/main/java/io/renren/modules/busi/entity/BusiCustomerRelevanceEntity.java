@@ -1,6 +1,5 @@
 package io.renren.modules.busi.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -13,54 +12,57 @@ import java.util.Date;
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
- * @date 2020-11-22 23:09:02
+ * @date 2020-11-28 11:49:13
  */
 @Data
-@TableName("busi_customer_follow")
-public class BusiCustomerFollowEntity implements Serializable {
+@TableName("busi_customer_relevance")
+public class BusiCustomerRelevanceEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 自增长id
+	 * 自增
 	 */
 	@TableId
 	private Integer id;
 	/**
-	 * 客户ID
+	 * 客户id
 	 */
 	private Integer customerId;
 	/**
-	 * 跟进方式
+	 * 姓名
 	 */
-	private String mode;
+	private String name;
 	/**
-	 * 意向级别
+	 * 性别
 	 */
-	private String grade;
+	private String sex;
 	/**
-	 * 跟进内容
+	 * 手机号
 	 */
-	private String content;
-
+	private String mobilePhone;
 	/**
-	 * 项目id
+	 * 证件类型
 	 */
-	@TableField(exist = false)
-	private Integer projectId;
-
+	private String idType;
 	/**
-	 * 下次跟进时间
+	 * 证件号码
 	 */
-	private Date nextDate;
-
+	private String idNumber;
+	/**
+	 * 关系
+	 */
+	private String relation;
+	/**
+	 * 通讯地址
+	 */
+	private String address;
 	/**
 	 * 创建时间
 	 */
 	private Date createTime;
-
 	/**
-	 * 跟进内容
+	 * 更新时间
 	 */
-	private String createName;
+	private Date updateTime;
 
 }
