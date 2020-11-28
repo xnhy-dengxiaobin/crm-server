@@ -1,20 +1,17 @@
 package io.renren.modules.busi.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.busi.entity.BusiProjectEntity;
-import io.renren.modules.busi.service.BusiProjectService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.BusiProjectEntity;
+import io.renren.modules.busi.service.BusiProjectService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -30,6 +27,17 @@ import io.renren.common.utils.R;
 public class BusiProjectController {
     @Autowired
     private BusiProjectService busiProjectService;
+
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listByParentId/{pid}")
+    public R listByParentId(@PathVariable("pid") Integer pid){
+        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("parent_id", pid));
+        return R.ok().put("list", rsList);
+    }
+
 
     /**
      * 列表

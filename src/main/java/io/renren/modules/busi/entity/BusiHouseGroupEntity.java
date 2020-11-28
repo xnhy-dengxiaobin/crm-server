@@ -12,47 +12,45 @@ import java.util.Date;
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
- * @date 2020-11-22 23:09:02
+ * @date 2020-11-26 23:05:13
  */
 @Data
-@TableName("busi_customer_follow")
-public class BusiCustomerFollowEntity implements Serializable {
+@TableName("busi_house_group")
+public class BusiHouseGroupEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 自增长id
+	 * 自增
 	 */
 	@TableId
 	private Integer id;
 	/**
-	 * 客户ID
+	 * 姓名
 	 */
-	private Integer customerId;
+	private String name;
 	/**
-	 * 跟进方式
+	 * 类型：栋/单元
 	 */
-	private String mode;
+	private String type;
 	/**
-	 * 意向级别
+	 * 意向项目,关联busi_project
 	 */
-	private String grade;
+	private Integer parentId;
 	/**
-	 * 跟进内容
+	 * 总数
 	 */
-	private String content;
+	private String sum;
 	/**
-	 * 下次跟进时间
+	 * 已售出数量
 	 */
-	private Date nextDate;
-
+	private String saleSum;
 	/**
 	 * 创建时间
 	 */
 	private Date createTime;
-
 	/**
-	 * 跟进内容
+	 * 更新时间
 	 */
-	private String createName;
+	private Date updateTime;
 
 }

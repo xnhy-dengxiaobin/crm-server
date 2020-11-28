@@ -2,17 +2,17 @@ package io.renren.modules.busi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
- * 
- * 
+ *
+ *
  * @author æå¤§é¾
  * @email 870455116@qq.com
- * @date 2020-11-22 23:09:03
+ * @date 2020-11-25 16:23:57
  */
 @Data
 @TableName("busi_customer")
@@ -88,5 +88,57 @@ public class BusiCustomerEntity implements Serializable {
 	 * 分配的职业顾问
 	 */
 	private String matchUserId;
+	/**
+	 * 最后跟进文本
+	 */
+	private String followLast;
+	/**
+	 * 认知途径
+	 */
+	private String channel;
+	/**
+	 * 来访次数
+	 */
+	private Integer comeCount;
+	/**
+	 * 客户来源
+	 */
+	private String source;
+	/**
+	 * 跟进方式
+	 */
+	private String followMode;
+	/**
+	 * 家庭结构
+	 */
+	private String familyStructure;
+	/**
+	 * 证件类型
+	 */
+	private String idType;
+	/**
+	 * 证件号码
+	 */
+	private String idNumber;
+	/**
+	 * 通讯地址
+	 */
+	private String address;
+	/**
+	 * 竞品对比
+	 */
+	private String situation;
+	/**
+	 * 状态：1：新客户2：来访3：
+	 */
+	private Integer status;
+	/**
+	 * 创建时间
+	 */
+	private Date createTime;
+	/**
+	 * 更新时间
+	 */
+	private Date updateTime;
 
 }

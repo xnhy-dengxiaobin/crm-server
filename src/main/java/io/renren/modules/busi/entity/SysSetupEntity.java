@@ -2,14 +2,13 @@ package io.renren.modules.busi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
- * 
- * 
+ *
+ *
  * @author æå¤§é¾
  * @email 870455116@qq.com
  * @date 2020-11-22 23:09:03
@@ -27,7 +26,7 @@ public class SysSetupEntity implements Serializable {
 	/**
 	 * key
 	 */
-	private String key;
+	private String keyN;
 	/**
 	 * value
 	 */

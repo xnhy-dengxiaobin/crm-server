@@ -22,6 +22,19 @@
         <result property="quantity" column="quantity"/>
         <result property="follow" column="follow"/>
         <result property="matchUserId" column="match_user_id"/>
+        <result property="followLast" column="follow_last"/>
+        <result property="channel" column="channel"/>
+        <result property="comeCount" column="come_count"/>
+        <result property="source" column="source"/>
+        <result property="followMode" column="follow_mode"/>
+        <result property="familyStructure" column="family_structure"/>
+        <result property="idType" column="id_type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="address" column="address"/>
+        <result property="situation" column="situation"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
 

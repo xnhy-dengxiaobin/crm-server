@@ -18,6 +18,7 @@
         <result property="totalPrices" column="total_prices"/>
         <result property="status" column="status"/>
         <result property="projectId" column="project_id"/>
+        <result property="groupId" column="group_id"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
 

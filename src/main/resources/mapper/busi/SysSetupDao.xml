@@ -6,7 +6,7 @@
 	<!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.renren.modules.busi.entity.SysSetupEntity" id="sysSetupMap">
         <result property="id" column="id"/>
-        <result property="key" column="key"/>
+        <result property="keyN" column="key_n"/>
         <result property="value" column="value"/>
         <result property="sort" column="sort"/>
         <result property="status" column="status"/>

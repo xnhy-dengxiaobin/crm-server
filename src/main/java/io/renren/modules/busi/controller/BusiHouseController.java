@@ -1,20 +1,17 @@
 package io.renren.modules.busi.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.busi.entity.BusiHouseEntity;
-import io.renren.modules.busi.service.BusiHouseService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.BusiHouseEntity;
+import io.renren.modules.busi.service.BusiHouseService;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -30,6 +27,17 @@ import io.renren.common.utils.R;
 public class BusiHouseController {
     @Autowired
     private BusiHouseService busiHouseService;
+
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listByGroupId/{gid}")
+    public R listByGroupId(@PathVariable("gid") Integer gid){
+        List<BusiHouseEntity> list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>().eq("group_id", gid));
+        return R.ok().put("list", list);
+    }
+
 
     /**
      * 列表
@@ -47,7 +55,6 @@ public class BusiHouseController {
      * 信息
      */
     @RequestMapping("/info/{id}")
-    @RequiresPermissions("busi:busihouse:info")
     public R info(@PathVariable("id") Integer id){
 		BusiHouseEntity busiHouse = busiHouseService.getById(id);
 

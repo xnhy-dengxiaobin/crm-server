@@ -11,6 +11,9 @@
         <result property="grade" column="grade"/>
         <result property="content" column="content"/>
         <result property="nextDate" column="next_date"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createName" column="create_name"/>
+
     </resultMap>
 
 

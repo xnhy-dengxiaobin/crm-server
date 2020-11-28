@@ -30,19 +30,26 @@ public class BusiCustomerController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("busi:busicustomer:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = busiCustomerService.queryPage(params);
 
         return R.ok().put("page", page);
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/allList")
+    public R allList(@RequestParam Map<String, Object> params){
+        PageUtils page = busiCustomerService.queryPage(params);
+
+        return R.ok().put("page", page);
+    }
 
     /**
      * 信息
      */
     @RequestMapping("/info/{id}")
-    @RequiresPermissions("busi:busicustomer:info")
     public R info(@PathVariable("id") Integer id){
 		BusiCustomerEntity busiCustomer = busiCustomerService.getById(id);
 
@@ -53,7 +60,6 @@ public class BusiCustomerController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("busi:busicustomer:save")
     public R save(@RequestBody BusiCustomerEntity busiCustomer){
 		busiCustomerService.save(busiCustomer);
 
@@ -64,7 +70,6 @@ public class BusiCustomerController {
      * 修改
      */
     @RequestMapping("/update")
-    @RequiresPermissions("busi:busicustomer:update")
     public R update(@RequestBody BusiCustomerEntity busiCustomer){
 		busiCustomerService.updateById(busiCustomer);
 
