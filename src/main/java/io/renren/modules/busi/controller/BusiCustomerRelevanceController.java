@@ -9,7 +9,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -86,11 +85,9 @@ public class BusiCustomerRelevanceController {
     /**
      * 删除
      */
-    @RequestMapping("/delete")
-    @RequiresPermissions("busi:busicustomerrelevance:delete")
-    public R delete(@RequestBody Integer[] ids){
-		busiCustomerRelevanceService.removeByIds(Arrays.asList(ids));
-
+    @RequestMapping("/delete/{id}")
+    public R delete(@PathVariable("id") Integer id){
+		busiCustomerRelevanceService.removeById(id);
         return R.ok();
     }
 
