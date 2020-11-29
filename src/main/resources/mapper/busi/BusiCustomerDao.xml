@@ -3,41 +3,43 @@
 
 <mapper namespace="io.renren.modules.busi.dao.BusiCustomerDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.renren.modules.busi.entity.BusiCustomerEntity" id="busiCustomerMap">
-        <result property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="sex" column="sex"/>
-        <result property="mobilePhone" column="mobile_phone"/>
-        <result property="projectId" column="project_id"/>
-        <result property="purpose" column="purpose"/>
-        <result property="purposeProduct" column="purpose_product"/>
-        <result property="purposeArea" column="purpose_area"/>
-        <result property="purposeType" column="purpose_type"/>
-        <result property="purposeOrientation" column="purpose_orientation"/>
-        <result property="purposeFloor" column="purpose_floor"/>
-        <result property="grade" column="grade"/>
-        <result property="area" column="area"/>
-        <result property="profession" column="profession"/>
-        <result property="quantity" column="quantity"/>
-        <result property="follow" column="follow"/>
-        <result property="matchUserId" column="match_user_id"/>
-        <result property="followLast" column="follow_last"/>
-        <result property="channel" column="channel"/>
-        <result property="comeCount" column="come_count"/>
-        <result property="source" column="source"/>
-        <result property="followMode" column="follow_mode"/>
-        <result property="familyStructure" column="family_structure"/>
-        <result property="idType" column="id_type"/>
-        <result property="idNumber" column="id_number"/>
-        <result property="address" column="address"/>
-        <result property="situation" column="situation"/>
-        <result property="status" column="status"/>
-        <result property="followNextDate" column="follow_next_date"/>
-        <result property="followDate" column="follow_date"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-    </resultMap>
-
+  <!-- 可根据自己的需求，是否要使用 -->
+  <resultMap type="io.renren.modules.busi.entity.BusiCustomerEntity" id="busiCustomerMap">
+    <result property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="sex" column="sex"/>
+    <result property="mobilePhone" column="mobile_phone"/>
+    <result property="projectId" column="project_id"/>
+    <result property="purpose" column="purpose"/>
+    <result property="purposeProduct" column="purpose_product"/>
+    <result property="purposeArea" column="purpose_area"/>
+    <result property="purposeType" column="purpose_type"/>
+    <result property="purposeOrientation" column="purpose_orientation"/>
+    <result property="purposeFloor" column="purpose_floor"/>
+    <result property="grade" column="grade"/>
+    <result property="area" column="area"/>
+    <result property="profession" column="profession"/>
+    <result property="quantity" column="quantity"/>
+    <result property="follow" column="follow"/>
+    <result property="matchUserId" column="match_user_id"/>
+    <result property="followLast" column="follow_last"/>
+    <result property="channel" column="channel"/>
+    <result property="comeCount" column="come_count"/>
+    <result property="source" column="source"/>
+    <result property="followMode" column="follow_mode"/>
+    <result property="familyStructure" column="family_structure"/>
+    <result property="idType" column="id_type"/>
+    <result property="idNumber" column="id_number"/>
+    <result property="address" column="address"/>
+    <result property="situation" column="situation"/>
+    <result property="status" column="status"/>
+    <result property="followNextDate" column="follow_next_date"/>
+    <result property="followDate" column="follow_date"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateTime" column="update_time"/>
+  </resultMap>
+  <select id="normalFollowPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+    select * from busi_customer where  match_user_id = #{userId} and (follow_next_date is null  or follow_next_date>now())
+  </select>
 
 </mapper>
