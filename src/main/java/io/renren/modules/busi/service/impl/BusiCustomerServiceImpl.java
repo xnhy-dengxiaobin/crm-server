@@ -1,5 +1,6 @@
 package io.renren.modules.busi.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,11 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
 
         return new PageUtils(page);
     }
+
+  @Override
+  public IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page,String userId) {
+    return baseMapper.normalFollowPage(page,userId);
+  }
 
     @Override
     public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {

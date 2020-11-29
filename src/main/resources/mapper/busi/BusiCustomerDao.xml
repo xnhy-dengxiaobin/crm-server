@@ -48,4 +48,7 @@
         left join sys_user t2 on t1.match_user_id=t2.user_id
         where t1.mobile_phone like '%${mobilePhone}'
     </select>
+    <select id="normalFollowPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+      select * from busi_customer where  match_user_id = #{userId} and (follow_next_date is null  or follow_next_date>now())
+    </select>
 </mapper>

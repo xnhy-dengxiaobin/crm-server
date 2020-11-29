@@ -165,5 +165,12 @@ public class BusiCustomerEntity implements Serializable {
 	 * 更新时间
 	 */
 	private Date updateTime;
-
+  /**
+   * 原来的置业顾问
+   */
+  private String oldMatchUserId;
+  /**
+   * 原来的置业顾问姓名
+   */
+  private String oldMatchUserName;
 }
