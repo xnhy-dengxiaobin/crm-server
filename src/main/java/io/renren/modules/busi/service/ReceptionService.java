@@ -2,6 +2,7 @@ package io.renren.modules.busi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 
 import java.util.Map;
@@ -16,5 +17,15 @@ import java.util.Map;
 public interface ReceptionService extends IService<ReceptionEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 保存接待记录
+     * 如果客户中的置业顾问变化了，还要修改客户记录
+     * @param receptionEntity
+     * @param busiCustomerEntity
+     */
+    void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity);
+
+    PageUtils qryPage(Map<String, Object> params);
 }
 

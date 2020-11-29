@@ -22,7 +22,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 
-
 /**
  * 接待记录
  *
@@ -39,9 +38,19 @@ public class ReceptionController extends AbstractController {
     /**
      * 列表
      */
+    @RequestMapping("/lst")
+    public R lst(@RequestBody Map<String, Object> params) {
+        PageUtils page = receptionService.qryPage(params);
+
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 列表
+     */
     @RequestMapping("/list")
     @RequiresPermissions("busi:reception:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = receptionService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -53,8 +62,8 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/info/{id}")
     @RequiresPermissions("busi:reception:info")
-    public R info(@PathVariable("id") Integer id){
-		ReceptionEntity reception = receptionService.getById(id);
+    public R info(@PathVariable("id") Integer id) {
+        ReceptionEntity reception = receptionService.getById(id);
 
         return R.ok().put("reception", reception);
     }
@@ -63,9 +72,8 @@ public class ReceptionController extends AbstractController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("busi:reception:save")
-    public R save(@RequestBody Map<String, Object> params){
-        Map<String, Object> receptionMap = ParamResolvor.getMap(params,"reception");
+    public R save(@RequestBody Map<String, Object> params) {
+        Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
         ReceptionEntity receptionEntity = new ReceptionEntity();
         receptionEntity.setReceptionistId(getUserId().intValue());
         receptionEntity.setProjectId(ParamResolvor.getInt(receptionMap, "projectId"));
@@ -73,16 +81,24 @@ public class ReceptionController extends AbstractController {
         receptionEntity.setSalerId(ParamResolvor.getInt(receptionMap, "salerId"));
         receptionEntity.setCnt(ParamResolvor.getInt(receptionMap, "cnt"));
         receptionEntity.setMemo(ParamResolvor.getString(receptionMap, "memo"));
+        receptionEntity.setStatus(0);
         receptionEntity.setCreateTime(new Date());
 
-        Map<String, Object> customerMap = ParamResolvor.getMap(params,"customer");
+        Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
         BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
-        busiCustomerEntity.setId(ParamResolvor.getInt(customerMap, "id"));
-        busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId")+"");
-        //busiCustomerEntity
+        busiCustomerEntity.setId(ParamResolvor.getIntAsDefault(customerMap, "id", 0));
+        busiCustomerEntity.setMobilePhone(ParamResolvor.getString(customerMap, "mobilePhone"));
+        busiCustomerEntity.setName(ParamResolvor.getString(customerMap, "name"));
+        busiCustomerEntity.setSex(ParamResolvor.getString(customerMap, "sex"));
+        busiCustomerEntity.setSource(ParamResolvor.getString(customerMap, "source"));
+        busiCustomerEntity.setSourceName(ParamResolvor.getString(customerMap, "sourceName"));
+        busiCustomerEntity.setSourceMobile(ParamResolvor.getString(customerMap, "sourceMobile"));
+        busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId") + "");
+        busiCustomerEntity.setOldMatchUserId(ParamResolvor.getInt(customerMap, "oldMatchUserId") + "");
+        busiCustomerEntity.setOldMatchUserName(ParamResolvor.getString(customerMap, "oldMatchUserName") + "");
+        busiCustomerEntity.setCreateTime(new Date());
 
-
-        //receptionService.save(receptionEntity, );
+        receptionService.saveReception(receptionEntity, busiCustomerEntity);
 
         return R.ok();
     }
@@ -92,8 +108,8 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:reception:update")
-    public R update(@RequestBody ReceptionEntity reception){
-		receptionService.updateById(reception);
+    public R update(@RequestBody ReceptionEntity reception) {
+        receptionService.updateById(reception);
 
         return R.ok();
     }
@@ -103,8 +119,8 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:reception:delete")
-    public R delete(@RequestBody Integer[] ids){
-		receptionService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Integer[] ids) {
+        receptionService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }

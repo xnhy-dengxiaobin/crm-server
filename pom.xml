@@ -41,6 +41,7 @@
 		<fastjson.version>1.2.72</fastjson.version>
 		<hutool.version>4.1.1</hutool.version>
 		<lombok.version>1.18.4</lombok.version>
+		<pinyin.version>0.1.5</pinyin.version>
 
 		<!--wagon plugin 配置-->
 		<service-path>/work/renren</service-path>
@@ -231,6 +232,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.houbb</groupId>
+			<artifactId>pinyin</artifactId>
+			<version>${pinyin.version}</version>
 		</dependency>
 	</dependencies>
 

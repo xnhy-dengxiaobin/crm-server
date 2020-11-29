@@ -8,6 +8,9 @@
 
 package io.renren.modules.sys.controller;
 
+import com.github.houbb.heaven.util.lang.StringUtil;
+import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
+import com.github.houbb.pinyin.util.PinyinHelper;
 import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
@@ -111,7 +114,10 @@ public class SysUserController extends AbstractController {
 	@RequiresPermissions("sys:user:save")
 	public R save(@RequestBody SysUserEntity user){
 		ValidatorUtils.validateEntity(user, AddGroup.class);
-		
+
+		//TODO: 用户名首字母拼音 //https://github.com/houbb/pinyin
+		final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+
 		user.setCreateUserId(getUserId());
 		sysUserService.saveUser(user);
 		
@@ -126,6 +132,9 @@ public class SysUserController extends AbstractController {
 	@RequiresPermissions("sys:user:update")
 	public R update(@RequestBody SysUserEntity user){
 		ValidatorUtils.validateEntity(user, UpdateGroup.class);
+
+		//TODO: 用户名首字母拼音 //https://github.com/houbb/pinyin
+		final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
 
 		user.setCreateUserId(getUserId());
 		sysUserService.update(user);

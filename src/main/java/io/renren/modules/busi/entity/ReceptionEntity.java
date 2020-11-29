@@ -32,6 +32,13 @@ public class ReceptionEntity implements Serializable {
 	 * 接待客户的id
 	 */
 	private Integer customerId;
+	private String customerName;
+	private String mobilePhone;
+	private String source;
+	private String sourceName;
+	private String sourceMobile;
+	private String channel;
+
 	/**
 	 * 来访人数
 	 */
@@ -44,6 +51,9 @@ public class ReceptionEntity implements Serializable {
 	 * 分配的置业顾问id
 	 */
 	private Integer salerId;
+	private String matchUserId;
+	private String matchUserName;
+
 	/**
 	 * 接待员id
 	 */

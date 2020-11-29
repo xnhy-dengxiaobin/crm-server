@@ -4,6 +4,9 @@ import io.renren.modules.busi.entity.ReceptionEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * 接待记录
  * 
@@ -13,5 +16,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ReceptionDao extends BaseMapper<ReceptionEntity> {
-	
+	List<ReceptionEntity> slct(Map<String, Object> params);
+	Long cnt(Map<String, Object> params);
 }
