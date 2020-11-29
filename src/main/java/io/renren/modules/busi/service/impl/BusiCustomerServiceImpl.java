@@ -1,7 +1,10 @@
 package io.renren.modules.busi.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,4 +29,9 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
         return new PageUtils(page);
     }
 
+    @Override
+    public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {
+        String mobilePhone = params.get("mobilePhone").toString();
+        return getBaseMapper().selectByPhone(mobilePhone);
+    }
 }
