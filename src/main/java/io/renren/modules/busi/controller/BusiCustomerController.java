@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -25,6 +26,16 @@ import java.util.Map;
 public class BusiCustomerController {
     @Autowired
     private BusiCustomerService busiCustomerService;
+
+    /**
+     * 根据完整电话号码或者后四位查询
+     */
+    @RequestMapping("/listByPhone")
+    public R listByPhone(@RequestBody Map<String, Object> params){
+        List<BusiCustomerEntity> customers = busiCustomerService.queryByPhone(params);
+
+        return R.ok().put("customers", customers);
+    }
 
     /**
      * 列表

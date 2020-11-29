@@ -10,5 +10,23 @@
         <result property="projectId" column="project_id"/>
     </resultMap>
 
+    <resultMap type="io.renren.modules.busi.entity.BusiProjectEntity" id="busiProjectMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="parentId" column="parent_id"/>
+    </resultMap>
+
+    <select id="selectProjectByUser" parameterType="long" resultMap="busiProjectMap">
+        select t1.*
+        from busi_project t1
+        inner join busi_user_project t2 on t1.id = t2.project_id
+        where t2.user_id=#{userId}
+        and (coalesce(t1.parent_id, 0)=0 or t1.parent_id=1)
+    </select>
+
+    <select id="selectProjectByAdmin" resultMap="busiProjectMap">
+        select * from busi_project where (coalesce(parent_id, 0)=0 or parent_id=1)
+    </select>
 
 </mapper>

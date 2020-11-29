@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,5 +19,13 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
   PageUtils queryPage(Map<String, Object> params);
 
   IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId);
+    PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 根据完整电话号码或者后四位查询
+     * @param params
+     * @return
+     */
+    List<BusiCustomerEntity> queryByPhone(Map<String, Object> params);
 }
 

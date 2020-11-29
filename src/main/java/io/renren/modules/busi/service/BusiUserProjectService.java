@@ -2,8 +2,10 @@ package io.renren.modules.busi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.entity.BusiUserProjectEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +18,12 @@ import java.util.Map;
 public interface BusiUserProjectService extends IService<BusiUserProjectEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 根据当前用户的查询关联项目
+     * @param userId
+     * @return List<BusiProjectEntity>
+     */
+    List<BusiProjectEntity> queryProjectByUser(Long userId);
 }
 

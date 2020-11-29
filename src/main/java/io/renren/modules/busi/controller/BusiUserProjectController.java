@@ -3,6 +3,7 @@ package io.renren.modules.busi.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,10 +28,15 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("busi/busiuserproject")
-public class BusiUserProjectController {
+public class BusiUserProjectController extends AbstractController {
     @Autowired
     private BusiUserProjectService busiUserProjectService;
 
+    @RequestMapping("/listProjectsByUser")
+    public R listProjectsByUser(){
+        Long userId = getUser().getUserId();
+        return R.ok().put("projects", busiUserProjectService.queryProjectByUser(userId));
+    }
     /**
      * 列表
      */

@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -88,6 +89,13 @@ public class BusiCustomerEntity implements Serializable {
 	 * 分配的职业顾问
 	 */
 	private String matchUserId;
+
+	/**
+	 * 分配的职业顾问
+	 */
+	@TableField(exist = false)
+	private String matchUserName;
+
 	/**
 	 * 最后跟进文本
 	 */
@@ -110,6 +118,17 @@ public class BusiCustomerEntity implements Serializable {
 	 * 客户来源
 	 */
 	private String source;
+
+	/**
+	 * 客户来源名称
+	 */
+	private String sourceName;
+
+	/**
+	 * 客户来源联系方式
+	 */
+	private String sourceMobile;
+
 	/**
 	 * 跟进方式
 	 */
