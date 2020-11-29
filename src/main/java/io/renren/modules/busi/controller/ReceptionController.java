@@ -1,8 +1,13 @@
 package io.renren.modules.busi.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
+import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.sys.controller.AbstractController;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +32,7 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("busi/reception")
-public class ReceptionController {
+public class ReceptionController extends AbstractController {
     @Autowired
     private ReceptionService receptionService;
 
@@ -59,8 +64,25 @@ public class ReceptionController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("busi:reception:save")
-    public R save(@RequestBody ReceptionEntity reception){
-		receptionService.save(reception);
+    public R save(@RequestBody Map<String, Object> params){
+        Map<String, Object> receptionMap = ParamResolvor.getMap(params,"reception");
+        ReceptionEntity receptionEntity = new ReceptionEntity();
+        receptionEntity.setReceptionistId(getUserId().intValue());
+        receptionEntity.setProjectId(ParamResolvor.getInt(receptionMap, "projectId"));
+        receptionEntity.setCustomerId(ParamResolvor.getInt(receptionMap, "customerId"));
+        receptionEntity.setSalerId(ParamResolvor.getInt(receptionMap, "salerId"));
+        receptionEntity.setCnt(ParamResolvor.getInt(receptionMap, "cnt"));
+        receptionEntity.setMemo(ParamResolvor.getString(receptionMap, "memo"));
+        receptionEntity.setCreateTime(new Date());
+
+        Map<String, Object> customerMap = ParamResolvor.getMap(params,"customer");
+        BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
+        busiCustomerEntity.setId(ParamResolvor.getInt(customerMap, "id"));
+        busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId")+"");
+        //busiCustomerEntity
+
+
+        //receptionService.save(receptionEntity, );
 
         return R.ok();
     }
