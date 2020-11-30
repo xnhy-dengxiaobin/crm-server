@@ -38,6 +38,8 @@
         <result property="status" column="status"/>
         <result property="followNextDate" column="follow_next_date"/>
         <result property="followDate" column="follow_date"/>
+        <result property="followUserId" column="follow_user_id"/>
+        <result property="remark" column="remark"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>

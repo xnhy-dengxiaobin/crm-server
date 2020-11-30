@@ -105,7 +105,7 @@ public class BusiCustomerEntity implements Serializable {
 
 	private Date followDate;
 
-
+	private Long followUserId;
 	/**
 	 * 认知途径
 	 */
@@ -173,4 +173,6 @@ public class BusiCustomerEntity implements Serializable {
    * 原来的置业顾问姓名
    */
   private String oldMatchUserName;
+
+  private String remark;
 }

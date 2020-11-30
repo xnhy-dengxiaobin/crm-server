@@ -16,5 +16,9 @@ import java.util.Map;
 public interface ReceptionService extends IService<ReceptionEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils listBySalerId(Map<String, Object> params, Long salerId);
+
+
 }
 

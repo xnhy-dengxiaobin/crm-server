@@ -2,14 +2,14 @@ package io.renren.modules.busi.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 接待记录
- * 
+ *
  * @author liuh
  * @email 18067435857@163.com
  * @date 2020-11-29 00:51:30
@@ -20,7 +20,7 @@ public class ReceptionEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
 	private Integer id;

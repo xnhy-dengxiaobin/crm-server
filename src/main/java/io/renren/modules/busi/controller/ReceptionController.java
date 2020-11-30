@@ -1,25 +1,19 @@
 package io.renren.modules.busi.controller;
 
+import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.ParamResolvor;
+import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.ReceptionEntity;
+import io.renren.modules.busi.service.ReceptionService;
+import io.renren.modules.sys.controller.AbstractController;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
-
-import io.renren.common.utils.ParamResolvor;
-import io.renren.modules.busi.entity.BusiCustomerEntity;
-import io.renren.modules.sys.controller.AbstractController;
-import org.apache.ibatis.annotations.Param;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.renren.modules.busi.entity.ReceptionEntity;
-import io.renren.modules.busi.service.ReceptionService;
-import io.renren.common.utils.PageUtils;
-import io.renren.common.utils.R;
 
 
 
@@ -35,6 +29,17 @@ import io.renren.common.utils.R;
 public class ReceptionController extends AbstractController {
     @Autowired
     private ReceptionService receptionService;
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listBySalerId")
+    public R listBySalerId(@RequestParam Map<String, Object> params){
+        params.put("salerId", getUserId());
+        PageUtils maps = receptionService.listBySalerId(params, getUserId());
+        return R.ok().put("page", maps);
+    }
+
 
     /**
      * 列表

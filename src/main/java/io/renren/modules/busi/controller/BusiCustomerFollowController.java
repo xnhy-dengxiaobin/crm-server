@@ -87,11 +87,15 @@ public class BusiCustomerFollowController extends AbstractController {
         busiCustomerFollow.setCreateName(user.getUsername());
         busiCustomerFollow.setCreateTime(new Date());
         busiCustomerFollowService.save(busiCustomerFollow);
+        Date date = new Date();
         BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
         busiCustomerEntity.setId(busiCustomerFollow.getCustomerId());
-        busiCustomerEntity.setUpdateTime(new Date());
+        busiCustomerEntity.setUpdateTime(date);
         busiCustomerEntity.setFollowLast(busiCustomerFollow.getContent());
         busiCustomerEntity.setFollowMode(busiCustomerFollow.getMode());
+        busiCustomerEntity.setFollowDate(date);
+        busiCustomerEntity.setFollowNextDate(busiCustomerFollow.getNextDate());
+        busiCustomerEntity.setFollowUserId(getUserId());
         busiCustomerService.updateById(busiCustomerEntity);
         if(busiCustomerFollow.getProjectId() != null){
             BusiProjectEntity byId = busiProjectService.getById(busiCustomerFollow.getProjectId());
