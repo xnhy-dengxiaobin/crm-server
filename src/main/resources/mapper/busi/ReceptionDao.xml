@@ -7,14 +7,60 @@
     <resultMap type="io.renren.modules.busi.entity.ReceptionEntity" id="receptionMap">
         <result property="id" column="id"/>
         <result property="projectId" column="project_id"/>
+
         <result property="customerId" column="customer_id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+        <result property="source" column="source"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="sourceMobile" column="source_mobile"/>
+        <result property="channel" column="channel"/>
+
         <result property="cnt" column="cnt"/>
         <result property="memo" column="memo"/>
+
         <result property="salerId" column="saler_id"/>
+        <result property="matchUserName" column="match_user_name"/>
+
         <result property="receptionistId" column="receptionist_id"/>
         <result property="createTime" column="create_time"/>
         <result property="status" column="status"/>
     </resultMap>
 
-
+    <select id="slct" resultMap="receptionMap">
+        select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_name,
+        t2.source_mobile,t2.channel,t3.username as match_user_name
+        from busi_reception t1
+        inner join busi_customer t2 on t1.customer_id = t2.id
+        inner join sys_user t3 on t1.saler_id=t3.user_id
+        <where>
+            <if test=" id!=null and id !='' ">
+                and t1.id = #{id}
+            </if>
+            <if test=" matchUserName!=null and matchUserName !='' ">
+                and t3.username like '%${name}%'
+            </if>
+            <if test=" createTime !=null and createTime !='' ">
+                and datediff(t1.create_time, #{createTime}) = 0
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+    <select id="cnt" resultType="long">
+        select count(*)
+        from busi_reception t1
+        inner join busi_customer t2 on t1.customer_id = t2.id
+        inner join sys_user t3 on t1.saler_id=t3.user_id
+        <where>
+            <if test=" id!=null and id !='' ">
+                and t1.id = #{id}
+            </if>
+            <if test=" matchUserName!=null and matchUserName !='' ">
+                and t3.username like '%${name}%'
+            </if>
+            <if test=" createTime !=null and createTime !='' ">
+                and datediff(t1.create_time, #{createTime}) = 0
+            </if>
+        </where>
+    </select>
 </mapper>

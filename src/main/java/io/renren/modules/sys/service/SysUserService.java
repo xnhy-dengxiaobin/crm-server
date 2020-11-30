@@ -69,4 +69,10 @@ public interface SysUserService extends IService<SysUserEntity> {
    * @return
    */
   List<SysUserEntity> queryNormalFollow(Long projectId);
+
+  /**
+   * 根据projectId 查询置业顾问
+   * @return
+   */
+  List<SysUserEntity> querySalesUserByProjectId(Long projectId);
 }

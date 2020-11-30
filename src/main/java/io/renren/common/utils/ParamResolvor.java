@@ -26,6 +26,11 @@ public class ParamResolvor {
             throw new RuntimeException("不是一个List, 无法获取List值");
     }
 
+    public static List<Map<String, Object>> getListAsDefault(Map<String, Object> rs, String field, List<Map<String, Object>> d) throws RuntimeException {
+        List<Map<String, Object>> r = getList(rs, field);
+        return r == null ? d : r;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> List<T> getTList(Map<String, Object> rs, String field) throws RuntimeException {
         if (null == rs || rs.isEmpty())
@@ -37,6 +42,11 @@ public class ParamResolvor {
             return null == o ? null : (List<T>) o;
         else
             throw new RuntimeException("不是一个List, 无法获取List值");
+    }
+
+    public static <T> List<T> getTListAsDefault(Map<String, Object> rs, String field, List<T> d) throws RuntimeException {
+        List<T> r = getTList(rs, field);
+        return r == null ? d : r;
     }
 
     /**
@@ -59,6 +69,10 @@ public class ParamResolvor {
         else
             throw new RuntimeException("不是一个List, 无法获取List值");
     }
+    public static <T> List<T> getCommonListAsDefault(Map<String, Object> rs, String field, List<T> d) throws RuntimeException {
+        List<T> r = getCommonList(rs, field);
+        return r == null ? d : r;
+    }
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getMap(Map<String, Object> rs, String field) throws RuntimeException {
@@ -73,6 +87,11 @@ public class ParamResolvor {
             throw new RuntimeException("不是一个Map, 无法获取Map值");
     }
 
+    public static Map<String, Object> getMapAsDefault(Map<String, Object> rs, String field, Map<String, Object> d) throws RuntimeException {
+        Map<String, Object> r = getMap(rs, field);
+        return r == null ? d : r;
+    }
+
     public static String getString(Map<String, Object> rs, String field) throws RuntimeException {
         if (null == rs || rs.isEmpty())
             return "";
@@ -80,6 +99,11 @@ public class ParamResolvor {
         if (null == o)
             return "";
         return o.toString();
+    }
+
+    public static String getStringAsDefault(Map<String, Object> rs, String field, String d) throws RuntimeException {
+        String r = getString(rs, field);
+        return r == null ? d : r;
     }
 
     public static Integer getInt(Map<String, Object> rs, String field) throws RuntimeException {
@@ -93,6 +117,11 @@ public class ParamResolvor {
         }
     }
 
+    public static int getIntAsDefault(Map<String, Object> rs, String field, int d) throws RuntimeException {
+        Integer r = getInt(rs, field);
+        return r == null ? d : r;
+    }
+
     public static Long getLong(Map<String, Object> rs, String field) throws RuntimeException {
         if (null == rs || rs.isEmpty())
             return null;
@@ -102,6 +131,11 @@ public class ParamResolvor {
             log.error("", e);
             return null;
         }
+    }
+
+    public static long getLongAsDefault(Map<String, Object> rs, String field, long d) throws RuntimeException {
+        Long r = getLong(rs, field);
+        return r == null ? d : r;
     }
 
     public static Float getFloat(Map<String, Object> rs, String field) throws RuntimeException {
@@ -115,6 +149,11 @@ public class ParamResolvor {
         }
     }
 
+    public static float getFloatAsDefault(Map<String, Object> rs, String field, float d) throws RuntimeException {
+        Float r = getFloat(rs, field);
+        return r == null ? d : r;
+    }
+
     public static Double getDouble(Map<String, Object> rs, String field) throws RuntimeException {
         if (null == rs || rs.isEmpty())
             return null;
@@ -124,6 +163,11 @@ public class ParamResolvor {
             log.error("", e);
             return null;
         }
+    }
+
+    public static Double getFloatAsDefault(Map<String, Object> rs, String field, double d) throws RuntimeException {
+        Double r = getDouble(rs, field);
+        return r == null ? d : r;
     }
 
     public static boolean getBool(Map<String, Object> rs, String field) throws RuntimeException {
