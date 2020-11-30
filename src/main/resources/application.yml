@@ -1,13 +1,13 @@
 # Tomcat
-server:
-  tomcat:
-    uri-encoding: UTF-8
-    max-threads: 1000
-    min-spare-threads: 30
-  port: 8082
-  connection-timeout: 5000ms
-  servlet:
-    context-path: /crm
+#server:
+#  tomcat:
+#    uri-encoding: UTF-8
+#    max-threads: 1000
+#    min-spare-threads: 30
+#  port: 8082
+#  connection-timeout: 5000ms
+#  servlet:
+#    context-path: /crm
 
 spring:
   # 环境 dev|test|prod
@@ -76,4 +76,6 @@ renren:
     header: token
 
 crm:
+  log:
+    path: D:/logs
   upload-path: uploads/

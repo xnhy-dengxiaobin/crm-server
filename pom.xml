@@ -5,7 +5,7 @@
 	<groupId>io.renren</groupId>
 	<artifactId>crm-server</artifactId>
 	<version>3.0.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<description>crm-server</description>
 
 	<parent>

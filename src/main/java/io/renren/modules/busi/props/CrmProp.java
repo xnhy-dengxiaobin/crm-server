@@ -16,4 +16,6 @@ public class CrmProp {
 
     private String uploadPath;
 
+    private String logPath;
+
 }

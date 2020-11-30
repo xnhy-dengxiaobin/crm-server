@@ -47,3 +47,7 @@ spring:
 #      url: jdbc:postgresql://localhost:5432/renren_security
 #      username: renren
 #      password: 123456
+crm:
+    log:
+        path: D:/logs
+    upload-path: uploads/

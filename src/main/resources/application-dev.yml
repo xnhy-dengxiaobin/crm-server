@@ -1,3 +1,13 @@
+server:
+    tomcat:
+        uri-encoding: UTF-8
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 8082
+    connection-timeout: 5000ms
+    servlet:
+        context-path: /crm
+
 spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
@@ -47,3 +57,7 @@ spring:
 #      url: jdbc:postgresql://localhost:5432/renren_security
 #      username: renren
 #      password: 123456
+crm:
+    log:
+        path: D:/logs
+    upload-path: uploads/
