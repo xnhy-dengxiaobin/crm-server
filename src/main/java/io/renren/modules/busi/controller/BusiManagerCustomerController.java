@@ -1,21 +1,21 @@
 package io.renren.modules.busi.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
+import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,6 +62,63 @@ public class BusiManagerCustomerController {
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
     iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString());
     return R.ok().put("page", new PageUtils(iPage));
+  }
+
+  /**
+   * 回收客户
+   */
+  @RequestMapping("/recovery")
+  public R recovery(@RequestParam Map<String, Object> params) {
+    Object obj = params.get("ids");
+    String idstr = obj == null ? "" : obj.toString();
+    String[] ids = idstr.split(",");
+    if (ids.length < 1) {
+      return R.ok();
+    } else {
+      for (String id : ids) {
+        BusiCustomerEntity entity = busiCustomerService.getById(id);
+        if (entity != null && !StringUtils.isEmpty(entity.getMatchUserId())) {
+          SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
+          if (sysUserEntity != null) {
+            busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, id).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
+              .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 2).set(BusiCustomerEntity::getMatchUserId, null)
+            );
+          }
+        }
+      }
+    }
+    return R.ok();
+  }
+
+  /**
+   * 分配客户
+   */
+  @RequestMapping("/share")
+  public R share(@RequestParam Map<String, Object> params) {
+    Object userIdObj = params.get("userIds");
+    Object customerIdObj = params.get("customerIds");
+    String[] userIds = userIdObj == null ? new String[]{} : userIdObj.toString().split(",");
+    String[] customerIds = customerIdObj == null ? new String[]{} : customerIdObj.toString().split(",");
+    if (userIds.length < 1 || customerIds.length < 1) {
+      return R.ok();
+    } else {
+      int i = 0;
+      for (String customerId : customerIds) {
+        if (i + 1 == userIds.length) {
+          i = 0;
+        }
+        String userId = userIds[i];
+        BusiCustomerEntity entity = busiCustomerService.getById(customerId);
+        SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
+        if (sysUserEntity != null) {
+          busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
+            .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId)
+          );
+        }
+        i++;
+      }
+    }
+    return R.ok();
   }
 
   /**

@@ -22,6 +22,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 
+
 /**
  * 接待记录
  *
@@ -44,6 +45,17 @@ public class ReceptionController extends AbstractController {
 
         return R.ok().put("page", page);
     }
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listBySalerId")
+    public R listBySalerId(@RequestParam Map<String, Object> params){
+        params.put("salerId", getUserId());
+        PageUtils maps = receptionService.listBySalerId(params, getUserId());
+        return R.ok().put("page", maps);
+    }
+
 
     /**
      * 列表

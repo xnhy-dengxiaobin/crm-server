@@ -40,27 +40,36 @@ import java.util.Map;
 @RestController
 @RequestMapping("/sys/user")
 public class SysUserController extends AbstractController {
-	@Autowired
-	private SysUserService sysUserService;
-	@Autowired
-	private SysUserRoleService sysUserRoleService;
+  @Autowired
+  private SysUserService sysUserService;
+  @Autowired
+  private SysUserRoleService sysUserRoleService;
 
 
-	/**
-	 * 所有用户列表
-	 */
-	@GetMapping("/list")
-	@RequiresPermissions("sys:user:list")
-	public R list(@RequestParam Map<String, Object> params){
-		//只有超级管理员，才能查看所有管理员列表
-		if(getUserId() != Constant.SUPER_ADMIN){
-			params.put("createUserId", getUserId());
-		}
-		PageUtils page = sysUserService.queryPage(params);
+  /**
+   * 所有用户列表
+   */
+  @GetMapping("/list")
+  @RequiresPermissions("sys:user:list")
+  public R list(@RequestParam Map<String, Object> params) {
+    //只有超级管理员，才能查看所有管理员列表
+    if (getUserId() != Constant.SUPER_ADMIN) {
+      params.put("createUserId", getUserId());
+    }
+    PageUtils page = sysUserService.queryPage(params);
 
 		return R.ok().put("page", page);
 	}
-	
+
+  /**
+   * 该项目下所有置业顾问
+   */
+  @PostMapping("/salesByProjectId")
+  public R salesByProjectId(@RequestParam Long projectId) {
+    List list = sysUserService.querySalesUserByProjectId(projectId);
+
+    return R.ok().put("datas", list);
+  }
 	/**
 	 * 获取登录的用户信息
 	 */
@@ -68,7 +77,7 @@ public class SysUserController extends AbstractController {
 	public R info(){
 		return R.ok().put("user", getUser());
 	}
-	
+
 	/**
 	 * 修改登录用户密码
 	 */
@@ -76,21 +85,21 @@ public class SysUserController extends AbstractController {
 	@PostMapping("/password")
 	public R password(@RequestBody PasswordForm form){
 		Assert.isBlank(form.getNewPassword(), "新密码不为能空");
-		
+
 		//sha256加密
 		String password = new Sha256Hash(form.getPassword(), getUser().getSalt()).toHex();
 		//sha256加密
 		String newPassword = new Sha256Hash(form.getNewPassword(), getUser().getSalt()).toHex();
-				
+
 		//更新密码
 		boolean flag = sysUserService.updatePassword(getUserId(), password, newPassword);
 		if(!flag){
 			return R.error("原密码不正确");
 		}
-		
+
 		return R.ok();
 	}
-	
+
 	/**
 	 * 用户信息
 	 */
@@ -98,14 +107,14 @@ public class SysUserController extends AbstractController {
 	@RequiresPermissions("sys:user:info")
 	public R info(@PathVariable("userId") Long userId){
 		SysUserEntity user = sysUserService.getById(userId);
-		
+
 		//获取用户所属的角色列表
 		List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
 		user.setRoleIdList(roleIdList);
-		
+
 		return R.ok().put("user", user);
 	}
-	
+
 	/**
 	 * 保存用户
 	 */
@@ -115,15 +124,15 @@ public class SysUserController extends AbstractController {
 	public R save(@RequestBody SysUserEntity user){
 		ValidatorUtils.validateEntity(user, AddGroup.class);
 
-		//TODO: 用户名首字母拼音 //https://github.com/houbb/pinyin
-		final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+    //TODO: 用户名首字母拼音 //https://github.com/houbb/pinyin
+    final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
 
-		user.setCreateUserId(getUserId());
+    user.setCreateUserId(getUserId());
 		sysUserService.saveUser(user);
-		
+
 		return R.ok();
 	}
-	
+
 	/**
 	 * 修改用户
 	 */
@@ -133,15 +142,15 @@ public class SysUserController extends AbstractController {
 	public R update(@RequestBody SysUserEntity user){
 		ValidatorUtils.validateEntity(user, UpdateGroup.class);
 
-		//TODO: 用户名首字母拼音 //https://github.com/houbb/pinyin
-		final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+    //TODO: 用户名首字母拼音 //https://github.com/houbb/pinyin
+    final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
 
-		user.setCreateUserId(getUserId());
+    user.setCreateUserId(getUserId());
 		sysUserService.update(user);
-		
+
 		return R.ok();
 	}
-	
+
 	/**
 	 * 删除用户
 	 */
@@ -152,13 +161,13 @@ public class SysUserController extends AbstractController {
 		if(ArrayUtils.contains(userIds, 1L)){
 			return R.error("系统管理员不能删除");
 		}
-		
+
 		if(ArrayUtils.contains(userIds, getUserId())){
 			return R.error("当前用户不能删除");
 		}
-		
+
 		sysUserService.deleteBatch(userIds);
-		
+
 		return R.ok();
 	}
 }

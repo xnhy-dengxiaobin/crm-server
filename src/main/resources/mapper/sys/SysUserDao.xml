@@ -24,5 +24,10 @@
     select * from (select match_user_id,count(1) as count from busi_customer
     WHERE (follow_next_date IS NULL OR follow_next_date &lt; now()) and project_id =1 and status = 1 group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
   </select>
+  <select id="querySalesUserByProjectId" resultType="io.renren.modules.sys.entity.SysUserEntity">
+    select t2.user_id,t2.username,t2.email,t2.mobile,t2.create_time from busi_user_project t1 left join sys_user t2
+    on(t1.user_id = t2.user_id) where t1.project_id =#{projectId} and app_role = 2 and status=1
+  </select>
+
 
 </mapper>

@@ -129,6 +129,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     return baseMapper.queryNormalFollow(projectId);
   }
 
+  @Override
+  public List<SysUserEntity> querySalesUserByProjectId(Long projectId) {
+    return baseMapper.querySalesUserByProjectId(projectId);
+  }
+
   /**
 	 * 检查角色是否越权
 	 */

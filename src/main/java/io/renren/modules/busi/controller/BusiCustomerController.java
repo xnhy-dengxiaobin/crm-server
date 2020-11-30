@@ -4,6 +4,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("busi/busicustomer")
-public class BusiCustomerController {
+public class BusiCustomerController extends AbstractController {
     @Autowired
     private BusiCustomerService busiCustomerService;
 
@@ -35,6 +36,28 @@ public class BusiCustomerController {
         List<BusiCustomerEntity> customers = busiCustomerService.queryByPhone(params);
 
         return R.ok().put("customers", customers);
+    }
+
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/myList")
+    public R myList(@RequestParam Map<String, Object> params){
+        params.put("matchUserId",getUserId() +"");
+        PageUtils page = busiCustomerService.queryPage(params);
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/myNewList")
+    public R myNewList(@RequestParam Map<String, Object> params){
+        params.put("matchUserId",getUserId() +"");
+        params.put("followUserId",getUserId());
+        PageUtils page = busiCustomerService.queryPage(params);
+        return R.ok().put("page", page);
     }
 
     /**

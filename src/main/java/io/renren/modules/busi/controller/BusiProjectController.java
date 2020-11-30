@@ -38,6 +38,14 @@ public class BusiProjectController {
         return R.ok().put("list", rsList);
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/listParent")
+    public R listParent(){
+        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().isNull("parent_id"));
+        return R.ok().put("list", rsList);
+    }
 
     /**
      * 列表
