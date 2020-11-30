@@ -130,6 +130,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
   }
 
   @Override
+  public List<SysUserEntity> queryTimeoutList(Long projectId) {
+    return baseMapper.queryTimeoutList(projectId);
+  }
+
+  @Override
   public List<SysUserEntity> querySalesUserByProjectId(Long projectId) {
     return baseMapper.querySalesUserByProjectId(projectId);
   }

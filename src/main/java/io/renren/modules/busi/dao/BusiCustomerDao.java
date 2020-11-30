@@ -15,6 +15,8 @@ import java.util.List;
  */
 @Mapper
 public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
-  IPage<BusiCustomerEntity> normalFollowPage(IPage page, String userId);
+  IPage<BusiCustomerEntity> normalFollowPage(IPage page, String userId,String projectId);
+  IPage<BusiCustomerEntity> timeoutPage(IPage page, String userId,String projectId);
+  IPage<BusiCustomerEntity> publicPage(IPage page, String projectId);
     List<BusiCustomerEntity> selectByPhone(String phone);
 }

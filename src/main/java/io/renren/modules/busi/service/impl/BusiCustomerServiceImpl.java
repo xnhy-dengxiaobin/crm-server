@@ -38,11 +38,21 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
     }
 
   @Override
-  public IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page,String userId) {
-    return baseMapper.normalFollowPage(page,userId);
+  public IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page,String userId,String projectId) {
+    return baseMapper.normalFollowPage(page,userId,projectId);
   }
 
-    @Override
+  @Override
+  public IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId, String projectId) {
+    return baseMapper.timeoutPage(page,userId,projectId);
+  }
+
+  @Override
+  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId) {
+    return baseMapper.publicPage(page,projectId);
+  }
+
+  @Override
     public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {
         String mobilePhone = params.get("mobilePhone").toString();
         return getBaseMapper().selectByPhone(mobilePhone);

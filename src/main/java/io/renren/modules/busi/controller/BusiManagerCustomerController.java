@@ -1,6 +1,7 @@
 package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.common.utils.PageUtils;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -41,6 +43,20 @@ public class BusiManagerCustomerController {
 
     return R.ok().put("page", page);
   }
+  /**
+   * 客户分组统计
+   */
+  @RequestMapping("/groupList")
+  public R groupList(@RequestParam Map<String, Object> params) {
+    if (null == params.get("projectId")) {
+      return R.error("请选择当前要查看的项目");
+    } else {
+      return R.ok()
+        .put("timeoutCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().le(BusiCustomerEntity::getFollowNextDate,new Date()).eq(BusiCustomerEntity::getProjectId,params.get("projectId")).eq(BusiCustomerEntity::getStatus,1).isNotNull(BusiCustomerEntity::getMatchUserId)))
+        .put("normalCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().gt(BusiCustomerEntity::getFollowNextDate,new Date()).eq(BusiCustomerEntity::getProjectId,params.get("projectId")).eq(BusiCustomerEntity::getStatus,1).isNotNull(BusiCustomerEntity::getMatchUserId)))
+        .put("recoveryCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId,params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus,2)));
+    }
+  }
 
   /**
    * 正常跟进客户分组列表
@@ -53,14 +69,52 @@ public class BusiManagerCustomerController {
       return R.ok().put("datas", sysUserService.queryNormalFollow(Long.valueOf(params.get("projectId").toString())));
     }
   }
+  /**
+   * 逾期客户
+   */
+  @RequestMapping("/groupTimeoutList")
+  public R groupTimeoutList(@RequestParam Map<String, Object> params) {
+    if (null == params.get("projectId")) {
+      return R.error("请选择当前要查看的项目");
+    } else {
+      return R.ok().put("datas", sysUserService.queryTimeoutList(Long.valueOf(params.get("projectId").toString())));
+    }
+  }
 
   /**
    * 正常跟进客户列表
    */
   @RequestMapping("/normalFollowList")
   public R List(@RequestParam Map<String, Object> params) {
+    if(params.get("userId")==null||params.get("projectId")==null){
+      return R.error("参数异常");
+    }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString());
+    iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString(),params.get("projectId").toString());
+    return R.ok().put("page", new PageUtils(iPage));
+  }
+  /**
+   * 逾期客户列表
+   */
+  @RequestMapping("/timeoutList")
+  public R timeoutList(@RequestParam Map<String, Object> params) {
+    if(params.get("userId")==null||params.get("projectId")==null){
+      return R.error("参数异常");
+    }
+    IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
+    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(),params.get("projectId").toString());
+    return R.ok().put("page", new PageUtils(iPage));
+  }
+  /**
+   * 公共客户
+   */
+  @RequestMapping("/publicList")
+  public R publicList(@RequestParam Map<String, Object> params) {
+    if(params.get("projectId")==null){
+      return R.error("参数异常");
+    }
+    IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
+    iPage = busiCustomerService.publicPage(iPage,params.get("projectId").toString());
     return R.ok().put("page", new PageUtils(iPage));
   }
 

@@ -69,6 +69,12 @@ public interface SysUserService extends IService<SysUserEntity> {
    * @return
    */
   List<SysUserEntity> queryNormalFollow(Long projectId);
+  /**
+   * 根据projectId 查询逾期客户
+   * @param projectId
+   * @return
+   */
+  List<SysUserEntity> queryTimeoutList(Long projectId);
 
   /**
    * 根据projectId 查询置业顾问

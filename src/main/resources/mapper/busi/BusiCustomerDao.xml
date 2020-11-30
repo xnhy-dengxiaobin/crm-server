@@ -50,7 +50,13 @@
         left join sys_user t2 on t1.match_user_id=t2.user_id
         where t1.mobile_phone like '%${mobilePhone}'
     </select>
-    <select id="normalFollowPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
-      select * from busi_customer where  match_user_id = #{userId} and (follow_next_date is null  or follow_next_date>now())
-    </select>
+  <select id="normalFollowPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+    select * from busi_customer where project_id=#{projectId} and match_user_id = #{userId} and status =1 and  follow_next_date>now()
+  </select>
+  <select id="timeoutPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+    select * from busi_customer where project_id=#{projectId} and match_user_id = #{userId} and status =1 and  follow_next_date&lt;=now()
+  </select>
+  <select id="publicPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+    select * from busi_customer where project_id=#{projectId} and match_user_id is null and status =2
+  </select>
 </mapper>

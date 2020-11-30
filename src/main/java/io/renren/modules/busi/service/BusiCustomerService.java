@@ -18,7 +18,10 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
 
   PageUtils queryPage(Map<String, Object> params);
 
-  IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId);
+  IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId,String projectId);
+  IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId,String projectId);
+
+  IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page,String projectId);
 
     /**
      * 根据完整电话号码或者后四位查询
