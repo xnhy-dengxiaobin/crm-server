@@ -11,6 +11,9 @@ package io.renren.modules.sys.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.houbb.heaven.util.lang.StringUtil;
+import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
+import com.github.houbb.pinyin.util.PinyinHelper;
 import io.renren.common.exception.RRException;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
@@ -85,6 +88,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		String salt = RandomStringUtils.randomAlphanumeric(20);
 		user.setPassword(new Sha256Hash(user.getPassword(), salt).toHex());
 		user.setSalt(salt);
+
+		//拼音首字母
+		String s = PinyinHelper.toPinyin(user.getName(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+		user.setFirstLetter(s);
+
 		this.save(user);
 
 		//检查角色是否越权
@@ -102,6 +110,13 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 		}else{
 			user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
 		}
+
+		//拼音首字母
+		if(StringUtils.isNotEmpty(user.getName())){
+			String s = PinyinHelper.toPinyin(user.getName(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+			user.setFirstLetter(s);
+		}
+
 		this.updateById(user);
 
 		//检查角色是否越权

@@ -97,4 +97,14 @@ public class SysUserEntity implements Serializable {
    */
   @TableField(exist = false)
   private Integer count;
+
+  /**
+   * 真实姓名
+   */
+  private String name;
+
+  /**
+   * 用户名首字母
+   */
+  private String firstLetter;
 }
