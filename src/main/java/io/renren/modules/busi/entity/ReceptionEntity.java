@@ -62,6 +62,8 @@ public class ReceptionEntity implements Serializable {
 	private String matchUserId;
 	@TableField(exist = false)
 	private String matchUserName;
+	@TableField(exist = false)
+	private String head;
 
 	/**
 	 * 接待员id
@@ -75,5 +77,11 @@ public class ReceptionEntity implements Serializable {
 	 * 处理状态:0-未处理；10-已处理
 	 */
 	private Integer status;
+
+	/**
+	 * 是否新客户
+	 * 0否1是
+	 */
+	private Integer isNew;
 
 }

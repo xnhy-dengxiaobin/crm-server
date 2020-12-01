@@ -51,8 +51,10 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity) {
         if (busiCustomerEntity.getId() > 0) {
             busiCustomerDao.updateById(busiCustomerEntity);
+            receptionEntity.setIsNew(0);//老客户
         } else {
             busiCustomerDao.insert(busiCustomerEntity);
+            receptionEntity.setIsNew(1);//新客户
         }
 
         receptionEntity.setCustomerId(busiCustomerEntity.getId());

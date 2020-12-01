@@ -49,5 +49,5 @@ spring:
 #      password: 123456
 crm:
     log:
-        path: D:/logs
-    upload-path: uploads/
+        path: /data/logs
+    upload-path: /data/uploads/
