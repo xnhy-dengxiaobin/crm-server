@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -46,7 +47,7 @@ public class BusiCustomerFollowEntity implements Serializable {
 	 * 项目id
 	 */
 	@TableField(exist = false)
-	private Integer projectId;
+	private List<Integer> projectIds;
 
 	/**
 	 * 下次跟进时间
