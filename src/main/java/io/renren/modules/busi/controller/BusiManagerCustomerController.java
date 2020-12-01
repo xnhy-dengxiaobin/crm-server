@@ -66,8 +66,8 @@ public class BusiManagerCustomerController {
     } else {
       return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId,projectId).ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
         .put("flowClient", busiCustomerFollowService.toDayCount(projectId.toString()))
-        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getCreateTime, 1)))
-        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getCreateTime, 0)));
+        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getIsNew, 1)))
+        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getIsNew, 0)));
     }
   }
 
