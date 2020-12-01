@@ -1,6 +1,5 @@
 package io.renren.modules.busi.controller;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,11 +7,13 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
-import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
+import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.BusiCustomerFollowService;
+import io.renren.modules.busi.service.BusiCustomerRoamService;
 import io.renren.modules.busi.service.BusiCustomerService;
 import io.renren.modules.busi.service.ReceptionService;
+import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -33,7 +34,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("busi/manager/busicustomer")
-public class BusiManagerCustomerController {
+public class BusiManagerCustomerController extends AbstractController {
   @Autowired
   private BusiCustomerService busiCustomerService;
   @Autowired
@@ -42,6 +43,8 @@ public class BusiManagerCustomerController {
   private ReceptionService receptionService;
   @Autowired
   private BusiCustomerFollowService busiCustomerFollowService;
+  @Autowired
+  private BusiCustomerRoamService busiCustomerRoamService;
 
   /**
    * 列表
@@ -64,10 +67,10 @@ public class BusiManagerCustomerController {
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
     } else {
-      return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId,projectId).ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
+      return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, projectId).ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
         .put("flowClient", busiCustomerFollowService.toDayCount(projectId.toString()))
-        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getIsNew, 1)))
-        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getIsNew, 0)));
+        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId, projectId).ge(ReceptionEntity::getIsNew, 1)))
+        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId, projectId).ge(ReceptionEntity::getIsNew, 0)));
     }
   }
 
@@ -174,6 +177,11 @@ public class BusiManagerCustomerController {
       return R.ok();
     } else {
       for (String id : ids) {
+        BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
+        roam.setCreateTime(new Date());
+        roam.setCustomerId(Integer.parseInt(id));
+        roam.setRemark("垃圾箱，被" + getUser().getUsername() + "扔进垃圾箱");
+        busiCustomerRoamService.save(roam);
         busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, id)
           .set(BusiCustomerEntity::getStatus, 3)
         );
@@ -194,6 +202,11 @@ public class BusiManagerCustomerController {
       return R.ok();
     } else {
       for (String id : ids) {
+        BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
+        roam.setCreateTime(new Date());
+        roam.setCustomerId(Integer.parseInt(id));
+        roam.setRemark("回收，被" + getUser().getUsername() + "回收");
+        busiCustomerRoamService.save(roam);
         BusiCustomerEntity entity = busiCustomerService.getById(id);
         if (entity != null && !StringUtils.isEmpty(entity.getMatchUserId())) {
           SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
@@ -226,8 +239,16 @@ public class BusiManagerCustomerController {
           i = 0;
         }
         String userId = userIds[i];
+
+        BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
+        roam.setCreateTime(new Date());
+        roam.setCustomerId(Integer.parseInt(customerId));
+
         BusiCustomerEntity entity = busiCustomerService.getById(customerId);
         SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
+
+        roam.setRemark("分配，被" + getUser().getUsername() + "分配至" + sysUserService.getById(userId).getUsername());
+        busiCustomerRoamService.save(roam);
         if (sysUserEntity != null) {
           busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
             .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId)
