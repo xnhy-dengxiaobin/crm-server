@@ -90,6 +90,8 @@ public class SysUserEntity implements Serializable {
    * 1:经理，2：置业顾问
    */
   private Integer appRole;
+
+  private String head;
   /**
    * 统计使用
    */
