@@ -15,6 +15,11 @@
         <result property="createName" column="create_name"/>
 
     </resultMap>
+  <select id="toDayCount" resultType="integer">
+    select count(distinct t1.customer_id) from busi_customer_follow t1 left join busi_customer t2 on(
+    t1.customer_id = t2.id
+    ) where t2.project_id=#{projectId} and t1.create_time >= #{localDate}
+  </select>
 
 
 </mapper>

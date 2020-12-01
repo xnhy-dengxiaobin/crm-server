@@ -7,7 +7,7 @@ import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
 import java.util.Map;
 
 /**
- * 
+ *
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
@@ -16,5 +16,6 @@ import java.util.Map;
 public interface BusiCustomerFollowService extends IService<BusiCustomerFollowEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+    Integer toDayCount(String projectId);
 }
 
