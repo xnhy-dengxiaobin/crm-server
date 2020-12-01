@@ -45,6 +45,7 @@ public class BusiCustomerController extends AbstractController {
     @RequestMapping("/myList")
     public R myList(@RequestParam Map<String, Object> params){
         params.put("matchUserId",getUserId() +"");
+        params.put("desc","follow_date");
         PageUtils page = busiCustomerService.queryPage(params);
         return R.ok().put("page", page);
     }

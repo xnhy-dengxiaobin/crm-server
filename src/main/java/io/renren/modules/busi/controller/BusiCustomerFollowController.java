@@ -97,13 +97,15 @@ public class BusiCustomerFollowController extends AbstractController {
         busiCustomerEntity.setFollowNextDate(busiCustomerFollow.getNextDate());
         busiCustomerEntity.setFollowUserId(getUserId());
         busiCustomerService.updateById(busiCustomerEntity);
-        if(busiCustomerFollow.getProjectId() != null){
-            BusiProjectEntity byId = busiProjectService.getById(busiCustomerFollow.getProjectId());
-            BusiCustomerProjectEntity entity = new BusiCustomerProjectEntity();
-            entity.setCustomerId(busiCustomerFollow.getCustomerId());
-            entity.setProjectId(byId.getId());
-            entity.setProject(byId.getName());
-            busiCustomerProjectService.save(entity);
+        if(busiCustomerFollow.getProjectIds() != null){
+            for (Integer projectId : busiCustomerFollow.getProjectIds()) {
+                BusiProjectEntity byId = busiProjectService.getById(projectId);
+                BusiCustomerProjectEntity entity = new BusiCustomerProjectEntity();
+                entity.setCustomerId(busiCustomerFollow.getCustomerId());
+                entity.setProjectId(byId.getId());
+                entity.setProject(byId.getName());
+                busiCustomerProjectService.save(entity);
+            }
         }
         return R.ok();
     }

@@ -27,7 +27,10 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
             busiCustomerEntityQueryWrapper.and(qw->qw.ne("follow_user_id",params.get("followUserId")).or().isNull("follow_user_id"));
         }
         if(params.get("condition") != null && !"".equals(params.get("condition"))){
-            busiCustomerEntityQueryWrapper.and(qw->qw.likeRight("name",params.get("condition")).or().likeRight("mobile_phone",params.get("condition")));
+            busiCustomerEntityQueryWrapper.and(qw->qw.like("name",params.get("condition")).or().like("mobile_phone",params.get("condition")));
+        }
+        if(params.get("desc") != null){
+            busiCustomerEntityQueryWrapper.orderByDesc(params.get("desc").toString());
         }
         IPage<BusiCustomerEntity> page = this.page(
                 new Query<BusiCustomerEntity>().getPage(params),
