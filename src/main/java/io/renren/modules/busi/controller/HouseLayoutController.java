@@ -2,6 +2,7 @@ package io.renren.modules.busi.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -51,7 +52,7 @@ public class HouseLayoutController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("busi:houselayout:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = houseLayoutService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -63,8 +64,8 @@ public class HouseLayoutController {
      */
     @RequestMapping("/info/{id}")
     @RequiresPermissions("busi:houselayout:info")
-    public R info(@PathVariable("id") Integer id){
-		HouseLayoutEntity houseLayout = houseLayoutService.getById4Project(id);
+    public R info(@PathVariable("id") Integer id) {
+        HouseLayoutEntity houseLayout = houseLayoutService.getById4Project(id);
 
         return R.ok().put("houseLayout", houseLayout);
     }
@@ -74,8 +75,8 @@ public class HouseLayoutController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("busi:houselayout:save")
-    public R save(@RequestBody HouseLayoutEntity houseLayout){
-		houseLayoutService.save(houseLayout);
+    public R save(@RequestBody HouseLayoutEntity houseLayout) {
+        houseLayoutService.save(houseLayout);
 
         return R.ok();
     }
@@ -85,8 +86,8 @@ public class HouseLayoutController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:houselayout:update")
-    public R update(@RequestBody HouseLayoutEntity houseLayout){
-		houseLayoutService.updateById(houseLayout);
+    public R update(@RequestBody HouseLayoutEntity houseLayout) {
+        houseLayoutService.updateById(houseLayout);
 
         return R.ok();
     }
@@ -96,8 +97,8 @@ public class HouseLayoutController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:houselayout:delete")
-    public R delete(@RequestBody Integer[] ids){
-		houseLayoutService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Integer[] ids) {
+        houseLayoutService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }
@@ -105,13 +106,19 @@ public class HouseLayoutController {
     // 上传文件
     @RequestMapping("/upload")
     @RequiresPermissions("busi:houselayout:upload")
-    public R upload(@RequestParam MultipartFile[] uploads, @RequestParam String dirId, HttpServletRequest request) {
+    public R upload(@RequestParam MultipartFile[] uploads, @RequestParam String dirId, HttpServletRequest request) throws IOException {
         List<String> files = new ArrayList<>();
         String realPath = getClass().getClassLoader().getResource("").getPath();
+
+//根据相对获取绝对路径(文件上传到的保存位置)
+        realPath = realPath + "static/" + crmProp.getUploadPath() + dirId;
+        File dir = new File(realPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
         try {
             for (MultipartFile upload : uploads) {
-                //根据相对获取绝对路径(文件上传到的保存位置)
-                realPath = realPath + "static/" + crmProp.getUploadPath() + dirId;
 //获取文件后缀
                 String fileName = upload.getOriginalFilename().substring(0, upload.getOriginalFilename().lastIndexOf("."));
                 String extension = upload.getOriginalFilename().substring(upload.getOriginalFilename().lastIndexOf(".") + 1);
@@ -120,7 +127,11 @@ public class HouseLayoutController {
                         new SimpleDateFormat("yyyyMMddHHss").format(new Date());
                 String newFileName = newFileNamePrefix + "." + extension;
 //处理文件上传
-                upload.transferTo(new File(realPath, newFileName));
+                File newFile = new File(dir, newFileName);
+                if (!newFile.exists()) {
+                    newFile.createNewFile();
+                }
+                upload.transferTo(newFile);
                 files.add(dirId + "/" + newFileName);
             }
         } catch (Exception e) {

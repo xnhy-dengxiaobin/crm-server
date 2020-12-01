@@ -29,7 +29,7 @@
 
     <select id="slct" resultMap="receptionMap">
         select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_name,
-        t2.source_mobile,t2.channel,t3.username as match_user_name
+        t2.source_mobile,t2.channel,t3.name as match_user_name
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id
@@ -38,7 +38,7 @@
                 and t1.id = #{id}
             </if>
             <if test=" matchUserName!=null and matchUserName !='' ">
-                and t3.username like '%${name}%'
+                and (t3.name like '%${matchUserName}%' or t3.first_letter like '%${matchUserName}')
             </if>
             <if test=" createTime !=null and createTime !='' ">
                 and datediff(t1.create_time, #{createTime}) = 0
@@ -56,7 +56,7 @@
                 and t1.id = #{id}
             </if>
             <if test=" matchUserName!=null and matchUserName !='' ">
-                and t3.username like '%${name}%'
+                and (t3.name like '%${matchUserName}%' or t3.first_letter like '%${matchUserName}')
             </if>
             <if test=" createTime !=null and createTime !='' ">
                 and datediff(t1.create_time, #{createTime}) = 0
