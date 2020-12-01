@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -32,11 +33,17 @@ public class ReceptionEntity implements Serializable {
 	 * 接待客户的id
 	 */
 	private Integer customerId;
+	@TableField(exist = false)
 	private String customerName;
+	@TableField(exist = false)
 	private String mobilePhone;
+	@TableField(exist = false)
 	private String source;
+	@TableField(exist = false)
 	private String sourceName;
+	@TableField(exist = false)
 	private String sourceMobile;
+	@TableField(exist = false)
 	private String channel;
 
 	/**
@@ -51,7 +58,9 @@ public class ReceptionEntity implements Serializable {
 	 * 分配的置业顾问id
 	 */
 	private Integer salerId;
+	@TableField(exist = false)
 	private String matchUserId;
+	@TableField(exist = false)
 	private String matchUserName;
 
 	/**
