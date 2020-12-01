@@ -96,6 +96,8 @@ public class BusiCustomerEntity implements Serializable {
 	@TableField(exist = false)
 	private String matchUserName;
 
+	@TableField(exist = false)
+	private String head;
 	/**
 	 * 最后跟进文本
 	 */

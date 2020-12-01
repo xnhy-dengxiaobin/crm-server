@@ -8,7 +8,11 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
+import io.renren.modules.busi.entity.ReceptionEntity;
+import io.renren.modules.busi.service.BusiCustomerFollowService;
 import io.renren.modules.busi.service.BusiCustomerService;
+import io.renren.modules.busi.service.ReceptionService;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -33,6 +38,10 @@ public class BusiManagerCustomerController {
   private BusiCustomerService busiCustomerService;
   @Autowired
   private SysUserService sysUserService;
+  @Autowired
+  private ReceptionService receptionService;
+  @Autowired
+  private BusiCustomerFollowService busiCustomerFollowService;
 
   /**
    * 列表
@@ -43,6 +52,25 @@ public class BusiManagerCustomerController {
 
     return R.ok().put("page", page);
   }
+
+  /**
+   * 分析统计
+   *
+   * @return
+   */
+  @RequestMapping("/statistics")
+  public R statistics(@RequestParam Map<String, Object> params) {
+    Object projectId = params.get("projectId");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    } else {
+      return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId,projectId).ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
+        .put("flowClient", busiCustomerFollowService.toDayCount(projectId.toString()))
+        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getIsNew, 1)))
+        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId,projectId).ge(ReceptionEntity::getIsNew, 0)));
+    }
+  }
+
   /**
    * 客户分组统计
    */
@@ -52,9 +80,9 @@ public class BusiManagerCustomerController {
       return R.error("请选择当前要查看的项目");
     } else {
       return R.ok()
-        .put("timeoutCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().le(BusiCustomerEntity::getFollowNextDate,new Date()).eq(BusiCustomerEntity::getProjectId,params.get("projectId")).eq(BusiCustomerEntity::getStatus,1).isNotNull(BusiCustomerEntity::getMatchUserId)))
-        .put("normalCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().gt(BusiCustomerEntity::getFollowNextDate,new Date()).eq(BusiCustomerEntity::getProjectId,params.get("projectId")).eq(BusiCustomerEntity::getStatus,1).isNotNull(BusiCustomerEntity::getMatchUserId)))
-        .put("recoveryCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId,params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus,2)));
+        .put("timeoutCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().le(BusiCustomerEntity::getFollowNextDate, new Date()).eq(BusiCustomerEntity::getProjectId, params.get("projectId")).eq(BusiCustomerEntity::getStatus, 1).isNotNull(BusiCustomerEntity::getMatchUserId)))
+        .put("normalCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().gt(BusiCustomerEntity::getFollowNextDate, new Date()).eq(BusiCustomerEntity::getProjectId, params.get("projectId")).eq(BusiCustomerEntity::getStatus, 1).isNotNull(BusiCustomerEntity::getMatchUserId)))
+        .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)));
     }
   }
 
@@ -69,6 +97,7 @@ public class BusiManagerCustomerController {
       return R.ok().put("datas", sysUserService.queryNormalFollow(Long.valueOf(params.get("projectId").toString())));
     }
   }
+
   /**
    * 逾期客户
    */
@@ -86,36 +115,71 @@ public class BusiManagerCustomerController {
    */
   @RequestMapping("/normalFollowList")
   public R List(@RequestParam Map<String, Object> params) {
-    if(params.get("userId")==null||params.get("projectId")==null){
+    if (params.get("userId") == null || params.get("projectId") == null) {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString(),params.get("projectId").toString());
+    iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString(), params.get("projectId").toString());
     return R.ok().put("page", new PageUtils(iPage));
   }
+
   /**
    * 逾期客户列表
    */
   @RequestMapping("/timeoutList")
   public R timeoutList(@RequestParam Map<String, Object> params) {
-    if(params.get("userId")==null||params.get("projectId")==null){
+    if (params.get("userId") == null || params.get("projectId") == null) {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(),params.get("projectId").toString());
+    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString());
     return R.ok().put("page", new PageUtils(iPage));
   }
+
   /**
    * 公共客户
    */
   @RequestMapping("/publicList")
   public R publicList(@RequestParam Map<String, Object> params) {
-    if(params.get("projectId")==null){
+    if (params.get("projectId") == null) {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage,params.get("projectId").toString());
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString());
     return R.ok().put("page", new PageUtils(iPage));
+  }
+
+  /**
+   * 垃圾箱
+   */
+  @RequestMapping("/rubbishList")
+  public R rubbishList(@RequestParam Map<String, Object> params) {
+    if (params.get("projectId") == null) {
+      return R.error("参数异常");
+    }
+    IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString());
+    return R.ok().put("page", new PageUtils(iPage));
+  }
+
+  /**
+   * 垃圾箱
+   */
+  @RequestMapping("/rubbish")
+  public R rubbish(@RequestParam Map<String, Object> params) {
+    Object obj = params.get("ids");
+    String idstr = obj == null ? "" : obj.toString();
+    String[] ids = idstr.split(",");
+    if (ids.length < 1) {
+      return R.ok();
+    } else {
+      for (String id : ids) {
+        busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, id)
+          .set(BusiCustomerEntity::getStatus, 3)
+        );
+      }
+    }
+    return R.ok();
   }
 
   /**

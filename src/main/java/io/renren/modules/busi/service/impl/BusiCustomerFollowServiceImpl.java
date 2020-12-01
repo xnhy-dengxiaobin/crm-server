@@ -1,6 +1,8 @@
 package io.renren.modules.busi.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -25,5 +27,11 @@ public class BusiCustomerFollowServiceImpl extends ServiceImpl<BusiCustomerFollo
 
         return new PageUtils(page);
     }
+
+  @Override
+  public Integer toDayCount(String projectId) {
+    LocalDate localDate = LocalDate.now();
+    return baseMapper.toDayCount(projectId,localDate);
+  }
 
 }

@@ -21,15 +21,17 @@
 
         <result property="salerId" column="saler_id"/>
         <result property="matchUserName" column="match_user_name"/>
+        <result property="head" column="head"/>
 
         <result property="receptionistId" column="receptionist_id"/>
         <result property="createTime" column="create_time"/>
         <result property="status" column="status"/>
+        <result property="isNew" column="is_new"/>
     </resultMap>
 
     <select id="slct" resultMap="receptionMap">
         select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_name,
-        t2.source_mobile,t2.channel,t3.name as match_user_name
+        t2.source_mobile,t2.channel,t3.name as match_user_name,t3.head
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id

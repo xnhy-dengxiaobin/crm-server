@@ -60,4 +60,4 @@ spring:
 crm:
     log:
         path: D:/logs
-    upload-path: uploads/
+    upload-path: D:/uploads/

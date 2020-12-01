@@ -105,16 +105,14 @@ public class HouseLayoutController {
 
     // 上传文件
     @RequestMapping("/upload")
-    @RequiresPermissions("busi:houselayout:upload")
     public R upload(@RequestParam MultipartFile[] uploads, @RequestParam String dirId, HttpServletRequest request) throws IOException {
         List<String> files = new ArrayList<>();
-        String realPath = getClass().getClassLoader().getResource("").getPath();
 
 //根据相对获取绝对路径(文件上传到的保存位置)
-        realPath = realPath + "static/" + crmProp.getUploadPath() + dirId;
-        File dir = new File(realPath);
+        String filePath = crmProp.getUploadPath() + dirId;
+        File dir = new File(filePath);
         if (!dir.exists()) {
-            dir.mkdirs();
+            dir.mkdir();
         }
 
         try {
@@ -141,8 +139,38 @@ public class HouseLayoutController {
         return R.ok().put("files", files);
     }
 
+    @RequestMapping("/downloadFP/{dirId}/{fileName}")
+    public ResponseEntity<byte[]> downloadFP(HttpServletRequest request,@PathVariable String dirId, @PathVariable String fileName) {
+        try {
+            String path = crmProp.getUploadPath() + dirId + File.separator + fileName;
+            HttpHeaders headers = new HttpHeaders();
+            String name = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.lastIndexOf("."));
+            String ext = fileName.substring(fileName.lastIndexOf(".") + 1);
+            MediaType contentType = null;
+            switch (ext) {
+                case "jpg":
+                    contentType = MediaType.IMAGE_JPEG;
+                    break;
+                case "jpeg":
+                    contentType = MediaType.IMAGE_JPEG;
+                    break;
+                case "png":
+                    contentType = MediaType.IMAGE_PNG;
+                    break;
+                default:
+                    contentType = MediaType.IMAGE_GIF;
+            }
+            headers.setContentDispositionFormData("attachment", name);
+            headers.setContentType(contentType);
+            return new ResponseEntity<byte[]>(IOUtils.toByteArray(new FileInputStream(new File(path))),
+                    headers, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("文件下载出错", e);
+        }
+        return null;
+    }
+
     @RequestMapping("/download")
-    @RequiresPermissions("busi:houselayout:download")
     public ResponseEntity<byte[]> download(HttpServletRequest request, @PathVariable Integer id) {
         try {
             HouseLayoutEntity houseLayout = houseLayoutService.getById(id);
