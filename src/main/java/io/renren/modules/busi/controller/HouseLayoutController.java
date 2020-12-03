@@ -110,11 +110,12 @@ public class HouseLayoutController {
 
 //根据相对获取绝对路径(文件上传到的保存位置)
         String filePath = crmProp.getUploadPath() + dirId;
+        log.debug("上传目录:{}", filePath);
         File dir = new File(filePath);
         if (!dir.exists()) {
             dir.mkdir();
         }
-
+        log.debug("上传目录已创建:{}", filePath);
         try {
             for (MultipartFile upload : uploads) {
 //获取文件后缀
@@ -125,7 +126,9 @@ public class HouseLayoutController {
                         new SimpleDateFormat("yyyyMMddHHss").format(new Date());
                 String newFileName = newFileNamePrefix + "." + extension;
 //处理文件上传
-                File newFile = new File(dir, newFileName);
+                filePath = filePath + File.separator + newFileName;
+                File newFile = new File(filePath);
+                log.debug("上传文件为:{}", filePath);
                 if (!newFile.exists()) {
                     newFile.createNewFile();
                 }

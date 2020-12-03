@@ -29,5 +29,12 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
      * @return
      */
     List<BusiCustomerEntity> queryByPhone(Map<String, Object> params);
+
+  /**
+   * 完善客户信息
+   * 将接待记录置为已处理
+   * @param busiCustomerEntity
+   */
+  void perfect(BusiCustomerEntity busiCustomerEntity);
 }
 

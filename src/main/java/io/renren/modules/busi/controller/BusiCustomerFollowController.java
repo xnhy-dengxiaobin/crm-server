@@ -86,7 +86,7 @@ public class BusiCustomerFollowController extends AbstractController {
         SysUserEntity user = getUser();
         busiCustomerFollow.setCreateName(user.getUsername());
         busiCustomerFollow.setCreateTime(new Date());
-        busiCustomerFollowService.save(busiCustomerFollow);
+
         Date date = new Date();
         BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
         busiCustomerEntity.setId(busiCustomerFollow.getCustomerId());
@@ -96,17 +96,9 @@ public class BusiCustomerFollowController extends AbstractController {
         busiCustomerEntity.setFollowDate(date);
         busiCustomerEntity.setFollowNextDate(busiCustomerFollow.getNextDate());
         busiCustomerEntity.setFollowUserId(getUserId());
-        busiCustomerService.updateById(busiCustomerEntity);
-        if(busiCustomerFollow.getProjectIds() != null){
-            for (Integer projectId : busiCustomerFollow.getProjectIds()) {
-                BusiProjectEntity byId = busiProjectService.getById(projectId);
-                BusiCustomerProjectEntity entity = new BusiCustomerProjectEntity();
-                entity.setCustomerId(busiCustomerFollow.getCustomerId());
-                entity.setProjectId(byId.getId());
-                entity.setProject(byId.getName());
-                busiCustomerProjectService.save(entity);
-            }
-        }
+
+        busiCustomerFollowService.saveFollow(busiCustomerFollow, busiCustomerEntity);
+
         return R.ok();
     }
 

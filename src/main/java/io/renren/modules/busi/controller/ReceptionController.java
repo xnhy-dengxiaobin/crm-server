@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.service.BusiCustomerService;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +38,9 @@ public class ReceptionController extends AbstractController {
     @Autowired
     private ReceptionService receptionService;
 
+    @Autowired
+    private BusiCustomerService busiCustomerService;
+
     /**
      * 列表
      */
@@ -50,9 +55,9 @@ public class ReceptionController extends AbstractController {
      * 列表
      */
     @RequestMapping("/listBySalerId")
-    public R listBySalerId(@RequestParam Map<String, Object> params){
+    public R listBySalerId(@RequestBody Map<String, Object> params){
         params.put("salerId", getUserId());
-        PageUtils maps = receptionService.listBySalerId(params, getUserId());
+        PageUtils maps = receptionService.listBySalerId(params);
         return R.ok().put("page", maps);
     }
 
@@ -85,6 +90,13 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody Map<String, Object> params) {
+        Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
+
+        BusiCustomerEntity cus = busiCustomerService.getBaseMapper().selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", ParamResolvor.getString(customerMap, "mobilePhone")));
+        if(null != cus && cus.getId() > 0){
+            return R.error("该手机号码已经存在, 不是新客户");
+        }
+
         Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
         ReceptionEntity receptionEntity = new ReceptionEntity();
         receptionEntity.setReceptionistId(getUserId().intValue());
@@ -96,7 +108,6 @@ public class ReceptionController extends AbstractController {
         receptionEntity.setStatus(0);
         receptionEntity.setCreateTime(new Date());
 
-        Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
         BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
         busiCustomerEntity.setId(ParamResolvor.getIntAsDefault(customerMap, "id", 0));
         busiCustomerEntity.setMobilePhone(ParamResolvor.getString(customerMap, "mobilePhone"));

@@ -2,6 +2,7 @@ package io.renren.modules.busi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
 
 import java.util.Map;
@@ -17,5 +18,13 @@ public interface BusiCustomerFollowService extends IService<BusiCustomerFollowEn
 
     PageUtils queryPage(Map<String, Object> params);
     Integer toDayCount(String projectId);
+
+    /**
+     * 跟进信息
+     * 更新客户状态
+     * 插入跟进信息
+     * @param busiCustomerFollow
+     */
+    void saveFollow(BusiCustomerFollowEntity busiCustomerFollow, BusiCustomerEntity busiCustomerEntity);
 }
 

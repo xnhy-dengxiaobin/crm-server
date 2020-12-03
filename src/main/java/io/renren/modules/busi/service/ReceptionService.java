@@ -28,7 +28,7 @@ public interface ReceptionService extends IService<ReceptionEntity> {
 
     PageUtils qryPage(Map<String, Object> params);
 
-    PageUtils listBySalerId(Map<String, Object> params, Long salerId);
+    PageUtils listBySalerId(Map<String, Object> params);
 
 
 }

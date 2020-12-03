@@ -2,6 +2,7 @@ package io.renren.modules.busi.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.renren.common.utils.ParamResolvor;
+import io.renren.common.utils.R;
 import io.renren.modules.busi.dao.BusiCustomerDao;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
@@ -80,12 +81,24 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
         return new PageUtils(page);
     }
     @Override
-    public PageUtils listBySalerId(Map<String, Object> params, Long salerId){
-        IPage<ReceptionEntity> page = this.page(
-                new Query<ReceptionEntity>().getPage(params)
-        );
-        IPage<Map<String, Object>> mapIPage = getBaseMapper().listBySalerId(page, salerId);
-        return new PageUtils(mapIPage);
+    public PageUtils listBySalerId(Map<String, Object> params){
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+
+        params.put("status", ParamResolvor.getIntAsDefault(params, "status", -1) + "");
+
+        List<ReceptionEntity> list = getBaseMapper().listBySalerId(params);
+        Long cnt = getBaseMapper().listBySalerIdCnt(params);
+        Page<ReceptionEntity> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(list);
+
+        return new PageUtils(page);
     }
 
 

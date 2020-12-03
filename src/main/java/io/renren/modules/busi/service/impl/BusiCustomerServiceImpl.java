@@ -1,14 +1,20 @@
 package io.renren.modules.busi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.modules.busi.dao.BusiCustomerDao;
+import io.renren.modules.busi.dao.ReceptionDao;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +22,9 @@ import java.util.Map;
 
 @Service("busiCustomerService")
 public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCustomerEntity> implements BusiCustomerService {
+
+    @Autowired
+    private ReceptionDao receptionDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -59,5 +68,17 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
     public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {
         String mobilePhone = params.get("mobilePhone").toString();
         return getBaseMapper().selectByPhone(mobilePhone);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void perfect(BusiCustomerEntity busiCustomerEntity) {
+        getBaseMapper().updateById(busiCustomerEntity);
+        ReceptionEntity receptionEntity = new ReceptionEntity();
+        receptionEntity.setStatus(1);//已处理
+        receptionDao.update(receptionEntity,
+                new UpdateWrapper<ReceptionEntity>()
+                        .eq("customer_id", busiCustomerEntity.getId())
+                        .eq("saler_id", busiCustomerEntity.getMatchUserId()));
     }
 }

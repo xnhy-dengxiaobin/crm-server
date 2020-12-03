@@ -65,4 +65,30 @@
             </if>
         </where>
     </select>
+
+    <select id="listBySalerId" resultMap="receptionMap">
+        select br.*,bc.name as customer_name from busi_reception br
+        left join busi_customer bc on br.customer_id = bc.id
+        <where>
+            <if test=" salerId!=null and salerId !='' ">
+                and br.saler_id = #{salerId}
+            </if>
+            <if test=" status!=null and status !='' ">
+                and br.status = #{status}
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+    <select id="listBySalerIdCnt" resultType="long">
+        select count(*) from busi_reception br
+        left join busi_customer bc on br.customer_id = bc.id
+        <where>
+            <if test=" salerId!=null and salerId !='' ">
+                and br.saler_id = #{salerId}
+            </if>
+            <if test=" status!=null and status !='' ">
+                and br.status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>

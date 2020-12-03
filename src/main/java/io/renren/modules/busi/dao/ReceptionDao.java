@@ -23,6 +23,6 @@ public interface ReceptionDao extends BaseMapper<ReceptionEntity> {
 	List<ReceptionEntity> slct(Map<String, Object> params);
 	Long cnt(Map<String, Object> params);
 
-    @Select("select br.*,bc.name from busi_reception br left join busi_customer bc on br.customer_id = bc.id where saler_id = #{salerId}")
-    IPage<Map<String, Object>> listBySalerId(IPage<ReceptionEntity> page, Long salerId);
+    List<ReceptionEntity> listBySalerId(Map<String, Object> params);
+    Long listBySalerIdCnt(Map<String, Object> params);
 }

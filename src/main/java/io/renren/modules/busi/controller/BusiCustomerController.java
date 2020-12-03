@@ -1,5 +1,7 @@
 package io.renren.modules.busi.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
@@ -96,6 +98,11 @@ public class BusiCustomerController extends AbstractController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody BusiCustomerEntity busiCustomer){
+        BusiCustomerEntity cus = busiCustomerService.getBaseMapper().selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomer.getMobilePhone()));
+        if(null != cus && cus.getId() > 0){
+            return R.error("该手机号码已经存在, 不是新客户");
+        }
+
 		busiCustomerService.save(busiCustomer);
 
         return R.ok();
@@ -106,7 +113,7 @@ public class BusiCustomerController extends AbstractController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody BusiCustomerEntity busiCustomer){
-		busiCustomerService.updateById(busiCustomer);
+        busiCustomerService.perfect(busiCustomer);
 
         return R.ok();
     }
