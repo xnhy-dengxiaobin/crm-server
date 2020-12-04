@@ -107,4 +107,10 @@ public class SysUserEntity implements Serializable {
    * 用户名首字母
    */
   private String firstLetter;
+
+  /**
+   * 今日是否已签到
+   */
+  @TableField(exist = false)
+  private int isSigned;
 }

@@ -30,10 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -151,7 +149,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
   @Override
   public List<SysUserEntity> querySalesUserByProjectId(Long projectId) {
-    return baseMapper.querySalesUserByProjectId(projectId);
+	  HashMap<String, Object> params = new HashMap<>();
+	  params.put("projectId", projectId);
+	  params.put("today", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+	  return baseMapper.querySalesUserByProjectId(params);
   }
 
   /**

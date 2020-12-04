@@ -70,6 +70,7 @@ public class SysUserController extends AbstractController {
 
     return R.ok().put("datas", list);
   }
+
 	/**
 	 * 获取登录的用户信息
 	 */
