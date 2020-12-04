@@ -18,9 +18,13 @@ public class BusiCustomerRoamServiceImpl extends ServiceImpl<BusiCustomerRoamDao
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper<BusiCustomerRoamEntity> busiCustomerRoamEntityQueryWrapper = new QueryWrapper<>();
+        if(params.get("customerId") != null){
+            busiCustomerRoamEntityQueryWrapper.eq("customer_id",params.get("customerId"));
+        }
         IPage<BusiCustomerRoamEntity> page = this.page(
                 new Query<BusiCustomerRoamEntity>().getPage(params),
-                new QueryWrapper<BusiCustomerRoamEntity>()
+                busiCustomerRoamEntityQueryWrapper
         );
 
         return new PageUtils(page);

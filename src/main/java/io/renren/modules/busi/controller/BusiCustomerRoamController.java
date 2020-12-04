@@ -1,5 +1,6 @@
 package io.renren.modules.busi.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -26,6 +28,14 @@ public class BusiCustomerRoamController {
     @Autowired
     private BusiCustomerRoamService busiCustomerRoamService;
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/listByCustomerId")
+    public R listByCustomerId(@RequestParam Map<String, Object> params){
+        List<BusiCustomerRoamEntity> list = busiCustomerRoamService.list(new QueryWrapper<BusiCustomerRoamEntity>().eq("customer_id", params.get("customerId")));
+        return R.ok().put("list", list);
+    }
     /**
      * 列表
      */
