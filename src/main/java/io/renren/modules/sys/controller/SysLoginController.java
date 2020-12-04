@@ -107,6 +107,7 @@ public class SysLoginController extends AbstractController {
     R r = sysUserTokenService.createToken(user.getUserId());
     r.put("head",user.getHead());
     r.put("appRole",user.getAppRole());
+    r.put("name",user.getName());
     return r;
   }
 
