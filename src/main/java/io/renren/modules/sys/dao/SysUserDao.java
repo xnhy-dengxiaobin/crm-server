@@ -13,6 +13,7 @@ import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统用户
@@ -55,5 +56,5 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
    * 根据projectId 查询置业顾问
    * @return
    */
-  List<SysUserEntity> querySalesUserByProjectId(Long projectId);
+  List<SysUserEntity> querySalesUserByProjectId(Map<String, Object> params);
 }

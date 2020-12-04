@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.busi.dao.SignOnDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.busi.entity.SignOnEntity" id="signOnMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="userId" column="user_id"/>
+        <result property="signOnDate" column="sign_on_date"/>
+        <result property="createdTime" column="created_time"/>
+    </resultMap>
+
+
+</mapper>
