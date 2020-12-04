@@ -10,7 +10,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String url = getClass().getClassLoader().getResource("").getPath()+ "static/";
         registry.addResourceHandler("/images/**")
-                .addResourceLocations(url);
+                .addResourceLocations("file:"+url);
         super.addResourceHandlers(registry);
     }
 }

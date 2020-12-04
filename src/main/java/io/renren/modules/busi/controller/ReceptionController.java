@@ -92,11 +92,6 @@ public class ReceptionController extends AbstractController {
     public R save(@RequestBody Map<String, Object> params) {
         Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
 
-        BusiCustomerEntity cus = busiCustomerService.getBaseMapper().selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", ParamResolvor.getString(customerMap, "mobilePhone")));
-        if(null != cus && cus.getId() > 0){
-            return R.error("该手机号码已经存在, 不是新客户");
-        }
-
         Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
         ReceptionEntity receptionEntity = new ReceptionEntity();
         receptionEntity.setReceptionistId(getUserId().intValue());
