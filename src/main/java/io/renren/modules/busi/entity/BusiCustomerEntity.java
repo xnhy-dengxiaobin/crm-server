@@ -90,11 +90,16 @@ public class BusiCustomerEntity implements Serializable {
 	 */
 	private String matchUserId;
 
-	/**
-	 * 分配的职业顾问
-	 */
-	@TableField(exist = false)
-	private String matchUserName;
+  /**
+   * 分配的职业顾问
+   */
+  @TableField(exist = false)
+  private String matchUserName;
+  /**
+   * 分配的职业顾问姓名
+   */
+  @TableField(exist = false)
+  private String matchName;
 
 	@TableField(exist = false)
 	private String head;
@@ -176,6 +181,9 @@ public class BusiCustomerEntity implements Serializable {
    */
   private String oldMatchUserName;
 
+  @TableField(exist = false)
+  private String oldMatchName;
+
   private String remark;
 
 	/**
@@ -186,4 +194,9 @@ public class BusiCustomerEntity implements Serializable {
    * 分配置业顾问的时间
    */
 	private Date matchUserTime;
+  /**
+   * 项目名称
+   */
+  @TableField(exist = false)
+	private String projectName;
 }

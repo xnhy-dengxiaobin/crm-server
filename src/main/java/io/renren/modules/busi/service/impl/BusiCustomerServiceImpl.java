@@ -55,13 +55,13 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   }
 
   @Override
-  public IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId, String projectId) {
-    return baseMapper.timeoutPage(page,userId,projectId);
+  public IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId, String projectId,String keywords) {
+    return baseMapper.timeoutPage(page,userId,projectId,keywords);
   }
 
   @Override
-  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId) {
-    return baseMapper.publicPage(page,projectId);
+  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId,String keywords) {
+    return baseMapper.publicPage(page,projectId,keywords);
   }
 
   @Override

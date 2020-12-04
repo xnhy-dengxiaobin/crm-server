@@ -65,7 +65,7 @@ public class SysUserController extends AbstractController {
    * 该项目下所有置业顾问
    */
   @PostMapping("/salesByProjectId")
-  public R salesByProjectId(@RequestParam Long projectId) {
+  public R salesByProjectId(@RequestParam(required = false) Long projectId) {
     List list = sysUserService.querySalesUserByProjectId(projectId);
 
     return R.ok().put("datas", list);

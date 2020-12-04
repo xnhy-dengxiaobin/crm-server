@@ -3,6 +3,7 @@ package io.renren.modules.busi.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
@@ -136,7 +137,7 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString());
+    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString(),null);
     return R.ok().put("page", new PageUtils(iPage));
   }
   /**
@@ -144,9 +145,9 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/allTimeoutList")
   public R allTimeoutList(@RequestParam Map<String, Object> params) {
-    String keywords = ParamResolvor.getString(params, "keywords");
+    String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.timeoutPage(iPage, null, null);
+    iPage = busiCustomerService.timeoutPage(iPage, null, null,keywords);
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -155,11 +156,12 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/publicList")
   public R publicList(@RequestParam Map<String, Object> params) {
-    if (params.get("projectId") == null) {
-      return R.error("参数异常");
-    }
+//    if (params.get("projectId") == null) {
+//      return R.error("参数异常");
+//    }
+    String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString());
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId")==null?null:params.get("projectId").toString(),keywords);
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -172,7 +174,7 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString());
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString(),null);
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -204,15 +206,16 @@ public class BusiManagerCustomerController extends AbstractController {
   /**
    * 回收客户
    */
-  @RequestMapping("/recovery")
-  public R recovery(@RequestParam Map<String, Object> params) {
-    Object obj = params.get("ids");
-    String idstr = obj == null ? "" : obj.toString();
-    String[] ids = idstr.split(",");
+  @PostMapping("/recovery")
+  @SysLog("回收客户")
+  public R recovery(@RequestBody String[] ids) {
     if (ids.length < 1) {
       return R.ok();
     } else {
       for (String id : ids) {
+        if(StringUtils.isEmpty(id)){
+          continue;
+        }
         BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
         roam.setCreateTime(new Date());
         roam.setCustomerId(Integer.parseInt(id));
@@ -264,7 +267,7 @@ public class BusiManagerCustomerController extends AbstractController {
           sysUserEntity = new SysUserEntity();
         }
         busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
-          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId)
+          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime,new Date())
         );
 
         i++;
