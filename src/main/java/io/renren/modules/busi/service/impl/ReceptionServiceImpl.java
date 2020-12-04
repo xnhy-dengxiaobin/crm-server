@@ -9,8 +9,7 @@ import io.renren.modules.busi.service.BusiCustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -52,9 +51,16 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity) {
       BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
         if ((null != cus && cus.getId() > 0)||busiCustomerEntity.getId() > 0) {
+
+           if(!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
+               //换了置业顾问，重新设置分配时间
+               busiCustomerEntity.setMatchUserTime(new Date());
+           }
+
             busiCustomerDao.updateById(busiCustomerEntity);
             receptionEntity.setIsNew(0);//老客户
         } else {
+            busiCustomerEntity.setMatchUserTime(new Date());
             busiCustomerDao.insert(busiCustomerEntity);
             receptionEntity.setIsNew(1);//新客户
         }
