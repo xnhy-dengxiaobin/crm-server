@@ -3,7 +3,7 @@ spring:
         type: com.alibaba.druid.pool.DruidDataSource
         druid:
             driver-class-name: com.mysql.cj.jdbc.Driver
-            url: jdbc:mysql://nzc-crm.mysql.polardb.rds.aliyuncs.com:3306/nzc-crm?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+            url: jdbc:mysql://localhost:3306/nzc-crm?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
             username: crm
             password: crm@123!
             initial-size: 10
@@ -49,5 +49,5 @@ spring:
 #      password: 123456
 crm:
     log:
-        path: /data/logs
-    upload-path: /data/uploads/
+        path: D:/enn/logs
+    upload-path: D:/enn/uploads/
