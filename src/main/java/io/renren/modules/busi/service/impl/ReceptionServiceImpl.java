@@ -50,7 +50,8 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity) {
-        if (busiCustomerEntity.getId() > 0) {
+      BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
+        if ((null != cus && cus.getId() > 0)||busiCustomerEntity.getId() > 0) {
             busiCustomerDao.updateById(busiCustomerEntity);
             receptionEntity.setIsNew(0);//老客户
         } else {
