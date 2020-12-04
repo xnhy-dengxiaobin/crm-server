@@ -182,4 +182,8 @@ public class BusiCustomerEntity implements Serializable {
 	 * 保护日期截至日期
 	 */
 	private Date expiredDate;
+  /**
+   * 分配置业顾问的时间
+   */
+	private Date matchUserTime;
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
@@ -136,6 +137,16 @@ public class BusiManagerCustomerController extends AbstractController {
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
     iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString());
+    return R.ok().put("page", new PageUtils(iPage));
+  }
+  /**
+   * 逾期客户列表
+   */
+  @RequestMapping("/allTimeoutList")
+  public R allTimeoutList(@RequestParam Map<String, Object> params) {
+    String keywords = ParamResolvor.getString(params, "keywords");
+    IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
+    iPage = busiCustomerService.timeoutPage(iPage, null, null);
     return R.ok().put("page", new PageUtils(iPage));
   }
 

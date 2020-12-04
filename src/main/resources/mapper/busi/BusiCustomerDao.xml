@@ -56,7 +56,14 @@
     select * from busi_customer where project_id=#{projectId} and match_user_id = #{userId} and status =1 and  follow_next_date>now()
   </select>
   <select id="timeoutPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
-    select * from busi_customer where project_id=#{projectId} and match_user_id = #{userId} and status =1 and  follow_next_date&lt;=now()
+    select * from busi_customer where 1=1
+    <if test="projectId!=null">
+      and project_id=#{projectId}
+    </if>
+    <if test="match_user_id!=null">
+      and match_user_id = #{userId}
+    </if>
+     and status =1 and  follow_next_date&lt;=now()
   </select>
   <select id="publicPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
     select * from busi_customer where project_id=#{projectId} and match_user_id is null and status =2
