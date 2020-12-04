@@ -114,3 +114,6 @@ renren-fast
 ![输入图片说明](https://gitee.com/uploads/images/2018/0505/173151_12d065db_63154.jpeg "在这里输入图片标题")
 
 <br>
+
+## 2020-12-04
+1. busi_customer表增加字段expired_day，表示保护期截至日期；

@@ -177,4 +177,9 @@ public class BusiCustomerEntity implements Serializable {
   private String oldMatchUserName;
 
   private String remark;
+
+	/**
+	 * 保护日期截至日期
+	 */
+	private Date expiredDate;
 }
