@@ -109,6 +109,11 @@ public class SysUserEntity implements Serializable {
   private String firstLetter;
 
   /**
+   * 保持登录的天数
+   */
+  private long keepLoginDays;
+
+  /**
    * 今日是否已签到
    */
   @TableField(exist = false)

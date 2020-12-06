@@ -35,8 +35,8 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         QueryWrapper<ReceptionEntity> receptionEntityQueryWrapper = new QueryWrapper<>();
-        if(params.get("salerId") != null){
-            receptionEntityQueryWrapper.eq("saler_id",params.get("salerId"));
+        if (params.get("salerId") != null) {
+            receptionEntityQueryWrapper.eq("saler_id", params.get("salerId"));
         }
         IPage<ReceptionEntity> page = this.page(
                 new Query<ReceptionEntity>().getPage(params),
@@ -49,15 +49,18 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity) {
-      BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
-        if ((null != cus && cus.getId() > 0)||busiCustomerEntity.getId() > 0) {
+        BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
+        if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
 
-           if(!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
-               //换了置业顾问，重新设置分配时间
-               busiCustomerEntity.setMatchUserTime(new Date());
-           }
+            if (!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
+                //换了置业顾问，重新设置分配时间
+                busiCustomerEntity.setMatchUserTime(new Date());
+            }
 
             busiCustomerDao.updateById(busiCustomerEntity);
+            if (null == busiCustomerEntity.getId() || busiCustomerEntity.getId() <= 0) {
+                busiCustomerEntity.setId(cus.getId());
+            }
             receptionEntity.setIsNew(0);//老客户
         } else {
             busiCustomerEntity.setMatchUserTime(new Date());
@@ -87,8 +90,9 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
         return new PageUtils(page);
     }
+
     @Override
-    public PageUtils listBySalerId(Map<String, Object> params){
+    public PageUtils listBySalerId(Map<String, Object> params) {
         long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
         long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
         long offset = (currentPage - 1) * limit;
