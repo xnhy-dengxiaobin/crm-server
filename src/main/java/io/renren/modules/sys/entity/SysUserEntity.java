@@ -118,4 +118,7 @@ public class SysUserEntity implements Serializable {
    */
   @TableField(exist = false)
   private int isSigned;
+
+  @TableField(exist = false)
+  private List<Long> projectIds;
 }

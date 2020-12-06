@@ -18,6 +18,8 @@ import io.renren.common.exception.RRException;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
+import io.renren.modules.busi.dao.BusiUserProjectDao;
+import io.renren.modules.busi.service.BusiUserProjectService;
 import io.renren.modules.sys.dao.SysUserDao;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysRoleService;
@@ -45,6 +47,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 	private SysUserRoleService sysUserRoleService;
 	@Autowired
 	private SysRoleService sysRoleService;
+
+	@Autowired
+	private BusiUserProjectService busiUserProjectService;
 
 	@Override
 	public PageUtils queryPage(Map<String, Object> params) {
@@ -98,6 +103,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 		//保存用户与角色关系
 		sysUserRoleService.saveOrUpdate(user.getUserId(), user.getRoleIdList());
+
+		//用户和项目关系
+		busiUserProjectService.increaseOrModify(user.getUserId(), user.getProjectIds());
 	}
 
 	@Override
@@ -122,6 +130,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 		//保存用户与角色关系
 		sysUserRoleService.saveOrUpdate(user.getUserId(), user.getRoleIdList());
+
+		//用户和项目关系
+		busiUserProjectService.increaseOrModify(user.getUserId(), user.getProjectIds());
 	}
 
 	@Override

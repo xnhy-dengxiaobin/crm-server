@@ -25,5 +25,12 @@ public interface BusiUserProjectService extends IService<BusiUserProjectEntity> 
      * @return List<BusiProjectEntity>
      */
     List<BusiProjectEntity> queryProjectByUser(Long userId);
+
+    /**
+     * 保存用户和项目的关联
+     * @param userId
+     * @param projectIds
+     */
+    void increaseOrModify(Long userId, List<Long> projectIds);
 }
 

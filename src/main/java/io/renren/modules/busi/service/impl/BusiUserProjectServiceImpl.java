@@ -1,6 +1,8 @@
 package io.renren.modules.busi.service.impl;
 
+import io.renren.common.utils.MapUtils;
 import io.renren.modules.busi.entity.BusiProjectEntity;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,5 +39,21 @@ public class BusiUserProjectServiceImpl extends ServiceImpl<BusiUserProjectDao, 
             return getBaseMapper().selectProjectByAdmin();
         }
         return getBaseMapper().selectProjectByUser(userId);
+    }
+
+    @Override
+    public void increaseOrModify(Long userId, List<Long> projectIds) {
+        this.removeByMap(new MapUtils().put("user_id", userId));
+
+        if (CollectionUtils.isEmpty(projectIds)) {
+            return;
+        }
+
+        projectIds.forEach(p -> {
+            BusiUserProjectEntity up = new BusiUserProjectEntity();
+            up.setUserId(userId.intValue());
+            up.setProjectId(p.intValue());
+            save(up);
+        });
     }
 }
