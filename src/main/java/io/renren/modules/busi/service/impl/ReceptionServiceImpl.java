@@ -64,6 +64,8 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
             receptionEntity.setIsNew(0);//老客户
         } else {
             busiCustomerEntity.setMatchUserTime(new Date());
+            busiCustomerEntity.setProjectId(receptionEntity.getProjectId());
+            busiCustomerEntity.setStatus(1);
             busiCustomerDao.insert(busiCustomerEntity);
             receptionEntity.setIsNew(1);//新客户
         }
