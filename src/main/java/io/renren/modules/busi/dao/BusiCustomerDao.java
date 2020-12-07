@@ -19,4 +19,6 @@ public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
   IPage<BusiCustomerEntity> timeoutPage(IPage page, String userId,String projectId,String keywords);
   IPage<BusiCustomerEntity> publicPage(IPage page, String projectId,String keywords);
     List<BusiCustomerEntity> selectByPhone(String phone);
+  long countNormal(Object projectId);
+  long countTimeout(Object projectId);
 }

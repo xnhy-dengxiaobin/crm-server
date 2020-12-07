@@ -65,6 +65,16 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   }
 
   @Override
+  public long countNormal(Object projectId) {
+    return baseMapper.countNormal(projectId);
+  }
+
+  @Override
+  public long countTimeout(Object projectId) {
+    return baseMapper.countTimeout(projectId);
+  }
+
+  @Override
     public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {
         String mobilePhone = params.get("mobilePhone").toString();
         return getBaseMapper().selectByPhone(mobilePhone);

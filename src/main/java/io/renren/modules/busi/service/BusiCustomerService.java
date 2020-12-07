@@ -23,6 +23,19 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
 
   IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page,String projectId,String keywords);
 
+  /**
+   * 根据项目ID 统计正常跟进数量
+   * @param projectId
+   * @return
+   */
+  long countNormal(Object projectId);
+  /**
+   * 根据项目ID 统计超时跟进数量
+   * @param projectId
+   * @return
+   */
+  long countTimeout(Object projectId);
+
     /**
      * 根据完整电话号码或者后四位查询
      * @param params
