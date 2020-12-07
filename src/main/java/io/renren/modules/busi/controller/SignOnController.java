@@ -72,14 +72,14 @@ public class SignOnController extends AbstractController {
             put("sign_on_date", today);
         }});
         if(CollectionUtils.isNotEmpty(signOns)){
-            return R.error("重复签到");
+            return R.error("重复签到").put("result", 30);
         }
 
         signOns = signOnService.getBaseMapper().selectByMap(new HashMap<String, Object>(){{
             put("code", signOn.getCode());
         }});
         if(CollectionUtils.isNotEmpty(signOns)){
-            return R.error("签到码只能使用一次");
+            return R.error("签到码只能使用一次").put("result", 20);
         }
 
         signOn.setUserId(getUserId().intValue());
@@ -87,7 +87,7 @@ public class SignOnController extends AbstractController {
         signOn.setSignOnDate(new Date());
 		signOnService.save(signOn);
 
-        return R.ok();
+        return R.ok().put("result", 1);
     }
 
     /**

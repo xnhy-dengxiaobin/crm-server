@@ -1,5 +1,6 @@
 package io.renren.modules.busi.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -85,8 +86,12 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("请选择当前要查看的项目");
     } else {
       return R.ok()
-        .put("timeoutCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().le(BusiCustomerEntity::getFollowNextDate, new Date()).eq(BusiCustomerEntity::getProjectId, params.get("projectId")).eq(BusiCustomerEntity::getStatus, 1).isNotNull(BusiCustomerEntity::getMatchUserId)))
-        .put("normalCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().gt(BusiCustomerEntity::getFollowNextDate, new Date()).eq(BusiCustomerEntity::getProjectId, params.get("projectId")).eq(BusiCustomerEntity::getStatus, 1).isNotNull(BusiCustomerEntity::getMatchUserId)))
+        .put("timeoutCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda()
+                .and(wrapper -> wrapper.isNotNull(BusiCustomerEntity::getFollowNextDate).le(BusiCustomerEntity::getFollowNextDate, new Date()))
+                .eq(BusiCustomerEntity::getProjectId, params.get("projectId")).eq(BusiCustomerEntity::getStatus, 1).isNotNull(BusiCustomerEntity::getMatchUserId)))
+        .put("normalCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda()
+                .and(wrapper -> wrapper.isNull(BusiCustomerEntity::getFollowNextDate).or().gt(BusiCustomerEntity::getFollowNextDate, new Date()))
+                .eq(BusiCustomerEntity::getProjectId, params.get("projectId")).eq(BusiCustomerEntity::getStatus, 1).isNotNull(BusiCustomerEntity::getMatchUserId)))
         .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)));
     }
   }

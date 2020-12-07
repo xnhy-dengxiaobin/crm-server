@@ -116,4 +116,6 @@ renren-fast
 <br>
 
 ## 2020-12-04
-1. busi_customer表增加字段expired_day，表示保护期截至日期；
+1. busi_customer表增加字段expired_date，表示保护期截至日期；
+## 2020-12-06
+1. sys_user表中增加字段keep_login_days，表示保持登录状态的天数，以免session频繁失效。
