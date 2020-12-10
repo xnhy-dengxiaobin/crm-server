@@ -33,5 +33,10 @@ public interface ReceptionService extends IService<ReceptionEntity> {
 
     List<Map> groupByDateCount(String endDate,Integer projectId);
 
+    List<Map> groupByDateCountMonth(String endDate,Integer projectId);
+
+    List<Map> groupByDateCountYear(String endDate,Integer projectId);
+
+
 }
 
