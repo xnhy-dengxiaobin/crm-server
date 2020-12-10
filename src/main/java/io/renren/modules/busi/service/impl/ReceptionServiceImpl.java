@@ -116,4 +116,16 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     }
 
 
+    @Override
+    public List<Map> groupByDateCountMonth(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCountMonth(endDate,projectId);
+        return maps;
+    }
+    @Override
+    public List<Map> groupByDateCountYear(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCountYear(endDate,projectId);
+        return maps;
+    }
+
+
 }

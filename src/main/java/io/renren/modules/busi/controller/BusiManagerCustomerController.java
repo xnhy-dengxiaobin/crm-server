@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
@@ -92,18 +93,109 @@ public class BusiManagerCustomerController extends AbstractController {
   @RequestMapping("/statisticsCom")
   public R statisticsCom(@RequestParam Map<String, Object> params) {
     Object projectId = params.get("projectId");
-    Object endDate = params.get("endDate");
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
-    } else {
+    }
+    Object endDate = params.get("endDate");
+    Object unit = params.get("unit");
+    if(unit.toString().equals("day")){ //统计天
+      return dayConut(projectId, endDate);
+    }else if(unit.toString().equals("week")){ //统计周
+    return weekConut(projectId,endDate);
+    }else if(unit.toString().equals("month")){ //统计月
+      return monthConut(projectId,endDate);
+    }else if(unit.toString().equals("year")){//统计年
+      return yearConut(projectId,endDate);
+    }
+    return null;
+  }
+
+  private R yearConut(Object projectId, Object endDate) {
+    if(endDate == null || endDate.equals("")){
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      String format = sdf.format(new Date());
+      endDate = format;
+    }
+    List<Map> maps = receptionService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
+    return R.ok().put("rs",maps);
+  }
+
+  private R monthConut(Object projectId, Object endDate) {
+    if(endDate == null || endDate.equals("")){
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      String format = sdf.format(new Date());
+      endDate = format;
+    }
+    List<Map> maps = receptionService.groupByDateCountMonth(endDate.toString(),Integer.parseInt(projectId.toString()));
+    return R.ok().put("rs",maps);
+  }
+
+  private R weekConut(Object projectId, Object endDate) {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    Date date = null;
+    if(endDate != null && !endDate.equals("")) {
+      try {
+        date = simpleDateFormat.parse(endDate.toString());
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+    }else{
+      date = new Date();
+    }
+    Calendar calendar = Calendar.getInstance();
+    calendar.setFirstDayOfWeek(Calendar.MONDAY);//设置星期一为一周开始的第一天
+    calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
+    Integer weekNum ;
+    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy");
+    String format = simpleDateFormat2.format(date);
+    SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat("MM/dd");
+    int yyyy = Integer.parseInt(format);
+    calendar.setTimeInMillis(date.getTime());//时间戳
+    weekNum = calendar.get(Calendar.WEEK_OF_YEAR);//获得当前日期属于今年的第几周
+    System.out.println("第几年："+weekNum);
+    List<Map<String,Object>> rsList = new ArrayList<>();
+    for (int i =1;i<9;i++){
+      calendar.setWeekDate(yyyy, weekNum, 2);
+      //获得Calendar的时间
+      Date starttime = calendar.getTime();
+      //获得指定年的第几周的结束日期
+      calendar.setWeekDate(yyyy, weekNum, 1);
+      Date endtime = calendar.getTime();
+      //将时间戳格式化为指定格式
+      String dateStart = simpleDateFormat.format(starttime);
+      String dateEnd = simpleDateFormat.format(endtime);
+      weekNum -- ;
+      Map<String, Object> map = new HashMap<>();
+      map.put("startDate",dateStart + " 00:00:00");
+      map.put("endDate",dateEnd + " 59:59:59");
+      map.put("fullDate",dateEnd);
+      map.put("dateAbscissa",simpleDateFormat3.format(starttime) +""+ simpleDateFormat3.format(endtime));
+      rsList.add(map);
+    }
+    countDb(rsList,projectId);
+    return R.ok().put("rs",rsList);
+  }
+
+  private void countDb(List<Map<String, Object>> rsList,Object projectId) {
+    for (Map<String, Object> map : rsList) {
+      int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
+              .lambda()
+              .gt(ReceptionEntity::getCreateTime, map.get("startDate"))
+              .lt(ReceptionEntity::getCreateTime, map.get("endDate"))
+              .eq(ReceptionEntity::getProjectId,projectId));
+      map.put("num",count);
+    }
+  }
+
+  private R dayConut(Object projectId, Object endDate) {
       if(endDate == null || endDate.equals("")){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String format = sdf.format(new Date());
         endDate = format;
       }
+
       List<Map> maps = receptionService.groupByDateCount(endDate.toString(),Integer.parseInt(projectId.toString()));
       return R.ok().put("rs",maps);
-    }
   }
 
   /**
@@ -112,54 +204,91 @@ public class BusiManagerCustomerController extends AbstractController {
    * @return
    */
   @RequestMapping("/statisticsComInfo")
-  public R statisticsComInfo(@RequestParam Map<String, Object> params) {
+  public R statisticsComInfo(@RequestParam Map<String, Object> params) throws ParseException {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     Object projectId = params.get("projectId");
     Object date = params.get("date");
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
     } else {
       if(date == null || date.equals("")){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String format = sdf.format(new Date());
         date = format;
       }
-      String dateStart = date + " 00:00:00";
-      String dateEnd = date + " 59:59:59";
-      int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
-              .lambda()
-              .gt(ReceptionEntity::getCreateTime,dateStart)
-              .lt(ReceptionEntity::getCreateTime,dateEnd));
+      Object unit = params.get("unit");
+      Map<String, Integer> rs = null;
+      String dateStart;
+      String dateEnd;
+      if(unit.toString().equals("day")){
+        dateStart = date + " 00:00:00";
+        dateEnd = date + " 59:59:59";
+        rs = getComInfo(dateStart, dateEnd, projectId);
+      }else if(unit.toString().equals("week")){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(sdf.parse(date.toString()));
+        calendar.add(calendar.DATE,-6);
+        dateStart = sdf.format(calendar.getTime()) +" 00:00:00";
+        dateEnd = date+" 59:59:59";
+        rs = getComInfo(dateStart, dateEnd,projectId);
+      }else if(unit.toString().equals("month")){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+        Date parse = format.parse(date.toString());
+        dateStart = format.format(parse) + "-01 00:00:00";
+        dateEnd = date+" 59:59:59";
+        rs = getComInfo(dateStart, dateEnd,projectId);
+      }else if(unit.toString().equals("year")){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
+        Date parse = format.parse(date.toString());
+        String yearStr = format.format(parse);
+        dateStart = yearStr + "-01-01 00:00:00";
+        dateEnd = date+" 59:59:59";
+        rs = getComInfo(dateStart, dateEnd,projectId);
+      }
 
-      int countNew = receptionService.count(new QueryWrapper<ReceptionEntity>()
-              .lambda()
-              .eq(ReceptionEntity::getIsNew, 1)
-              .gt(ReceptionEntity::getCreateTime,dateStart)
-              .lt(ReceptionEntity::getCreateTime,dateEnd));
-
-      int countOld = receptionService.count(new QueryWrapper<ReceptionEntity>()
-              .lambda()
-              .eq(ReceptionEntity::getIsNew, 0)
-              .gt(ReceptionEntity::getCreateTime,dateStart)
-              .lt(ReceptionEntity::getCreateTime,dateEnd));
-
-      int countYcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
-              .lambda().eq(ReceptionEntity::getStatus,1)
-              .gt(ReceptionEntity::getCreateTime,dateStart)
-              .lt(ReceptionEntity::getCreateTime,dateEnd));
-
-
-      int countWcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
-              .lambda().eq(ReceptionEntity::getStatus,0)
-              .gt(ReceptionEntity::getCreateTime,dateStart)
-              .lt(ReceptionEntity::getCreateTime,dateEnd));
-      Map<String, Integer> rs = new HashMap<>();
-      rs.put("countNew",countNew);
-      rs.put("countOld",countOld);
-      rs.put("countYcl",countYcl);
-      rs.put("countWcl",countWcl);
-      rs.put("count",count);
       return R.ok().put("rs",rs);
     }
+  }
+
+  private Map<String, Integer> getComInfo(String dateStart, String dateEnd,Object projectId) {
+    int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
+            .lambda()
+            .gt(ReceptionEntity::getCreateTime,dateStart)
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
+
+    int countNew = receptionService.count(new QueryWrapper<ReceptionEntity>()
+            .lambda()
+            .eq(ReceptionEntity::getIsNew, 1)
+            .gt(ReceptionEntity::getCreateTime,dateStart)
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
+
+    int countOld = receptionService.count(new QueryWrapper<ReceptionEntity>()
+            .lambda()
+            .eq(ReceptionEntity::getIsNew, 0)
+            .gt(ReceptionEntity::getCreateTime,dateStart)
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
+
+    int countYcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
+            .lambda().eq(ReceptionEntity::getStatus,1)
+            .gt(ReceptionEntity::getCreateTime,dateStart)
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
+
+
+    int countWcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
+            .lambda().eq(ReceptionEntity::getStatus,0)
+            .gt(ReceptionEntity::getCreateTime,dateStart)
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
+    Map<String, Integer> rs = new HashMap<>();
+    rs.put("countNew",countNew);
+    rs.put("countOld",countOld);
+    rs.put("countYcl",countYcl);
+    rs.put("countWcl",countWcl);
+    rs.put("count",count);
+    return rs;
   }
 
   /**

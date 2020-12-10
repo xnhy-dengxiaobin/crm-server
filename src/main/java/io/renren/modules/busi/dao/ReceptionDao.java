@@ -23,4 +23,9 @@ public interface ReceptionDao extends BaseMapper<ReceptionEntity> {
     Long listBySalerIdCnt(Map<String, Object> params);
 
     List<Map> groupByDateCount(String endDate,Integer projectId);
+
+    List<Map> groupByDateCountMonth(String endDate,Integer projectId);
+
+    List<Map> groupByDateCountYear(String endDate,Integer projectId);
+
 }
