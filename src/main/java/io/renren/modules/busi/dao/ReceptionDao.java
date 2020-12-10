@@ -1,12 +1,8 @@
 package io.renren.modules.busi.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-
-import java.util.Map;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +21,6 @@ public interface ReceptionDao extends BaseMapper<ReceptionEntity> {
 
     List<ReceptionEntity> listBySalerId(Map<String, Object> params);
     Long listBySalerIdCnt(Map<String, Object> params);
+
+    List<Map> groupByDateCount(String endDate,Integer projectId);
 }

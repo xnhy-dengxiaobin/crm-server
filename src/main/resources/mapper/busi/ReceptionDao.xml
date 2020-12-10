@@ -91,4 +91,31 @@
             </if>
         </where>
     </select>
+
+    <select id="groupByDateCount" resultType="map">
+        SELECT
+        DATE_FORMAT(temp.date,'%m/%d') as dateAbscissa,
+        temp.date as fullDate,
+        IFNULL(u.num,0) as num
+        from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  DAY)AS 'date' FROM
+        (
+        SELECT * from
+        (SELECT i AS id FROM num ) a
+        where a.id &lt;=7
+        ) AS numlist
+
+        ) temp
+        LEFT JOIN
+        (
+        SELECT
+        DATE(c.create_time) AS udate,
+        COUNT(1)as num
+        FROM
+        busi_reception c
+        WHERE
+        c.project_id = #{projectId}
+
+        GROUP BY DATE(c.create_time)
+        ) u on DATE(temp.date) = u.udate ORDER BY temp.date desc
+    </select>
 </mapper>

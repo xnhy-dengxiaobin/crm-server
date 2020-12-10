@@ -5,6 +5,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +31,7 @@ public interface ReceptionService extends IService<ReceptionEntity> {
 
     PageUtils listBySalerId(Map<String, Object> params);
 
+    List<Map> groupByDateCount(String endDate,Integer projectId);
 
 }
 

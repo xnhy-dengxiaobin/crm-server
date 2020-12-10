@@ -1,27 +1,22 @@
 package io.renren.modules.busi.service.impl;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.renren.common.utils.ParamResolvor;
-import io.renren.common.utils.R;
-import io.renren.modules.busi.dao.BusiCustomerDao;
-import io.renren.modules.busi.entity.BusiCustomerEntity;
-import io.renren.modules.busi.service.BusiCustomerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
+import io.renren.modules.busi.dao.BusiCustomerDao;
 import io.renren.modules.busi.dao.ReceptionDao;
+import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.ReceptionService;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -112,6 +107,12 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
         page.setRecords(list);
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<Map> groupByDateCount(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCount(endDate,projectId);
+        return maps;
     }
 
 

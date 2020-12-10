@@ -1,6 +1,5 @@
 package io.renren.modules.busi.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,10 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author gale
@@ -70,10 +68,97 @@ public class BusiManagerCustomerController extends AbstractController {
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
     } else {
-      return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, projectId).ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
+      return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
+              .lambda().eq(BusiCustomerEntity::getProjectId, projectId)
+              .ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
+
         .put("flowClient", busiCustomerFollowService.toDayCount(projectId.toString()))
-        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId, projectId).ge(ReceptionEntity::getIsNew, 1)))
-        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>().lambda().eq(ReceptionEntity::getProjectId, projectId).ge(ReceptionEntity::getIsNew, 0)));
+
+        .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>()
+                .lambda().eq(ReceptionEntity::getProjectId, projectId)
+                .ge(ReceptionEntity::getIsNew, 1)))
+
+        .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>()
+                .lambda().eq(ReceptionEntity::getProjectId, projectId).
+                        ge(ReceptionEntity::getIsNew, 0)));
+    }
+  }
+
+  /**
+   * 分析统计
+   *
+   * @return
+   */
+  @RequestMapping("/statisticsCom")
+  public R statisticsCom(@RequestParam Map<String, Object> params) {
+    Object projectId = params.get("projectId");
+    Object endDate = params.get("endDate");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    } else {
+      if(endDate == null || endDate.equals("")){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String format = sdf.format(new Date());
+        endDate = format;
+      }
+      List<Map> maps = receptionService.groupByDateCount(endDate.toString(),Integer.parseInt(projectId.toString()));
+      return R.ok().put("rs",maps);
+    }
+  }
+
+  /**
+   * 分析统计
+   *
+   * @return
+   */
+  @RequestMapping("/statisticsComInfo")
+  public R statisticsComInfo(@RequestParam Map<String, Object> params) {
+    Object projectId = params.get("projectId");
+    Object date = params.get("date");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    } else {
+      if(date == null || date.equals("")){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String format = sdf.format(new Date());
+        date = format;
+      }
+      String dateStart = date + " 00:00:00";
+      String dateEnd = date + " 59:59:59";
+      int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
+              .lambda()
+              .gt(ReceptionEntity::getCreateTime,dateStart)
+              .lt(ReceptionEntity::getCreateTime,dateEnd));
+
+      int countNew = receptionService.count(new QueryWrapper<ReceptionEntity>()
+              .lambda()
+              .eq(ReceptionEntity::getIsNew, 1)
+              .gt(ReceptionEntity::getCreateTime,dateStart)
+              .lt(ReceptionEntity::getCreateTime,dateEnd));
+
+      int countOld = receptionService.count(new QueryWrapper<ReceptionEntity>()
+              .lambda()
+              .eq(ReceptionEntity::getIsNew, 0)
+              .gt(ReceptionEntity::getCreateTime,dateStart)
+              .lt(ReceptionEntity::getCreateTime,dateEnd));
+
+      int countYcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
+              .lambda().eq(ReceptionEntity::getStatus,1)
+              .gt(ReceptionEntity::getCreateTime,dateStart)
+              .lt(ReceptionEntity::getCreateTime,dateEnd));
+
+
+      int countWcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
+              .lambda().eq(ReceptionEntity::getStatus,0)
+              .gt(ReceptionEntity::getCreateTime,dateStart)
+              .lt(ReceptionEntity::getCreateTime,dateEnd));
+      Map<String, Integer> rs = new HashMap<>();
+      rs.put("countNew",countNew);
+      rs.put("countOld",countOld);
+      rs.put("countYcl",countYcl);
+      rs.put("countWcl",countWcl);
+      rs.put("count",count);
+      return R.ok().put("rs",rs);
     }
   }
 
