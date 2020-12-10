@@ -172,16 +172,17 @@ public class BusiManagerCustomerController extends AbstractController {
       map.put("dateAbscissa",simpleDateFormat3.format(starttime) +""+ simpleDateFormat3.format(endtime));
       rsList.add(map);
     }
-    countDb(rsList);
+    countDb(rsList,projectId);
     return R.ok().put("rs",rsList);
   }
 
-  private void countDb(List<Map<String, Object>> rsList) {
+  private void countDb(List<Map<String, Object>> rsList,Object projectId) {
     for (Map<String, Object> map : rsList) {
       int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
               .lambda()
               .gt(ReceptionEntity::getCreateTime, map.get("startDate"))
-              .lt(ReceptionEntity::getCreateTime, map.get("endDate")));
+              .lt(ReceptionEntity::getCreateTime, map.get("endDate"))
+              .eq(ReceptionEntity::getProjectId,projectId));
       map.put("num",count);
     }
   }
@@ -221,61 +222,66 @@ public class BusiManagerCustomerController extends AbstractController {
       if(unit.toString().equals("day")){
         dateStart = date + " 00:00:00";
         dateEnd = date + " 59:59:59";
-        rs = getComInfo(dateStart, dateEnd);
+        rs = getComInfo(dateStart, dateEnd, projectId);
       }else if(unit.toString().equals("week")){
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(sdf.parse(date.toString()));
         calendar.add(calendar.DATE,-6);
         dateStart = sdf.format(calendar.getTime()) +" 00:00:00";
         dateEnd = date+" 59:59:59";
-        rs = getComInfo(dateStart, dateEnd);
+        rs = getComInfo(dateStart, dateEnd,projectId);
       }else if(unit.toString().equals("month")){
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         Date parse = format.parse(date.toString());
         dateStart = format.format(parse) + "-01 00:00:00";
         dateEnd = date+" 59:59:59";
-        rs = getComInfo(dateStart, dateEnd);
+        rs = getComInfo(dateStart, dateEnd,projectId);
       }else if(unit.toString().equals("year")){
         SimpleDateFormat format = new SimpleDateFormat("yyyy");
         Date parse = format.parse(date.toString());
         String yearStr = format.format(parse);
         dateStart = yearStr + "-01-01 00:00:00";
         dateEnd = date+" 59:59:59";
-        rs = getComInfo(dateStart, dateEnd);
+        rs = getComInfo(dateStart, dateEnd,projectId);
       }
 
       return R.ok().put("rs",rs);
     }
   }
 
-  private Map<String, Integer> getComInfo(String dateStart, String dateEnd) {
+  private Map<String, Integer> getComInfo(String dateStart, String dateEnd,Object projectId) {
     int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
             .lambda()
             .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd));
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
 
     int countNew = receptionService.count(new QueryWrapper<ReceptionEntity>()
             .lambda()
             .eq(ReceptionEntity::getIsNew, 1)
             .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd));
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
 
     int countOld = receptionService.count(new QueryWrapper<ReceptionEntity>()
             .lambda()
             .eq(ReceptionEntity::getIsNew, 0)
             .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd));
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
 
     int countYcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
             .lambda().eq(ReceptionEntity::getStatus,1)
             .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd));
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
 
 
     int countWcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
             .lambda().eq(ReceptionEntity::getStatus,0)
             .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd));
+            .lt(ReceptionEntity::getCreateTime,dateEnd)
+            .eq(ReceptionEntity::getProjectId,projectId));
     Map<String, Integer> rs = new HashMap<>();
     rs.put("countNew",countNew);
     rs.put("countOld",countOld);
