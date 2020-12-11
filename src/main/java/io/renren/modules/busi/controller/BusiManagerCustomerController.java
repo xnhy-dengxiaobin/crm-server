@@ -90,6 +90,30 @@ public class BusiManagerCustomerController extends AbstractController {
    *
    * @return
    */
+  @RequestMapping("/statisticsSource")
+  public R statisticsSource(@RequestParam Map<String, Object> params) {
+    Object projectId = params.get("projectId");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    }
+    Object endDate = params.get("endDate");
+    Object unit = params.get("unit");
+    if(unit.toString().equals("day")){ //统计天
+      return dayConut(projectId, endDate,2);
+    }else if(unit.toString().equals("week")){ //统计周
+      return weekCountS(projectId,endDate);
+    }else if(unit.toString().equals("month")){ //统计月
+      return monthConut(projectId,endDate,2);
+    }else if(unit.toString().equals("year")){//统计年
+      return yearConut(projectId,endDate,2);
+    }
+    return null;
+  }
+  /**
+   * 分析统计
+   *
+   * @return
+   */
   @RequestMapping("/statisticsCom")
   public R statisticsCom(@RequestParam Map<String, Object> params) {
     Object projectId = params.get("projectId");
@@ -99,34 +123,69 @@ public class BusiManagerCustomerController extends AbstractController {
     Object endDate = params.get("endDate");
     Object unit = params.get("unit");
     if(unit.toString().equals("day")){ //统计天
-      return dayConut(projectId, endDate);
+      return dayConut(projectId, endDate,1);
     }else if(unit.toString().equals("week")){ //统计周
     return weekConut(projectId,endDate);
     }else if(unit.toString().equals("month")){ //统计月
-      return monthConut(projectId,endDate);
+      return monthConut(projectId,endDate,1);
     }else if(unit.toString().equals("year")){//统计年
-      return yearConut(projectId,endDate);
+      return yearConut(projectId,endDate,1);
     }
     return null;
   }
 
-  private R yearConut(Object projectId, Object endDate) {
+  private R yearConut(Object projectId, Object endDate,int t) {
     if(endDate == null || endDate.equals("")){
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String format = sdf.format(new Date());
       endDate = format;
     }
-    List<Map> maps = receptionService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
+    List<Map> maps;
+    if(t == 0){
+      maps = receptionService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
+    }else{
+      maps = busiCustomerService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
+    }
     return R.ok().put("rs",maps);
   }
 
-  private R monthConut(Object projectId, Object endDate) {
+  private R monthConut(Object projectId, Object endDate,int t) {
     if(endDate == null || endDate.equals("")){
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String format = sdf.format(new Date());
       endDate = format;
     }
-    List<Map> maps = receptionService.groupByDateCountMonth(endDate.toString(),Integer.parseInt(projectId.toString()));
+    List<Map> maps;
+    if(t == 1) {
+      maps = receptionService.groupByDateCountMonth(endDate.toString(), Integer.parseInt(projectId.toString()));
+    }else{
+      maps = busiCustomerService.groupByDateCountMonth(endDate.toString(), Integer.parseInt(projectId.toString()));
+    }
+    return R.ok().put("rs",maps);
+  }
+
+  private R weekCountS(Object projectId, Object endDate){
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String paramDate;
+    if(endDate != null && !endDate.equals("")) {
+      paramDate = endDate.toString();
+    }else{
+      Date date = new Date();
+      Calendar calendar = Calendar.getInstance();
+      calendar.setFirstDayOfWeek(Calendar.MONDAY);//设置星期一为一周开始的第一天
+      calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
+      Integer weekNum ;
+      calendar.setTimeInMillis(date.getTime());//时间戳
+      weekNum = calendar.get(Calendar.WEEK_OF_YEAR);//获得当前日期属于今年的第几周
+      SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy");
+      String format = simpleDateFormat2.format(date);
+      int yyyy = Integer.parseInt(format);
+      //获得指定年的第几周的结束日期
+      calendar.setWeekDate(yyyy, weekNum, 1);
+      Date endtime = calendar.getTime();
+      paramDate = simpleDateFormat.format(endtime);
+    }
+    List<Map> maps = busiCustomerService.groupByDateCountWeek(paramDate, Integer.parseInt(projectId.toString()));
     return R.ok().put("rs",maps);
   }
 
@@ -187,14 +246,18 @@ public class BusiManagerCustomerController extends AbstractController {
     }
   }
 
-  private R dayConut(Object projectId, Object endDate) {
+  private R dayConut(Object projectId, Object endDate,int t) {
       if(endDate == null || endDate.equals("")){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String format = sdf.format(new Date());
         endDate = format;
       }
-
-      List<Map> maps = receptionService.groupByDateCount(endDate.toString(),Integer.parseInt(projectId.toString()));
+      List<Map> maps ;
+      if(t == 1) {
+        maps = receptionService.groupByDateCount(endDate.toString(), Integer.parseInt(projectId.toString()));
+      }else {
+        maps = busiCustomerService.groupByDateCountDay(endDate.toString(), Integer.parseInt(projectId.toString()));
+      }
       return R.ok().put("rs",maps);
   }
 

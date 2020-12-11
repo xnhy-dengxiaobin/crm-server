@@ -140,7 +140,7 @@
         FROM
         busi_reception c
         WHERE
-        1 = 1
+        c.project_id = #{projectId}
 
         GROUP BY DATE_FORMAT(c.create_time,'%Y-%m')
         ) u on DATE_FORMAT(temp.date,'%Y-%m')  = u.udate ORDER BY temp.date desc;
@@ -167,7 +167,7 @@
         FROM
         busi_reception c
         WHERE
-        1 = 1
+        c.project_id = #{projectId}
 
         GROUP BY DATE_FORMAT(c.create_time,'%Y')
         ) u on DATE_FORMAT(temp.date,'%Y')  = u.udate ORDER BY temp.date desc;

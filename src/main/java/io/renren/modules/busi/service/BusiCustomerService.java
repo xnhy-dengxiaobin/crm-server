@@ -1,7 +1,6 @@
 package io.renren.modules.busi.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
@@ -49,5 +48,13 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
    * @param busiCustomerEntity
    */
   void perfect(BusiCustomerEntity busiCustomerEntity);
+
+  List<Map> groupByDateCountDay(String endDate,Integer projectId);
+
+  List<Map> groupByDateCountWeek(String endDate,Integer projectId);
+
+  List<Map> groupByDateCountMonth(String endDate,Integer projectId);
+
+  List<Map> groupByDateCountYear(String endDate,Integer projectId);
 }
 

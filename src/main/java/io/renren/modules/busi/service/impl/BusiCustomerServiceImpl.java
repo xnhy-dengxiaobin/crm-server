@@ -11,7 +11,6 @@ import io.renren.modules.busi.dao.ReceptionDao;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,4 +90,28 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
                         .eq("customer_id", busiCustomerEntity.getId())
                         .eq("saler_id", busiCustomerEntity.getMatchUserId()));
     }
+
+    @Override
+    public List<Map> groupByDateCountWeek(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCountWeek(endDate,projectId);
+        return maps;
+    }
+
+    @Override
+    public List<Map> groupByDateCountDay(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCountDay(endDate,projectId);
+        return maps;
+    }
+
+    @Override
+    public List<Map> groupByDateCountMonth(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCountMonth(endDate,projectId);
+        return maps;
+    }
+    @Override
+    public List<Map> groupByDateCountYear(String endDate,Integer projectId){
+        List<Map> maps = baseMapper.groupByDateCountYear(endDate,projectId);
+        return maps;
+    }
+
 }
