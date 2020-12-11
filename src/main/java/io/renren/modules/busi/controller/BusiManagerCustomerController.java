@@ -141,7 +141,7 @@ public class BusiManagerCustomerController extends AbstractController {
       endDate = format;
     }
     List<Map> maps;
-    if(t == 0){
+    if(t == 1){
       maps = receptionService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
     }else{
       maps = busiCustomerService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
