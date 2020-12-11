@@ -75,6 +75,33 @@ renren:
     expire: 604800
     header: token
 
+wx:
+  mini:
+    app-id: wx766bb0a461ad397b
+    app-secret: 750b667e0c745dc04310582b64ed6ce6
+    access-token-key: miniToken
+    access-token-timeout: 3600
+    base-url: https://api.weixin.qq.com/cgi-bin/
+    access-token-api: token?grant_type=client_credential
+    send-template-message-api: message/wxopen/template/send?access_token=
+    send-uniform-message-api: message/wxopen/template/uniform_send?access_token=
+    status-message-id:
+    alarm-message-id:
+    session-key-url: https://api.weixin.qq.com/sns/jscode2session?grant_type=authorization_code
+  mp:
+    app-id: wx7d45c71b70976f8f
+    app-secret: 615c0bdf454d7f324465c134f5b77799
+    access-token-key: mpToken
+    return-url: https://www.valensyq.com/wx/mp/valensUserInfo
+  pay:
+    app-id: wx766bb0a461ad397b
+    mch-id: 1557470831
+    mch-key: nongzhichulinliyouwo201910080951
+    sub-mch-id:
+    sub-mch-key:
+    key-path: classpath:cert/apiclient_cert.p12
+    notify-url: https://www.nongzhichu.top/fruit-server/wx/pay/notify
+
 crm:
   log:
     path: D:/logs
