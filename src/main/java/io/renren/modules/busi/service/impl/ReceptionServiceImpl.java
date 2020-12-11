@@ -96,7 +96,6 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
 
-        params.put("status", ParamResolvor.getIntAsDefault(params, "status", -1) + "");
 
         List<ReceptionEntity> list = getBaseMapper().listBySalerId(params);
         Long cnt = getBaseMapper().listBySalerIdCnt(params);

@@ -76,6 +76,12 @@
             <if test=" status!=null and status !='' ">
                 and br.status = #{status}
             </if>
+            <if test=" startDate!=null and startDate !='' ">
+                and br.create_time &gt; #{startDate}
+            </if>
+            <if test=" endDate!=null and endDate !='' ">
+                and br.create_time &lt; #{endDate}
+            </if>
         </where>
         limit #{offset},#{limit}
     </select>
@@ -88,6 +94,12 @@
             </if>
             <if test=" status!=null and status !='' ">
                 and br.status = #{status}
+            </if>
+            <if test=" startDate!=null and startDate !='' ">
+                and br.create_time &gt; #{startDate}
+            </if>
+            <if test=" endDate!=null and endDate !='' ">
+                and br.create_time &lt; #{endDate}
             </if>
         </where>
     </select>
