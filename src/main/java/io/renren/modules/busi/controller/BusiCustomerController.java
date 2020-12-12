@@ -1,8 +1,9 @@
 package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
@@ -11,10 +12,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 /**
@@ -63,6 +61,29 @@ public class BusiCustomerController extends AbstractController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/followList")
+    public R followList(@RequestParam Map<String, Object> params){
+        QueryWrapper<BusiCustomerEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().le(BusiCustomerEntity::getFollowNextDate,getEndTime())
+                    .eq(BusiCustomerEntity::getMatchUserId,getUserId()).orderByDesc(BusiCustomerEntity::getFollowNextDate);
+        IPage<BusiCustomerEntity> page = busiCustomerService.page(
+                new Query<BusiCustomerEntity>().getPage(params),
+                queryWrapper
+        );
+        return R.ok().put("page", new PageUtils(page));
+    }
+
+    private Date getEndTime() {
+        Calendar todayEnd = Calendar.getInstance();
+        todayEnd.set(Calendar.HOUR, 23);
+        todayEnd.set(Calendar.MINUTE, 59);
+        todayEnd.set(Calendar.SECOND, 59);
+        todayEnd.set(Calendar.MILLISECOND, 999);
+        return todayEnd.getTime();
+    }
     /**
      * 列表
      */
