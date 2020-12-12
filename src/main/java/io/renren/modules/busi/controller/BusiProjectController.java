@@ -1,10 +1,12 @@
 package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.service.BusiProjectService;
+import io.renren.modules.sys.entity.SysMenuEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -52,10 +54,15 @@ public class BusiProjectController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("busi:busiproject:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = busiProjectService.queryPage(params);
-
-        return R.ok().put("page", page);
+    public List<BusiProjectEntity> list(@RequestParam Map<String, Object> params){
+      List<BusiProjectEntity> list = busiProjectService.list();
+      for(BusiProjectEntity projectEntity : list){
+        BusiProjectEntity parentProjectEntity = busiProjectService.getById(projectEntity.getParentId());
+        if(parentProjectEntity != null){
+          projectEntity.setParentName(parentProjectEntity.getName());
+        }
+      }
+      return list;
     }
 
 
@@ -102,5 +109,23 @@ public class BusiProjectController {
 
         return R.ok();
     }
+  /**
+   * 删除
+   */
+  @SysLog("删除项目")
+  @PostMapping("/delete/{projectId}")
+  @RequiresPermissions("busi:busiproject:delete")
+  public R delete(@PathVariable("projectId") long projectId){
+    if(projectId < 1){
+      return R.error("参数错误，请检查");
+    }
+    //判断是否有子菜单或按钮
+    List<BusiProjectEntity> projectList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("parent_id", projectId));
+    if(projectList.size() > 0){
+      return R.error("请先删除子项目");
+    }
+    busiProjectService.removeById(projectId);
+    return R.ok();
+  }
 
 }
