@@ -83,6 +83,7 @@
                 and br.create_time &lt; #{endDate}
             </if>
         </where>
+        order by br.create_time desc
         limit #{offset},#{limit}
     </select>
     <select id="listBySalerIdCnt" resultType="long">
