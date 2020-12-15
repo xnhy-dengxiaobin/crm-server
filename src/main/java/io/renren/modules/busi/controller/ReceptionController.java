@@ -4,10 +4,13 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
 import io.renren.modules.busi.service.ReceptionService;
 import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
-
 
 
 /**
@@ -34,6 +36,9 @@ public class ReceptionController extends AbstractController {
     @Autowired
     private BusiCustomerService busiCustomerService;
 
+    @Autowired
+    private SysUserService sysUserService;
+
     /**
      * 列表
      */
@@ -48,7 +53,7 @@ public class ReceptionController extends AbstractController {
      * 列表
      */
     @RequestMapping("/listBySalerId")
-    public R listBySalerId(@RequestBody Map<String, Object> params){
+    public R listBySalerId(@RequestBody Map<String, Object> params) {
         params.put("salerId", getUserId());
         params.put("status", ParamResolvor.getIntAsDefault(params, "status", -1) + "");
         PageUtils maps = receptionService.listBySalerId(params);
@@ -110,7 +115,13 @@ public class ReceptionController extends AbstractController {
         busiCustomerEntity.setOldMatchUserName(ParamResolvor.getString(customerMap, "oldMatchUserName") + "");
         busiCustomerEntity.setCreateTime(new Date());
 
-        receptionService.saveReception(receptionEntity, busiCustomerEntity);
+        SysUserEntity matchUser = sysUserService.getById(busiCustomerEntity.getMatchUserId());
+        BusiCustomerRoamEntity busiCustomerRoamEntity = new BusiCustomerRoamEntity();
+        busiCustomerRoamEntity.setUserId(getUserId().intValue());
+        busiCustomerRoamEntity.setRemark("分配，被" + getUser().getName() + "分配至" + matchUser.getName());
+        busiCustomerRoamEntity.setCreateTime(new Date());
+
+        receptionService.saveReception(receptionEntity, busiCustomerEntity, busiCustomerRoamEntity);
 
         return R.ok();
     }

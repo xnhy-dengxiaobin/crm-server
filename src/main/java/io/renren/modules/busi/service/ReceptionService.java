@@ -3,6 +3,7 @@ package io.renren.modules.busi.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface ReceptionService extends IService<ReceptionEntity> {
      * @param receptionEntity
      * @param busiCustomerEntity
      */
-    void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity);
+    void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity, BusiCustomerRoamEntity busiCustomerRoamEntity);
 
     PageUtils qryPage(Map<String, Object> params);
 

@@ -77,8 +77,8 @@ renren:
 
 wx:
   mini:
-    app-id: wx766bb0a461ad397b
-    app-secret: 750b667e0c745dc04310582b64ed6ce6
+    app-id: wxedcdc4d1af2dd571
+    app-secret: ff4b4742e739391cf8789a71db59e2c5
     access-token-key: miniToken
     access-token-timeout: 3600
     base-url: https://api.weixin.qq.com/cgi-bin/
@@ -89,14 +89,14 @@ wx:
     alarm-message-id:
     session-key-url: https://api.weixin.qq.com/sns/jscode2session?grant_type=authorization_code
   mp:
-    app-id: wx7d45c71b70976f8f
-    app-secret: 615c0bdf454d7f324465c134f5b77799
+    app-id: wxd0bc2cace4a21878
+    app-secret: d93468bba7efff8eebdf9f756e638e1e
     access-token-key: mpToken
     return-url: https://www.valensyq.com/wx/mp/valensUserInfo
   pay:
-    app-id: wx766bb0a461ad397b
-    mch-id: 1557470831
-    mch-key: nongzhichulinliyouwo201910080951
+    app-id: xxxxxxxxxxxxxxxxxx
+    mch-id: 1111111111
+    mch-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     sub-mch-id:
     sub-mch-key:
     key-path: classpath:cert/apiclient_cert.p12
