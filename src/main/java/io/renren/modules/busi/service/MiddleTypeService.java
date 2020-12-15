@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.MiddleTypeEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,12 @@ import java.util.Map;
 public interface MiddleTypeService extends IService<MiddleTypeEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 查询所有符合条件的记录
+     * @param params
+     * @return
+     */
+    List<MiddleTypeEntity> qryLst(Map<String, Object> params);
 }
 

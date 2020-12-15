@@ -1,6 +1,7 @@
 package io.renren.modules.busi.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -15,7 +16,6 @@ import io.renren.modules.busi.entity.MiddleTypeEntity;
 import io.renren.modules.busi.service.MiddleTypeService;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
-
 
 
 /**
@@ -36,7 +36,7 @@ public class MiddleTypeController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("busi:middletype:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = middleTypeService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -48,8 +48,8 @@ public class MiddleTypeController {
      */
     @RequestMapping("/info/{id}")
     @RequiresPermissions("busi:middletype:info")
-    public R info(@PathVariable("id") Integer id){
-		MiddleTypeEntity middleType = middleTypeService.getById(id);
+    public R info(@PathVariable("id") Integer id) {
+        MiddleTypeEntity middleType = middleTypeService.getById(id);
 
         return R.ok().put("middleType", middleType);
     }
@@ -59,8 +59,8 @@ public class MiddleTypeController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("busi:middletype:save")
-    public R save(@RequestBody MiddleTypeEntity middleType){
-		middleTypeService.save(middleType);
+    public R save(@RequestBody MiddleTypeEntity middleType) {
+        middleTypeService.save(middleType);
 
         return R.ok();
     }
@@ -70,8 +70,8 @@ public class MiddleTypeController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:middletype:update")
-    public R update(@RequestBody MiddleTypeEntity middleType){
-		middleTypeService.updateById(middleType);
+    public R update(@RequestBody MiddleTypeEntity middleType) {
+        middleTypeService.updateById(middleType);
 
         return R.ok();
     }
@@ -81,10 +81,20 @@ public class MiddleTypeController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:middletype:delete")
-    public R delete(@RequestBody Integer[] ids){
-		middleTypeService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Integer[] ids) {
+        middleTypeService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }
 
+    /*********************以下为自定义************************/
+    /**
+     * 列表
+     */
+    @RequestMapping("/lst")
+    public R lst(@RequestParam Map<String, Object> params) {
+        List<MiddleTypeEntity> middleTypeEntities = middleTypeService.qryLst(params);
+
+        return R.ok().put("list", middleTypeEntities);
+    }
 }
