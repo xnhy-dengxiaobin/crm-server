@@ -8,8 +8,10 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
 import io.renren.modules.busi.dao.BusiCustomerDao;
+import io.renren.modules.busi.dao.BusiCustomerRoamDao;
 import io.renren.modules.busi.dao.ReceptionDao;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.ReceptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Autowired
     private BusiCustomerDao busiCustomerDao;
 
+    @Autowired
+    private BusiCustomerRoamDao busiCustomerRoamDao;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         QueryWrapper<ReceptionEntity> receptionEntityQueryWrapper = new QueryWrapper<>();
@@ -43,13 +48,17 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity) {
+    public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity, BusiCustomerRoamEntity busiCustomerRoamEntity) {
         BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
+
         if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
 
             if (!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
                 //换了置业顾问，重新设置分配时间
                 busiCustomerEntity.setMatchUserTime(new Date());
+                //换了置业顾问，增加转介路径
+                busiCustomerRoamEntity.setCustomerId(cus.getId());
+                busiCustomerRoamDao.insert(busiCustomerRoamEntity);
             }
 
             busiCustomerDao.updateById(busiCustomerEntity);
@@ -63,6 +72,10 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
             busiCustomerEntity.setStatus(1);
             busiCustomerDao.insert(busiCustomerEntity);
             receptionEntity.setIsNew(1);//新客户
+
+            //新客户，增加转介路径
+            busiCustomerRoamEntity.setCustomerId(busiCustomerEntity.getId());
+            busiCustomerRoamDao.insert(busiCustomerRoamEntity);
         }
 
         receptionEntity.setCustomerId(busiCustomerEntity.getId());
