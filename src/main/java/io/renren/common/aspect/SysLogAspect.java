@@ -90,8 +90,12 @@ public class SysLogAspect {
 		sysLog.setIp(IPUtils.getIpAddr(request));
 
 		//用户名
-		String username = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUsername();
-		sysLog.setUsername(username);
+		if(!(SecurityUtils.getSubject().getPrincipal()==null)) {
+			String username = ((SysUserEntity) SecurityUtils.getSubject().getPrincipal()).getUsername();
+			sysLog.setUsername(username);
+		}else{
+			sysLog.setUsername("admin");
+		}
 
 		sysLog.setTime(time);
 		sysLog.setCreateDate(new Date());

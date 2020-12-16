@@ -151,6 +151,19 @@ public class SysUserController extends AbstractController {
     }
 
     /**
+     * 保存wx用户
+     */
+    @SysLog("保存wx用户")
+    @PostMapping("/wxSave")
+    public R wxSave(@RequestBody SysUserEntity user) {
+        ValidatorUtils.validateEntity(user, AddGroup.class);
+        final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+        user.setCreateUserId(1l);
+        sysUserService.saveUser(user);
+        return R.ok();
+    }
+
+    /**
      * 修改用户
      */
     @SysLog("修改用户")

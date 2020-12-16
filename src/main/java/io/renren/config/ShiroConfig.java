@@ -63,6 +63,8 @@ public class ShiroConfig {
     filterMap.put("/captcha.jpg", "anon");
     filterMap.put("/busi/houselayout/downloadFP/**", "anon"); //下载户型图片
     filterMap.put("/busi/middletype/lst", "anon"); //经纪人注册时查询所有能够选择的身份标签
+    filterMap.put("/sys/user/wxSave", "anon"); //经纪人注册时查询所有能够选择的身份标签
+    filterMap.put("/wx/mini/getUserInfo", "anon"); //经纪人注册时查询所有能够选择的身份标签
     filterMap.put("/favicon.ico", "anon");
     filterMap.put("/**", "oauth2");
     shiroFilter.setFilterChainDefinitionMap(filterMap);
