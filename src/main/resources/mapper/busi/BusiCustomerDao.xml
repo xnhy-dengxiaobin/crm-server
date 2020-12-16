@@ -103,7 +103,20 @@
     <if test="projectId!=null">
      and t1.project_id=#{projectId}
     </if>
-     and t1.match_user_id is null and t1.status =2
+      <if test="stt==1">
+          and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
+      </if>
+      <if test="stt==2">
+          and t1.match_user_id is null and t1.status =2
+      </if>
+      <if test="stt==3">
+          and t1.status =1
+          and t1.match_user_id is not null
+          and (select `value` from sys_setup where key_n='逾期时间') >= DATEDIFF(now(),t1.match_user_time)
+      </if>
+      <if test="stt==4">
+          and t1.status in (1,2)
+      </if>
   </select>
 
 
