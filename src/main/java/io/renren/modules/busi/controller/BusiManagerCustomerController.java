@@ -515,7 +515,7 @@ public class BusiManagerCustomerController extends AbstractController {
         BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
         roam.setCreateTime(new Date());
         roam.setCustomerId(Integer.parseInt(id));
-        roam.setRemark("垃圾箱，被" + getUser().getUsername() + "扔进垃圾箱");
+        roam.setRemark("垃圾箱，被" + getUser().getName() + "扔进垃圾箱");
         busiCustomerRoamService.save(roam);
         busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, id)
           .set(BusiCustomerEntity::getStatus, 3)
@@ -541,14 +541,14 @@ public class BusiManagerCustomerController extends AbstractController {
         BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
         roam.setCreateTime(new Date());
         roam.setCustomerId(Integer.parseInt(id));
-        roam.setRemark("回收，被" + getUser().getUsername() + "回收");
+        roam.setRemark("回收，被" + getUser().getName() + "回收");
         busiCustomerRoamService.save(roam);
         BusiCustomerEntity entity = busiCustomerService.getById(id);
         if (entity != null && !StringUtils.isEmpty(entity.getMatchUserId())) {
           SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
           if (sysUserEntity != null) {
             busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, id).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
-              .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 2).set(BusiCustomerEntity::getMatchUserId, null)
+              .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 2).set(BusiCustomerEntity::getMatchUserId, null)
             );
           }
         }
@@ -583,13 +583,13 @@ public class BusiManagerCustomerController extends AbstractController {
         BusiCustomerEntity entity = busiCustomerService.getById(customerId);
         SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
         roam.setUserId(Integer.parseInt(userId));
-        roam.setRemark("分配，被" + getUser().getUsername() + "分配至" + sysUserService.getById(userId).getUsername());
+        roam.setRemark("分配，被" + getUser().getName() + "分配至" + sysUserService.getById(userId).getName());
         busiCustomerRoamService.save(roam);
         if (sysUserEntity == null) {
           sysUserEntity = new SysUserEntity();
         }
         busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
-          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getUsername()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime,new Date())
+          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime,new Date())
         );
 
         i++;
