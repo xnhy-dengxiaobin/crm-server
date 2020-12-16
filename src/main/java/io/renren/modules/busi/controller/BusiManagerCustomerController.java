@@ -483,7 +483,7 @@ public class BusiManagerCustomerController extends AbstractController {
 //    }
     String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId")==null?null:params.get("projectId").toString(),keywords,ParamResolvor.getInt(params, "stt"));
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId")==null?null:params.get("projectId").toString(),keywords,ParamResolvor.getInt(params, "stt"),ParamResolvor.getLong(params,"oldMatchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -496,7 +496,7 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString(),null, ParamResolvor.getInt(params, "stt"));
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString(),null, ParamResolvor.getInt(params, "stt"),ParamResolvor.getLong(params,"oldMatchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 

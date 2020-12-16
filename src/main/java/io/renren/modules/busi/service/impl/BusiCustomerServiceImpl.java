@@ -59,8 +59,8 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   }
 
   @Override
-  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId,String keywords, Integer stt) {
-    return baseMapper.publicPage(page,projectId,keywords,stt);
+  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId,String keywords, Integer stt,Long oldMatchUserId) {
+    return baseMapper.publicPage(page,projectId,keywords,stt,oldMatchUserId);
   }
 
   @Override
