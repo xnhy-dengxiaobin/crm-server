@@ -571,7 +571,7 @@ public class BusiManagerCustomerController extends AbstractController {
     } else {
       int i = 0;
       for (String customerId : customerIds) {
-        if (i + 1 == userIds.length) {
+        if (i == userIds.length) {
           i = 0;
         }
         String userId = userIds[i];
