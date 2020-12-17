@@ -159,7 +159,7 @@ public class SysUserController extends AbstractController {
         ValidatorUtils.validateEntity(user, AddGroup.class);
         final String pinyin = PinyinHelper.toPinyin(user.getUsername(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
         user.setCreateUserId(1l);
-        sysUserService.saveUser(user);
+        sysUserService.saveWxUser(user);
         return R.ok();
     }
 

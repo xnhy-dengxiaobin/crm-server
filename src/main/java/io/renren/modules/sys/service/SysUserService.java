@@ -40,11 +40,20 @@ public interface SysUserService extends IService<SysUserEntity> {
 	 * 根据用户名，查询系统用户
 	 */
 	SysUserEntity queryByUserName(String username);
+	/**
+	 * 根据wxunionId，查询系统用户
+	 */
+	SysUserEntity queryByUnionId(String unionId);
 
 	/**
 	 * 保存用户
 	 */
 	void saveUser(SysUserEntity user);
+
+	/**
+	 * 保存wx用户
+	 */
+	void saveWxUser(SysUserEntity user);
 
 	/**
 	 * 修改用户

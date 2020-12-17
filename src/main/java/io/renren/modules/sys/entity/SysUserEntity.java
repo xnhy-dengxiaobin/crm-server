@@ -104,6 +104,26 @@ public class SysUserEntity implements Serializable {
   private String name;
 
   /**
+   * openId
+   */
+  private String openId;
+
+  /**
+   * nickName微信名
+   */
+  private String nickName;
+
+  /**
+   * unionId
+   */
+  private String unionId;
+
+  /**
+   * avatarUrl头像
+   */
+  private String avatarUrl;
+
+  /**
    * 用户名首字母
    */
   private String firstLetter;

@@ -84,8 +84,38 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 	}
 
 	@Override
+	public SysUserEntity queryByUnionId(String unionId) {
+		return baseMapper.selectOne(new QueryWrapper<SysUserEntity>().eq("union_id", unionId));
+	}
+
+	@Override
 	@Transactional
 	public void saveUser(SysUserEntity user) {
+		user.setCreateTime(new Date());
+		//sha256加密
+		String salt = RandomStringUtils.randomAlphanumeric(20);
+		user.setPassword(new Sha256Hash(user.getPassword(), salt).toHex());
+		user.setSalt(salt);
+
+		//拼音首字母
+		String s = PinyinHelper.toPinyin(user.getName(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+		user.setFirstLetter(s);
+
+		this.save(user);
+
+		//检查角色是否越权
+		checkRole(user);
+
+		//保存用户与角色关系
+		sysUserRoleService.saveOrUpdate(user.getUserId(), user.getRoleIdList());
+
+		//用户和项目关系
+		busiUserProjectService.increaseOrModify(user.getUserId(), user.getProjectIds());
+	}
+
+	@Override
+	@Transactional
+	public void saveWxUser(SysUserEntity user) {
 		user.setCreateTime(new Date());
 		//sha256加密
 		String salt = RandomStringUtils.randomAlphanumeric(20);
