@@ -483,7 +483,7 @@ public class BusiManagerCustomerController extends AbstractController {
 //    }
     String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId")==null?null:params.get("projectId").toString(),keywords,ParamResolvor.getInt(params, "stt"),ParamResolvor.getLong(params,"oldMatchUserId"));
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId")==null?null:params.get("projectId").toString(),keywords,ParamResolvor.getInt(params, "stt"),ParamResolvor.getLong(params,"matchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 

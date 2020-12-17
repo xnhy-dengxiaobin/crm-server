@@ -118,8 +118,8 @@
       <if test="stt==4">
           and t1.status in (1,2)
       </if>
-      <if test="oldMatchUserId != null">
-          and t1.old_match_user_id = #{oldMatchUserId}
+      <if test="matchUserId != null">
+          and t1.match_user_id = #{matchUserId}
       </if>
   </select>
 

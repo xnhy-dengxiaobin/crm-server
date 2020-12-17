@@ -20,7 +20,7 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
   IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId,String projectId);
   IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId,String projectId,String keywords);
 
-  IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page,String projectId,String keywords, Integer stt,Long oldMatchUserId);
+  IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page,String projectId,String keywords, Integer stt,Long matchUserId);
 
   /**
    * 根据项目ID 统计正常跟进数量
