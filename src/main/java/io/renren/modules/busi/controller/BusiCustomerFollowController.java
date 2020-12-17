@@ -5,8 +5,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
-import io.renren.modules.busi.entity.BusiCustomerProjectEntity;
-import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.service.BusiCustomerFollowService;
 import io.renren.modules.busi.service.BusiCustomerProjectService;
 import io.renren.modules.busi.service.BusiCustomerService;
@@ -84,7 +82,7 @@ public class BusiCustomerFollowController extends AbstractController {
     @RequestMapping("/save")
     public R save(@RequestBody BusiCustomerFollowEntity busiCustomerFollow){
         SysUserEntity user = getUser();
-        busiCustomerFollow.setCreateName(user.getUsername());
+        busiCustomerFollow.setCreateName(user.getName());
         busiCustomerFollow.setCreateTime(new Date());
 
         Date date = new Date();

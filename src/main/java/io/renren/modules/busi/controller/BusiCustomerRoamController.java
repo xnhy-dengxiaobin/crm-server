@@ -33,7 +33,7 @@ public class BusiCustomerRoamController {
      */
     @RequestMapping("/listByCustomerId")
     public R listByCustomerId(@RequestParam Map<String, Object> params){
-        List<BusiCustomerRoamEntity> list = busiCustomerRoamService.list(new QueryWrapper<BusiCustomerRoamEntity>().eq("customer_id", params.get("customerId")));
+        List<BusiCustomerRoamEntity> list = busiCustomerRoamService.list(new QueryWrapper<BusiCustomerRoamEntity>().eq("customer_id", params.get("customerId")).orderByDesc("create_time"));
         return R.ok().put("list", list);
     }
     /**
