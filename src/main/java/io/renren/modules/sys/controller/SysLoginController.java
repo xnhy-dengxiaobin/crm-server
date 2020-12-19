@@ -134,6 +134,8 @@ public class SysLoginController extends AbstractController {
         r.put("head",user.getHead());
         r.put("appRole",user.getAppRole());
         r.put("name",user.getName());
+        r.put("mobile",user.getMobile());
+        r.put("middleTypeName",user.getMiddleTypeName());
         return r;
     }
 

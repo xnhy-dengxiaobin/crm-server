@@ -28,9 +28,11 @@ public class WxMiniController {
 
     @RequestMapping("/getUserInfo")
     public R getUserInfo(@RequestBody Map<String, Object> param) {
-        return R.ok().put("userInfo", miniService.getUserInfo(ParamResolvor.getString(param, "code"),
+//        return R.ok().put("userInfo", miniService.getUserInfo(ParamResolvor.getString(param, "code"),ParamResolvor.getString(param, "encryptedData"),ParamResolvor.getString(param, "iv")));
+        R r = R.ok().put("userInfo", miniService.getUserInfo(ParamResolvor.getString(param, "code"),
                 ParamResolvor.getString(param, "encryptedData"),
                 ParamResolvor.getString(param, "iv")));
+        return r;
     }
 
     @RequestMapping("/getUserInfoBySessionKey")

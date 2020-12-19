@@ -124,6 +124,16 @@ public class SysUserEntity implements Serializable {
   private String avatarUrl;
 
   /**
+   * 身份ID
+   */
+  private String middleTypeId;
+
+  /**
+   * 身份
+   */
+  private String middleTypeName;
+
+  /**
    * 用户名首字母
    */
   private String firstLetter;
