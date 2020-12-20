@@ -14,8 +14,47 @@
         <result property="mobile3" column="mobile3"/>
         <result property="projectId" column="project_id"/>
         <result property="userId" column="user_id"/>
+        <result property="customerId" column="customer_id"/>
         <result property="status" column="status"/>
+        <result property="createTime" column="created_time"/>
     </resultMap>
 
-
+    <select id="slct" resultMap="prepareMap">
+        select t1.*,t2.busi_status
+        from busi_prepare t1
+        left join busi_customer t2 on t1.customer_id = t2.id
+        <where>
+            <if test="projectId!=null and projectId !='' ">
+                and t1.project_id = #{projectId}
+            </if>
+            <if test="start!=null">
+                and t1.created_time >= #{start}
+            </if>
+            <if test="end!=null">
+                <![CDATA[
+                and t1.created_time <= #{end}
+                ]]>
+            </if>
+        </where>
+        order by ${order}
+        limit #{offset},#{limit}
+    </select>
+    <select id="cnt" resultType="long">
+        select count(*)
+        from busi_prepare t1
+        left join busi_customer t2 on t1.customer_id = t2.id
+        <where>
+            <if test="projectId!=null and projectId !='' ">
+                and t1.project_id = #{projectId}
+            </if>
+            <if test="start!=null">
+                and t1.created_time >= #{start}
+            </if>
+            <if test="end!=null">
+                <![CDATA[
+                and t1.created_time <= #{end}
+                ]]>
+            </if>
+        </where>
+    </select>
 </mapper>

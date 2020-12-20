@@ -1,6 +1,11 @@
 package io.renren.modules.busi.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.entity.ReceptionEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -26,4 +31,23 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         return new PageUtils(page);
     }
 
+    @Override
+    public PageUtils lstPage(Map<String, Object> params) {
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+
+        List<PrepareEntity> list = getBaseMapper().slct(params);
+        long cnt = getBaseMapper().cnt(params);
+
+        Page<PrepareEntity> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(list);
+
+        return new PageUtils(page);
+    }
 }
