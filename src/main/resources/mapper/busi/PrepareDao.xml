@@ -16,11 +16,13 @@
         <result property="userId" column="user_id"/>
         <result property="customerId" column="customer_id"/>
         <result property="status" column="status"/>
-        <result property="createTime" column="created_time"/>
+        <result property="statusUpdatedTime" column="status_updated_time"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="updatedTime" column="updated_time"/>
     </resultMap>
 
     <select id="slct" resultMap="prepareMap">
-        select t1.*,t2.busi_status
+        select t1.*,t2.busi_status,t2.busi_status_updated_time
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
         <where>
@@ -36,7 +38,19 @@
                 ]]>
             </if>
         </where>
-        order by ${order}
+        <if test="sort=='0'">
+            order by t2.busi_status_updated_time desc, t1.status_updated_time desc
+        </if>
+        <if test="sort=='1'">
+            order by t2.busi_status_updated_time asc, t1.status_updated_time asc
+        </if>
+        <if test="sort=='2'">
+            order by t2.updated_time desc
+        </if>
+        <if test="sort=='3'">
+            order by t2.updated_time asc
+        </if>
+
         limit #{offset},#{limit}
     </select>
     <select id="cnt" resultType="long">
