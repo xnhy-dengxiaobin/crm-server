@@ -99,6 +99,11 @@ public class SysUserEntity implements Serializable {
   private Integer count;
 
   /**
+   * 性别
+   */
+  private String sex;
+
+  /**
    * 真实姓名
    */
   private String name;
