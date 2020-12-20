@@ -1,7 +1,7 @@
 package io.renren.modules.busi.controller;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +70,17 @@ public class PrepareController {
      */
     @RequestMapping("/wx/save")
     public R wxsave(@RequestBody PrepareEntity prepare){
-        prepareService.save(prepare);
-
-        return R.ok();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("mobile",prepare.getMobile());
+        PageUtils onepage = prepareService.queryPage(params);
+        if(onepage.getList().size() > 0){
+            return R.error("该手机号已报备");
+        }else{
+            prepare.setCreatedTime(new Date());
+            prepareService.save(prepare);
+            return R.ok();
+        }
     }
 
     /**

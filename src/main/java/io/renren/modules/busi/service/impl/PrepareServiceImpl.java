@@ -3,6 +3,7 @@ package io.renren.modules.busi.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.entity.ReceptionEntity;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,9 +24,10 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
+        String mobile = (String)params.get("mobile");
         IPage<PrepareEntity> page = this.page(
                 new Query<PrepareEntity>().getPage(params),
-                new QueryWrapper<PrepareEntity>()
+                new QueryWrapper<PrepareEntity>().like(StringUtils.isNotBlank(mobile),"mobile", mobile)
         );
 
         return new PageUtils(page);
