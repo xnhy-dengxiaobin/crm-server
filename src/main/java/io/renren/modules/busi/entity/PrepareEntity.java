@@ -66,6 +66,11 @@ public class PrepareEntity implements Serializable {
 	private Integer status;
 
 	/**
+	 * 状态更新时间
+	 */
+	private Date statusUpdatedTime;
+
+	/**
 	 * 报备时间
 	 */
 	private Date createdTime;

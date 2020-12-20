@@ -16,6 +16,7 @@
         <result property="userId" column="user_id"/>
         <result property="customerId" column="customer_id"/>
         <result property="status" column="status"/>
+        <result property="statusUpdatedTime" column="status_updated_time"/>
         <result property="createTime" column="created_time"/>
     </resultMap>
 
