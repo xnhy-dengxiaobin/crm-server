@@ -87,4 +87,12 @@ public class PrepareController {
         return R.ok();
     }
 
+    /**
+     * 查询和客户相关联的列表
+     */
+    @RequestMapping("/lstPage")
+    public R lstPage(@RequestBody Map<String, Object> params){
+        PageUtils page = prepareService.lstPage(params);
+        return R.ok().put("page", page);
+    }
 }

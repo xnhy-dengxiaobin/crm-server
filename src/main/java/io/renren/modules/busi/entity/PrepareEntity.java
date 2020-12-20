@@ -57,8 +57,17 @@ public class PrepareEntity implements Serializable {
 	 */
 	private String userId;
 	/**
+	 * 关联客户记录id
+	 */
+	private String customerId;
+	/**
 	 * 状态
 	 */
 	private Integer status;
+
+	/**
+	 * 报备时间
+	 */
+	private Date createdTime;
 
 }

@@ -16,5 +16,7 @@ import java.util.Map;
 public interface PrepareService extends IService<PrepareEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils lstPage(Map<String, Object> params);
 }
 
