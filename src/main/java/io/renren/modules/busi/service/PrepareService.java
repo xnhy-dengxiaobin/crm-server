@@ -2,6 +2,7 @@ package io.renren.modules.busi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
+import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.busi.entity.PrepareEntity;
 
 import java.util.Map;
@@ -18,5 +19,8 @@ public interface PrepareService extends IService<PrepareEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     PageUtils lstPage(Map<String, Object> params);
+
+    boolean check(PrepareCheckEntity checks);
+
 }
 

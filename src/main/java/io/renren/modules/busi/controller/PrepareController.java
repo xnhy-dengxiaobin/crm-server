@@ -3,6 +3,7 @@ package io.renren.modules.busi.controller;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import io.renren.modules.busi.entity.PrepareCheckEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -102,6 +103,16 @@ public class PrepareController {
     public R delete(@RequestBody Integer[] ids){
 		prepareService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    /**
+     * 删除
+     */
+    @RequestMapping("/check")
+    @RequiresPermissions("busi:prepare:check")
+    public R check(@RequestBody PrepareCheckEntity Checks){
+        prepareService.check(Checks);
         return R.ok();
     }
 

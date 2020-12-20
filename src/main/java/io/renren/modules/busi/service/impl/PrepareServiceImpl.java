@@ -2,6 +2,7 @@ package io.renren.modules.busi.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,11 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         page.setRecords(list);
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public boolean check(PrepareCheckEntity checks) {
+
+        return true;
     }
 }
