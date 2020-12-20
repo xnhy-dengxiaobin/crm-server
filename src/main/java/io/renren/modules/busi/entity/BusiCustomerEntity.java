@@ -199,4 +199,13 @@ public class BusiCustomerEntity implements Serializable {
    */
   @TableField(exist = false)
 	private String projectName;
+
+	/**
+	 * 业务状态:报备、到访、认筹、认购和签约
+	 */
+	private String busiStatus;
+	/**
+	 * 业务状态更新时间
+	 */
+  private Date busiStatusUpdatedTime;
 }

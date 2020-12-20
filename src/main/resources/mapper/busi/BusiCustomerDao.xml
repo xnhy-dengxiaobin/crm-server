@@ -37,6 +37,8 @@
         <result property="address" column="address"/>
         <result property="situation" column="situation"/>
         <result property="status" column="status"/>
+        <result property="busiStatus" column="busi_status"/>
+        <result property="busiStatusUpdatedTime" column="busi_status_updated_time"/>
         <result property="followNextDate" column="follow_next_date"/>
         <result property="followDate" column="follow_date"/>
         <result property="followUserId" column="follow_user_id"/>
