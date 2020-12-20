@@ -1,6 +1,7 @@
 package io.renren.modules.sys.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -87,4 +88,21 @@ public class SetupController {
         return R.ok();
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/lst")
+    public R lst(@RequestParam Map<String, Object> params){
+        List<SetupEntity> setupEntities = setupService.qry(params);
+        return R.ok().put("list", setupEntities);
+    }
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/batchList")
+    public R lst(@RequestBody List<String> keys){
+        List<SetupEntity> setupEntities = setupService.queryBatch(keys);
+        return R.ok().put("list", setupEntities);
+    }
 }
