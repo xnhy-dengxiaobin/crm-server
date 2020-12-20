@@ -66,6 +66,16 @@ public class PrepareController {
     }
 
     /**
+     * wx保存
+     */
+    @RequestMapping("/wx/save")
+    public R wxsave(@RequestBody PrepareEntity prepare){
+        prepareService.save(prepare);
+
+        return R.ok();
+    }
+
+    /**
      * 修改
      */
     @RequestMapping("/update")
