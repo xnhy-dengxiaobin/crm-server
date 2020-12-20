@@ -22,5 +22,7 @@ public interface PrepareService extends IService<PrepareEntity> {
 
     boolean check(PrepareCheckEntity checks);
 
+    String wxSave(PrepareEntity prepare,long userId);
+
 }
 

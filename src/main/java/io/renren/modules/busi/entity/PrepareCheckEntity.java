@@ -22,7 +22,6 @@ public class PrepareCheckEntity implements Serializable {
 	/**
 	 * ID
 	 */
-	@TableId
 	private Integer[] ids;
 	/**
 	 * 客户名称

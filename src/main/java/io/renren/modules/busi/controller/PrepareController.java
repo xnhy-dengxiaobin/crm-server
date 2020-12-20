@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import io.renren.modules.busi.entity.PrepareCheckEntity;
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,7 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("busi/prepare")
-public class PrepareController {
+public class PrepareController extends AbstractController {
     @Autowired
     private PrepareService prepareService;
 
@@ -71,17 +72,12 @@ public class PrepareController {
      */
     @RequestMapping("/wx/save")
     public R wxsave(@RequestBody PrepareEntity prepare){
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("mobile",prepare.getMobile());
-        PageUtils onepage = prepareService.queryPage(params);
-        if(onepage.getList().size() > 0){
-            return R.error("该手机号已报备");
-        }else{
-            prepare.setCreatedTime(new Date());
-            prepareService.save(prepare);
-            return R.ok();
+        String msg = prepareService.wxSave(prepare, getUserId());
+        if(msg.indexOf("拒收无效")>0){
+            return R.error(msg);
         }
+        return R.ok();
+
     }
 
     /**
