@@ -52,6 +52,12 @@ public class PrepareEntity implements Serializable {
 	 * 意向楼ID
 	 */
 	private Integer projectId;
+
+	/**
+	 * 意向项目名称
+	 */
+	private String projectName;
+
 	/**
 	 * 中介销售ID
 	 */
@@ -69,6 +75,16 @@ public class PrepareEntity implements Serializable {
 	 * 状态更新时间
 	 */
 	private Date statusUpdatedTime;
+
+	/**
+	 * 业务状态
+	 */
+	private Integer busiStatus;
+
+	/**
+	 * 业务状态更新时间
+	 */
+	private Date busiStatusUpdatedTime;
 
 	/**
 	 * 报备时间
