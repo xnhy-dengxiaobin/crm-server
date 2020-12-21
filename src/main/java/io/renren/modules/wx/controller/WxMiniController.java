@@ -69,4 +69,9 @@ public class WxMiniController {
         );
         return R.ok();
     }
+
+    @RequestMapping("/getUserQrcode")
+    public R getUserQrcode(@RequestBody Map<String, Object> param) {
+        return R.ok().put("fileid", miniService.getUserQrcode(param));
+    }
 }

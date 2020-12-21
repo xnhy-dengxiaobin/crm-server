@@ -6,9 +6,14 @@ import cn.binarywang.wx.miniapp.api.impl.WxMaUserServiceImpl;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.HttpUtils;
 import io.renren.common.utils.JsonUtil;
 import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.dao.WxuserQrDao;
+import io.renren.modules.busi.entity.PrepareEntity;
+import io.renren.modules.busi.entity.WxuserQrEntity;
+import io.renren.modules.busi.props.CrmProp;
 import io.renren.modules.wx.config.WxProp;
 import io.renren.modules.wx.service.MiniService;
 import org.apache.commons.collections.MapUtils;
@@ -18,7 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -26,6 +35,11 @@ public class MiniServiceImpl implements MiniService {
     @Autowired
     private WxProp wxProp;
 
+    @Autowired
+    private CrmProp crmProp;
+
+    @Autowired
+    private WxuserQrDao wxuserQrDao;
 
     @Autowired
     private WxMaService wxMaService;
@@ -171,4 +185,52 @@ public class MiniServiceImpl implements MiniService {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public String getUserQrcode(Map<String, Object>  param) {
+        String unionId = param.get("unionId").toString();
+        String nickName = param.get("nickName").toString();
+        FileChannel in = null;
+        FileChannel out = null;
+        try {
+            List<WxuserQrEntity> pes = wxuserQrDao.selectList(new QueryWrapper<WxuserQrEntity>()
+                    .eq("union_id",unionId));
+            if(pes.size() == 0) {
+                File file = wxMaService.getQrcodeService().createQrcode("pages/index/index?scene=" + unionId, 220);
+                int index = file.getName().lastIndexOf(".");
+                char[] ch = file.getName().toCharArray();
+                String lastString = String.copyValueOf(ch, index + 1, ch.length - index - 1);
+                String filePath = crmProp.getUploadPath() + "wx/" + unionId + "." + lastString;
+                File newFile = new File(filePath);
+                if (!newFile.exists()) {
+                    newFile.createNewFile();
+                }
+                in = new FileInputStream(file).getChannel();
+                out = new FileOutputStream(filePath).getChannel();
+                in.transferTo(0, in.size(), out);
+                WxuserQrEntity user = new WxuserQrEntity();
+                user.setDirId("wx");
+                user.setUnionId(unionId);
+                user.setFileid(unionId);
+                user.setFilename("二维码");
+                user.setNickName(nickName);
+                user.setUrl(unionId);
+                wxuserQrDao.insert(user);
+                return unionId;
+            }else{
+                return unionId;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            try {
+                in.close();
+                out.close();
+            }catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
 }

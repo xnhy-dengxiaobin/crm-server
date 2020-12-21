@@ -74,4 +74,14 @@ public interface MiniService {
      * @return
      */
     WxMaUserInfo getUserInfoBySessionKey(String sessionKey, String encryptedData, String iv);
+
+
+    /**
+     * 根据获取用户信息二维码ID
+     * @param userid
+     */
+    String getUserQrcode(Map<String, Object>  param);
+
+
+
 }
