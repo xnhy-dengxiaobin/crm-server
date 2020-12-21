@@ -117,6 +117,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/lstPage")
     public R lstPage(@RequestBody Map<String, Object> params){
+        params.put("userId", getUserId());
         PageUtils page = prepareService.lstPage(params);
         return R.ok().put("page", page);
     }

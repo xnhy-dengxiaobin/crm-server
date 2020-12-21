@@ -3,7 +3,7 @@
 
 <mapper namespace="io.renren.modules.busi.dao.PrepareDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="io.renren.modules.busi.entity.PrepareEntity" id="prepareMap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
@@ -13,31 +13,40 @@
         <result property="mobile2" column="mobile2"/>
         <result property="mobile3" column="mobile3"/>
         <result property="projectId" column="project_id"/>
+        <result property="projectName" column="project_name"/>
         <result property="userId" column="user_id"/>
         <result property="customerId" column="customer_id"/>
         <result property="status" column="status"/>
         <result property="statusUpdatedTime" column="status_updated_time"/>
+        <result property="busiStatus" column="busi_status"/>
+        <result property="busiStatusUpdatedTime" column="busi_status_updated_time"/>
         <result property="createdTime" column="created_time"/>
         <result property="updatedTime" column="updated_time"/>
     </resultMap>
 
     <select id="slct" resultMap="prepareMap">
-        select t1.*,t2.busi_status,t2.busi_status_updated_time
+        select t1.*,t2.busi_status,t2.busi_status_updated_time,t3.name as project_name
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
-        <where>
-            <if test="projectId!=null and projectId !='' ">
-                and t1.project_id = #{projectId}
-            </if>
-            <if test="start!=null">
-                and t1.created_time >= #{start}
-            </if>
-            <if test="end!=null">
-                <![CDATA[
+        inner join busi_project t3 on t1.project_id = t3.id
+        where t1.user_id=#{userId}
+        <if test="projectId!=null and projectId !='' ">
+            and t1.project_id = #{projectId}
+        </if>
+        <if test="customerStatus!=null and customerStatus !='' ">
+            and t2.busi_status like '%${customerStatus}%'
+        </if>
+        <if test="prepareStatus!=null and prepareStatus !='' ">
+            and t1.status = #{prepareStatus}
+        </if>
+        <if test="start!=null">
+            and t1.created_time >= #{start}
+        </if>
+        <if test="end!=null">
+            <![CDATA[
                 and t1.created_time <= #{end}
                 ]]>
-            </if>
-        </where>
+        </if>
         <if test="sort=='0'">
             order by t2.busi_status_updated_time desc, t1.status_updated_time desc
         </if>
@@ -57,18 +66,24 @@
         select count(*)
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
-        <where>
-            <if test="projectId!=null and projectId !='' ">
-                and t1.project_id = #{projectId}
-            </if>
-            <if test="start!=null">
-                and t1.created_time >= #{start}
-            </if>
-            <if test="end!=null">
-                <![CDATA[
+        inner join busi_project t3 on t1.project_id = t3.id
+        where t1.user_id=#{userId}
+        <if test="projectId!=null and projectId !='' ">
+            and t1.project_id = #{projectId}
+        </if>
+        <if test="customerStatus!=null and customerStatus !='' ">
+            and t2.busi_status like '%${customerStatus}%'
+        </if>
+        <if test="prepareStatus!=null and prepareStatus !='' ">
+            and t1.status = #{prepareStatus}
+        </if>
+        <if test="start!=null">
+            and t1.created_time >= #{start}
+        </if>
+        <if test="end!=null">
+            <![CDATA[
                 and t1.created_time <= #{end}
                 ]]>
-            </if>
-        </where>
+        </if>
     </select>
 </mapper>
