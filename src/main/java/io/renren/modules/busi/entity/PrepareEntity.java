@@ -81,11 +81,13 @@ public class PrepareEntity implements Serializable {
 	/**
 	 * 业务状态
 	 */
+	@TableField(exist = false)
 	private Integer busiStatus;
 
 	/**
 	 * 业务状态更新时间
 	 */
+	@TableField(exist = false)
 	private Date busiStatusUpdatedTime;
 
 	/**
