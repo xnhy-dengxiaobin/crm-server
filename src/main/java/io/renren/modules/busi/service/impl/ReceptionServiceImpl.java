@@ -7,20 +7,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
-import io.renren.modules.busi.dao.BusiCustomerDao;
-import io.renren.modules.busi.dao.BusiCustomerRoamDao;
-import io.renren.modules.busi.dao.ReceptionDao;
-import io.renren.modules.busi.entity.BusiCustomerEntity;
-import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
-import io.renren.modules.busi.entity.ReceptionEntity;
+import io.renren.modules.busi.dao.*;
+import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.ReceptionService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service("receptionService")
@@ -31,6 +26,12 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
     @Autowired
     private BusiCustomerRoamDao busiCustomerRoamDao;
+
+    @Autowired
+    private PrepareDao prepareDao;
+
+    @Autowired
+    private CustomerStatusLogDao customerStatusLogDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -48,7 +49,8 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity, BusiCustomerRoamEntity busiCustomerRoamEntity) {
+    public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity,
+                              BusiCustomerRoamEntity busiCustomerRoamEntity, long prepareId) {
         BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
 
         if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
@@ -76,6 +78,39 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
             //新客户，增加转介路径
             busiCustomerRoamEntity.setCustomerId(busiCustomerEntity.getId());
             busiCustomerRoamDao.insert(busiCustomerRoamEntity);
+
+            //处理报备。关联报备记录，将其它相同号码的报备记录设置为无效
+            if(prepareId > 0){
+                PrepareEntity okPrepare = prepareDao.selectById(prepareId);
+
+                //先将其它相同客户号码的有效报备置为手工无效
+                List<Integer> status = new ArrayList<Integer>();
+                status.add(0);
+                status.add(10);
+                List<PrepareEntity> prepareEntities = prepareDao.selectList(new QueryWrapper<PrepareEntity>().in("status", status).eq("mobile", okPrepare.getMobile()));
+                if(CollectionUtils.isNotEmpty(prepareEntities)){
+                    for(PrepareEntity p : prepareEntities){
+                        if(p.getId() == prepareId){
+                            continue;
+                        }
+                        PrepareEntity pEntity = new PrepareEntity();
+                        pEntity.setId(p.getId());
+                        pEntity.setStatus(-20);
+                        prepareDao.updateById(pEntity);
+                    }
+                }
+
+                //将当前报备设置为有效且关联客户id
+                PrepareEntity prepareEntity = new PrepareEntity();
+                prepareEntity.setId(((Long)prepareId).intValue());
+                prepareEntity.setCustomerId(busiCustomerEntity.getId());
+                prepareEntity.setStatus(10);
+                prepareDao.updateById(prepareEntity);
+
+                //记录状态变更日志
+                CustomerStatusLogEntity customerStatusLogEntity = new CustomerStatusLogEntity();
+                //customerStatusLogEntity.setStatus();
+            }
         }
 
         receptionEntity.setCustomerId(busiCustomerEntity.getId());

@@ -64,10 +64,27 @@ public class PrepareEntity implements Serializable {
 	 * 中介销售ID
 	 */
 	private String userId;
+
+	/**
+	 * 经济人电话
+	 */
+	@TableField(exist = false)
+	private String middleUserMobile;
+	/**
+	 * 渠道id
+	 */
+	@TableField(exist = false)
+	private long middleTypeId;
+	/**
+	 * 渠道名称
+	 */
+	@TableField(exist = false)
+	private String middleTypeName;
+
 	/**
 	 * 关联客户记录id
 	 */
-	private String customerId;
+	private Integer customerId;
 	/**
 	 * 状态
 	 */

@@ -26,7 +26,8 @@ public interface ReceptionService extends IService<ReceptionEntity> {
      * @param receptionEntity
      * @param busiCustomerEntity
      */
-    void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity, BusiCustomerRoamEntity busiCustomerRoamEntity);
+    void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity,
+                       BusiCustomerRoamEntity busiCustomerRoamEntity, long prepareId);
 
     PageUtils qryPage(Map<String, Object> params);
 

@@ -121,7 +121,9 @@ public class ReceptionController extends AbstractController {
         busiCustomerRoamEntity.setRemark("分配，被" + getUser().getName() + "分配至" + matchUser.getName());
         busiCustomerRoamEntity.setCreateTime(new Date());
 
-        receptionService.saveReception(receptionEntity, busiCustomerEntity, busiCustomerRoamEntity);
+        long prepareId = ParamResolvor.getLongAsDefault(params, "prepareId", 0);
+
+        receptionService.saveReception(receptionEntity, busiCustomerEntity, busiCustomerRoamEntity, prepareId);
 
         return R.ok();
     }

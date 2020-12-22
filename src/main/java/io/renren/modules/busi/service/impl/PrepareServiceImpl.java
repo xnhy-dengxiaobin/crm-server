@@ -112,4 +112,9 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         }
         return msg;
     }
+
+    @Override
+    public PrepareEntity gtById(Integer id) {
+        return getBaseMapper().gtById(id);
+    }
 }

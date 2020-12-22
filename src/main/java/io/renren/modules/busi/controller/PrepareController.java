@@ -121,4 +121,14 @@ public class PrepareController extends AbstractController {
         PageUtils page = prepareService.lstPage(params);
         return R.ok().put("page", page);
     }
+
+    /**
+     * 信息
+     */
+    @RequestMapping("/nf/{id}")
+    public R nf(@PathVariable("id") Integer id){
+        PrepareEntity prepare = prepareService.gtById(id);
+
+        return R.ok().put("prepare", prepare);
+    }
 }

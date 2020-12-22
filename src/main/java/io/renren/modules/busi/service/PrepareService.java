@@ -24,5 +24,11 @@ public interface PrepareService extends IService<PrepareEntity> {
 
     String wxSave(PrepareEntity prepare,long userId);
 
+    /**
+     * 查询某个报备信息，包含项目、渠道经纪人名称、渠道经纪人电话
+     * @param id
+     * @return
+     */
+    PrepareEntity gtById(Integer id);
 }
 
