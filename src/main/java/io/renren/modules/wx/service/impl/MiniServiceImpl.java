@@ -214,18 +214,20 @@ public class MiniServiceImpl implements MiniService {
                 user.setFileid(unionId);
                 user.setFilename("二维码");
                 user.setNickName(nickName);
-                user.setUrl(unionId);
+                user.setUrl("wx/"+ unionId+ "." + lastString);
                 wxuserQrDao.insert(user);
-                return unionId;
+                return user.getUrl();
             }else{
-                return unionId;
+                return pes.get(0).getUrl();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
             try {
-                in.close();
-                out.close();
+                if(in!=null) {
+                    in.close();
+                    out.close();
+                }
             }catch (Exception e){
                 throw new RuntimeException(e);
             }
