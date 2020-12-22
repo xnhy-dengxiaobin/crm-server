@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -56,6 +57,7 @@ public class PrepareEntity implements Serializable {
 	/**
 	 * 意向项目名称
 	 */
+	@TableField(exist = false)
 	private String projectName;
 
 	/**

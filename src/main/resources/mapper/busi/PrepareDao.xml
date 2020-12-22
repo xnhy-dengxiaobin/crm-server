@@ -30,6 +30,15 @@
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
         where t1.user_id=#{userId}
+        <if test="name!=null and name !='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test="mobile!=null and mobile !='' ">
+            and (t1.mobile like '%${mobile}'
+            or t1.mobile1 like '%${mobile}'
+            or t1.mobile2 like '%${mobile}'
+            or t1.mobile3 like '%${mobile}')
+        </if>
         <if test="projectId!=null and projectId !='' ">
             and t1.project_id = #{projectId}
         </if>
@@ -68,6 +77,15 @@
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
         where t1.user_id=#{userId}
+        <if test="name!=null and name !='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test="mobile!=null and mobile !='' ">
+            and (t1.mobile like '%${mobile}'
+            or t1.mobile1 like '%${mobile}'
+            or t1.mobile2 like '%${mobile}'
+            or t1.mobile3 like '%${mobile}')
+        </if>
         <if test="projectId!=null and projectId !='' ">
             and t1.project_id = #{projectId}
         </if>
