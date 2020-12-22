@@ -30,6 +30,9 @@
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
         where t1.user_id=#{userId}
+        <if test=" id != null and id > 0 ">
+            and t1.id = #{id}
+        </if>
         <if test="name!=null and name !='' ">
             and t1.name like '%${name}%'
         </if>
@@ -77,6 +80,9 @@
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
         where t1.user_id=#{userId}
+        <if test=" id != null and id > 0 ">
+            and t1.id = #{id}
+        </if>
         <if test="name!=null and name !='' ">
             and t1.name like '%${name}%'
         </if>
