@@ -9,7 +9,7 @@
         <result property="preparedId" column="prepared_id"/>
         <result property="customerId" column="customer_id"/>
         <result property="status" column="status"/>
-        <result property="title" column="title"/>
+        <result property="action" column="action"/>
         <result property="memo1" column="memo1"/>
         <result property="memo2" column="memo2"/>
         <result property="memo3" column="memo3"/>

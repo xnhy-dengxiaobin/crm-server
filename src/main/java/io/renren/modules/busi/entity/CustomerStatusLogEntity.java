@@ -37,9 +37,9 @@ public class CustomerStatusLogEntity implements Serializable {
 	 */
 	private String status;
 	/**
-	 * 状态的另一种叫法
+	 * 动作
 	 */
-	private String title;
+	private String action;
 	/**
 	 * 说明1
 	 */
