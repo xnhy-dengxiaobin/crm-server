@@ -115,6 +115,8 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
 
     @Override
     public PrepareEntity gtById(Integer id) {
-        return getBaseMapper().gtById(id);
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        return getBaseMapper().gtById(null, id);
     }
 }

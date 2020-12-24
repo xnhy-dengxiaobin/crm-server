@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.CustomerStatusLogEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,7 @@ import java.util.Map;
 public interface CustomerStatusLogService extends IService<CustomerStatusLogEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    List<CustomerStatusLogEntity> queryList(Map<String, Object> params);
 }
 

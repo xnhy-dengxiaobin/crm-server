@@ -34,50 +34,14 @@
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
         inner join sys_user t4 on t1.user_id = t4.user_id
-        where t1.user_id=#{userId}
-        <if test=" id != null and id > 0 ">
-            and t1.id = #{id}
-        </if>
-        <if test="name!=null and name !='' ">
-            and t1.name like '%${name}%'
-        </if>
-        <if test="mobile!=null and mobile !='' ">
-            and (t1.mobile like '%${mobile}'
-            or t1.mobile1 like '%${mobile}'
-            or t1.mobile2 like '%${mobile}'
-            or t1.mobile3 like '%${mobile}')
-        </if>
-        <if test="projectId!=null and projectId !='' ">
-            and t1.project_id = #{projectId}
-        </if>
-        <if test="customerStatus!=null and customerStatus !='' ">
-            and t2.busi_status like '%${customerStatus}%'
-        </if>
-        <if test="prepareStatus!=null and prepareStatus !='' ">
-            and t1.status = #{prepareStatus}
-        </if>
-        <if test="start!=null">
-            and t1.created_time >= #{start}
-        </if>
-        <if test="end!=null">
-            <![CDATA[
-                and t1.created_time <= #{end}
-                ]]>
-        </if>
-        <if test="sort=='0'">
-            order by t2.busi_status_updated_time desc, t1.status_updated_time desc
-        </if>
-        <if test="sort=='1'">
-            order by t2.busi_status_updated_time asc, t1.status_updated_time asc
-        </if>
-        <if test="sort=='2'">
-            order by t2.updated_time desc
-        </if>
-        <if test="sort=='3'">
-            order by t2.updated_time asc
-        </if>
-
-        limit #{offset},#{limit}
+        <where>
+            <if test=" id != null and id > 0 ">
+                and t1.id = #{id}
+            </if>
+            <if test="userId!=null and userId >0 ">
+                and t1.user_id=#{userId}
+            </if>
+        </where>
     </select>
 
     <select id="slct" resultMap="prepareMap">

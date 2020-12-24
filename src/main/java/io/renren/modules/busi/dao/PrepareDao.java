@@ -19,5 +19,5 @@ public interface PrepareDao extends BaseMapper<PrepareEntity> {
     List<PrepareEntity> slct(Map<String, Object> params);
     long cnt(Map<String, Object> params);
 
-    PrepareEntity gtById(Integer id);
+    PrepareEntity gtById(Integer userId, Integer id);
 }

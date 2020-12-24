@@ -1,6 +1,7 @@
 package io.renren.modules.busi.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -87,5 +88,13 @@ public class CustomerStatusLogController {
         return R.ok();
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/lst")
+    public R lst(@RequestParam Map<String, Object> params){
+        List<CustomerStatusLogEntity> list = customerStatusLogService.queryList(params);
 
+        return R.ok().put("list", list);
+    }
 }
