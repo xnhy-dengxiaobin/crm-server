@@ -92,7 +92,7 @@ public class CustomerStatusLogController {
      * 列表
      */
     @RequestMapping("/lst")
-    public R lst(@RequestParam Map<String, Object> params){
+    public R lst(@RequestBody Map<String, Object> params){
         List<CustomerStatusLogEntity> list = customerStatusLogService.queryList(params);
 
         return R.ok().put("list", list);

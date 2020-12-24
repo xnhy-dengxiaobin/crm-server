@@ -27,7 +27,7 @@ public class CustomerStatusLogEntity implements Serializable {
 	/**
 	 * 报备id
 	 */
-	private Integer preparedId;
+	private Integer prepareId;
 	/**
 	 * 客户id
 	 */
