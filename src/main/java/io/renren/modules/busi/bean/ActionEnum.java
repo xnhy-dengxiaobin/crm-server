@@ -22,4 +22,12 @@ public enum ActionEnum {
         this.code = code;
         this.label = label;
     }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 }

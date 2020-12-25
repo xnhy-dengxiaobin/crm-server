@@ -37,6 +37,5 @@ public class CustomerStatusLogServiceImpl extends ServiceImpl<CustomerStatusLogD
                 .or()
                 .eq(customerId > 0, "customer_id", customerId)
         );
-
     }
 }

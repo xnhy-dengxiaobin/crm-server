@@ -4,12 +4,19 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
+import io.renren.modules.busi.bean.ActionEnum;
+import io.renren.modules.busi.bean.BusiStatusEnum;
+import io.renren.modules.busi.constant.Constant;
 import io.renren.modules.busi.dao.*;
 import io.renren.modules.busi.entity.*;
+import io.renren.modules.busi.service.CustomerStatusLogService;
 import io.renren.modules.busi.service.ReceptionService;
+import io.renren.modules.sys.dao.SetupDao;
+import io.renren.modules.sys.dao.SysConfigDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +40,9 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Autowired
     private CustomerStatusLogDao customerStatusLogDao;
 
+    @Autowired
+    private CustomerStatusLogService customerStatusLogService;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         QueryWrapper<ReceptionEntity> receptionEntityQueryWrapper = new QueryWrapper<>();
@@ -53,8 +63,12 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
                               BusiCustomerRoamEntity busiCustomerRoamEntity, long prepareId) {
         BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
 
-        if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
+        //如果没有客户，说明是初次到访，将其它相同电话号码的客户报备置为手工无效；添加状态变更日志人工确客：接收；添加经纪人保护期。
+        //如果客户已经存在->
+        //属于当前经纪人->更新经纪人保护期
+        //不属于当前经纪人->前经纪人是否还在保护期？是，登记无效，返回；否，更新当前经纪人的报备信息，设置customerId，记录经纪人变更转介路径
 
+        if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
             if (!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
                 //换了置业顾问，重新设置分配时间
                 busiCustomerEntity.setMatchUserTime(new Date());
@@ -97,6 +111,11 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
                         pEntity.setId(p.getId());
                         pEntity.setStatus(-20);
                         prepareDao.updateById(pEntity);
+
+                        //状态变更日志，手工无效
+                        CustomerStatusLogEntity visitedLog = customerStatusLogService.mannulReject(busiCustomerEntity.getId(), Long.valueOf(prepareId).intValue(), Constant.MANNUL_REJECT_REASON);
+                        visitedLog.setUserId(receptionEntity.getReceptionistId());
+                        customerStatusLogDao.insert(visitedLog);
                     }
                 }
 
@@ -105,11 +124,15 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
                 prepareEntity.setId(((Long) prepareId).intValue());
                 prepareEntity.setCustomerId(busiCustomerEntity.getId());
                 prepareEntity.setStatus(10);
+                //到访后的保护期
+                Date expired = DateUtils.addDateDays(new Date(), Constant.channelGranteePeriod);
+                prepareEntity.setExpired(expired);
                 prepareDao.updateById(prepareEntity);
 
                 //记录状态变更日志
-                CustomerStatusLogEntity customerStatusLogEntity = new CustomerStatusLogEntity();
-                //customerStatusLogEntity.setStatus();
+                CustomerStatusLogEntity visitedLog = customerStatusLogService.visited(busiCustomerEntity.getId(), Long.valueOf(prepareId).intValue());
+                visitedLog.setUserId(receptionEntity.getReceptionistId());
+                customerStatusLogDao.insert(visitedLog);
             }
         }
 
