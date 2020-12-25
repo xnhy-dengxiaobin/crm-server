@@ -70,18 +70,18 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("请选择当前要查看的项目");
     } else {
       return R.ok().put("newClient", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
-              .lambda().eq(BusiCustomerEntity::getProjectId, projectId)
-              .ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
+        .lambda().eq(BusiCustomerEntity::getProjectId, projectId)
+        .ge(BusiCustomerEntity::getCreateTime, LocalDate.now())))
 
         .put("flowClient", busiCustomerFollowService.toDayCount(projectId.toString()))
 
         .put("receptionNewClient", receptionService.count(new QueryWrapper<ReceptionEntity>()
-                .lambda().eq(ReceptionEntity::getProjectId, projectId)
-                .ge(ReceptionEntity::getIsNew, 1)))
+          .lambda().eq(ReceptionEntity::getProjectId, projectId)
+          .ge(ReceptionEntity::getIsNew, 1)))
 
         .put("receptionOldClient", receptionService.count(new QueryWrapper<ReceptionEntity>()
-                .lambda().eq(ReceptionEntity::getProjectId, projectId).
-                        ge(ReceptionEntity::getIsNew, 0)));
+          .lambda().eq(ReceptionEntity::getProjectId, projectId).
+            ge(ReceptionEntity::getIsNew, 0)));
     }
   }
 
@@ -98,17 +98,18 @@ public class BusiManagerCustomerController extends AbstractController {
     }
     Object endDate = params.get("endDate");
     Object unit = params.get("unit");
-    if(unit.toString().equals("day")){ //统计天
-      return dayConut(projectId, endDate,2);
-    }else if(unit.toString().equals("week")){ //统计周
-      return weekCountS(projectId,endDate);
-    }else if(unit.toString().equals("month")){ //统计月
-      return monthConut(projectId,endDate,2);
-    }else if(unit.toString().equals("year")){//统计年
-      return yearConut(projectId,endDate,2);
+    if (unit.toString().equals("day")) { //统计天
+      return dayConut(projectId, endDate, 2);
+    } else if (unit.toString().equals("week")) { //统计周
+      return weekCountS(projectId, endDate);
+    } else if (unit.toString().equals("month")) { //统计月
+      return monthConut(projectId, endDate, 2);
+    } else if (unit.toString().equals("year")) {//统计年
+      return yearConut(projectId, endDate, 2);
     }
     return null;
   }
+
   /**
    * 分析统计
    *
@@ -122,59 +123,59 @@ public class BusiManagerCustomerController extends AbstractController {
     }
     Object endDate = params.get("endDate");
     Object unit = params.get("unit");
-    if(unit.toString().equals("day")){ //统计天
-      return dayConut(projectId, endDate,1);
-    }else if(unit.toString().equals("week")){ //统计周
-    return weekConut(projectId,endDate);
-    }else if(unit.toString().equals("month")){ //统计月
-      return monthConut(projectId,endDate,1);
-    }else if(unit.toString().equals("year")){//统计年
-      return yearConut(projectId,endDate,1);
+    if (unit.toString().equals("day")) { //统计天
+      return dayConut(projectId, endDate, 1);
+    } else if (unit.toString().equals("week")) { //统计周
+      return weekConut(projectId, endDate);
+    } else if (unit.toString().equals("month")) { //统计月
+      return monthConut(projectId, endDate, 1);
+    } else if (unit.toString().equals("year")) {//统计年
+      return yearConut(projectId, endDate, 1);
     }
     return null;
   }
 
-  private R yearConut(Object projectId, Object endDate,int t) {
-    if(endDate == null || endDate.equals("")){
+  private R yearConut(Object projectId, Object endDate, int t) {
+    if (endDate == null || endDate.equals("")) {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String format = sdf.format(new Date());
       endDate = format;
     }
     List<Map> maps;
-    if(t == 1){
-      maps = receptionService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
-    }else{
-      maps = busiCustomerService.groupByDateCountYear(endDate.toString(),Integer.parseInt(projectId.toString()));
+    if (t == 1) {
+      maps = receptionService.groupByDateCountYear(endDate.toString(), Integer.parseInt(projectId.toString()));
+    } else {
+      maps = busiCustomerService.groupByDateCountYear(endDate.toString(), Integer.parseInt(projectId.toString()));
     }
-    return R.ok().put("rs",maps);
+    return R.ok().put("rs", maps);
   }
 
-  private R monthConut(Object projectId, Object endDate,int t) {
-    if(endDate == null || endDate.equals("")){
+  private R monthConut(Object projectId, Object endDate, int t) {
+    if (endDate == null || endDate.equals("")) {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String format = sdf.format(new Date());
       endDate = format;
     }
     List<Map> maps;
-    if(t == 1) {
+    if (t == 1) {
       maps = receptionService.groupByDateCountMonth(endDate.toString(), Integer.parseInt(projectId.toString()));
-    }else{
+    } else {
       maps = busiCustomerService.groupByDateCountMonth(endDate.toString(), Integer.parseInt(projectId.toString()));
     }
-    return R.ok().put("rs",maps);
+    return R.ok().put("rs", maps);
   }
 
-  private R weekCountS(Object projectId, Object endDate){
+  private R weekCountS(Object projectId, Object endDate) {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     String paramDate;
-    if(endDate != null && !endDate.equals("")) {
+    if (endDate != null && !endDate.equals("")) {
       paramDate = endDate.toString();
-    }else{
+    } else {
       Date date = new Date();
       Calendar calendar = Calendar.getInstance();
       calendar.setFirstDayOfWeek(Calendar.MONDAY);//设置星期一为一周开始的第一天
       calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
-      Integer weekNum ;
+      Integer weekNum;
       calendar.setTimeInMillis(date.getTime());//时间戳
       weekNum = calendar.get(Calendar.WEEK_OF_YEAR);//获得当前日期属于今年的第几周
       SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy");
@@ -186,34 +187,34 @@ public class BusiManagerCustomerController extends AbstractController {
       paramDate = simpleDateFormat.format(endtime);
     }
     List<Map> maps = busiCustomerService.groupByDateCountWeek(paramDate, Integer.parseInt(projectId.toString()));
-    return R.ok().put("rs",maps);
+    return R.ok().put("rs", maps);
   }
 
   private R weekConut(Object projectId, Object endDate) {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     Date date = null;
-    if(endDate != null && !endDate.equals("")) {
+    if (endDate != null && !endDate.equals("")) {
       try {
         date = simpleDateFormat.parse(endDate.toString());
       } catch (ParseException e) {
         e.printStackTrace();
       }
-    }else{
+    } else {
       date = new Date();
     }
     Calendar calendar = Calendar.getInstance();
     calendar.setFirstDayOfWeek(Calendar.MONDAY);//设置星期一为一周开始的第一天
     calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
-    Integer weekNum ;
+    Integer weekNum;
     SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy");
     String format = simpleDateFormat2.format(date);
     SimpleDateFormat simpleDateFormat3 = new SimpleDateFormat("MM/dd");
     int yyyy = Integer.parseInt(format);
     calendar.setTimeInMillis(date.getTime());//时间戳
     weekNum = calendar.get(Calendar.WEEK_OF_YEAR);//获得当前日期属于今年的第几周
-    System.out.println("第几年："+weekNum);
-    List<Map<String,Object>> rsList = new ArrayList<>();
-    for (int i =1;i<9;i++){
+    System.out.println("第几年：" + weekNum);
+    List<Map<String, Object>> rsList = new ArrayList<>();
+    for (int i = 1; i < 9; i++) {
       calendar.setWeekDate(yyyy, weekNum, 2);
       //获得Calendar的时间
       Date starttime = calendar.getTime();
@@ -223,49 +224,49 @@ public class BusiManagerCustomerController extends AbstractController {
       //将时间戳格式化为指定格式
       String dateStart = simpleDateFormat.format(starttime);
       String dateEnd = simpleDateFormat.format(endtime);
-      weekNum -- ;
+      weekNum--;
       Map<String, Object> map = new HashMap<>();
-      map.put("startDate",dateStart + " 00:00:00");
-      map.put("endDate",dateEnd + " 59:59:59");
-      map.put("fullDate",dateEnd);
-      map.put("dateAbscissa",simpleDateFormat3.format(starttime) +""+ simpleDateFormat3.format(endtime));
+      map.put("startDate", dateStart + " 00:00:00");
+      map.put("endDate", dateEnd + " 59:59:59");
+      map.put("fullDate", dateEnd);
+      map.put("dateAbscissa", simpleDateFormat3.format(starttime) + "" + simpleDateFormat3.format(endtime));
       rsList.add(map);
     }
-    countDb(rsList,projectId);
-    return R.ok().put("rs",rsList);
+    countDb(rsList, projectId);
+    return R.ok().put("rs", rsList);
   }
 
-  private void countDb(List<Map<String, Object>> rsList,Object projectId) {
+  private void countDb(List<Map<String, Object>> rsList, Object projectId) {
     for (Map<String, Object> map : rsList) {
       int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
-              .lambda()
-              .gt(ReceptionEntity::getCreateTime, map.get("startDate"))
-              .lt(ReceptionEntity::getCreateTime, map.get("endDate"))
-              .eq(ReceptionEntity::getProjectId,projectId));
-      map.put("num",count);
+        .lambda()
+        .gt(ReceptionEntity::getCreateTime, map.get("startDate"))
+        .lt(ReceptionEntity::getCreateTime, map.get("endDate"))
+        .eq(ReceptionEntity::getProjectId, projectId));
+      map.put("num", count);
     }
   }
 
-  private R dayConut(Object projectId, Object endDate,int t) {
-      if(endDate == null || endDate.equals("")){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String format = sdf.format(new Date());
-        endDate = format;
-      }
-      List<Map> maps ;
-      if(t == 1) {
-        maps = receptionService.groupByDateCount(endDate.toString(), Integer.parseInt(projectId.toString()));
-      }else {
-        maps = busiCustomerService.groupByDateCountDay(endDate.toString(), Integer.parseInt(projectId.toString()));
-      }
-      return R.ok().put("rs",maps);
+  private R dayConut(Object projectId, Object endDate, int t) {
+    if (endDate == null || endDate.equals("")) {
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      String format = sdf.format(new Date());
+      endDate = format;
+    }
+    List<Map> maps;
+    if (t == 1) {
+      maps = receptionService.groupByDateCount(endDate.toString(), Integer.parseInt(projectId.toString()));
+    } else {
+      maps = busiCustomerService.groupByDateCountDay(endDate.toString(), Integer.parseInt(projectId.toString()));
+    }
+    return R.ok().put("rs", maps);
   }
 
   /**
    * 列表
    */
   @RequestMapping("/listByDate")
-  public R listByDate(@RequestBody Map<String, Object> params)throws ParseException {
+  public R listByDate(@RequestBody Map<String, Object> params) throws ParseException {
     String dateStart = null;
     String dateEnd = null;
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -300,8 +301,8 @@ public class BusiManagerCustomerController extends AbstractController {
         dateStart = yearStr + "-01-01 00:00:00";
         dateEnd = date + " 59:59:59";
       }
-      params.put("startDate",dateStart);
-      params.put("endDate",dateEnd);
+      params.put("startDate", dateStart);
+      params.put("endDate", dateEnd);
       PageUtils maps = receptionService.listBySalerId(params);
       return R.ok().put("page", maps);
     }
@@ -324,76 +325,76 @@ public class BusiManagerCustomerController extends AbstractController {
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
     } else {
-      if(date == null || date.equals("")){
+      if (date == null || date.equals("")) {
         String format = sdf.format(new Date());
         date = format;
       }
       Object unit = params.get("unit");
-      if(unit.toString().equals("day")){
+      if (unit.toString().equals("day")) {
         dateStart = date + " 00:00:00";
         dateEnd = date + " 59:59:59";
-      }else if(unit.toString().equals("week")){
+      } else if (unit.toString().equals("week")) {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(sdf.parse(date.toString()));
-        calendar.add(calendar.DATE,-6);
-        dateStart = sdf.format(calendar.getTime()) +" 00:00:00";
-        dateEnd = date+" 59:59:59";
-      }else if(unit.toString().equals("month")){
+        calendar.add(calendar.DATE, -6);
+        dateStart = sdf.format(calendar.getTime()) + " 00:00:00";
+        dateEnd = date + " 59:59:59";
+      } else if (unit.toString().equals("month")) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
         Date parse = format.parse(date.toString());
         dateStart = format.format(parse) + "-01 00:00:00";
-        dateEnd = date+" 59:59:59";
-      }else if(unit.toString().equals("year")){
+        dateEnd = date + " 59:59:59";
+      } else if (unit.toString().equals("year")) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy");
         Date parse = format.parse(date.toString());
         String yearStr = format.format(parse);
         dateStart = yearStr + "-01-01 00:00:00";
-        dateEnd = date+" 59:59:59";
+        dateEnd = date + " 59:59:59";
       }
-      rs = getComInfo(dateStart, dateEnd,projectId);
-      return R.ok().put("rs",rs);
+      rs = getComInfo(dateStart, dateEnd, projectId);
+      return R.ok().put("rs", rs);
     }
   }
 
-  private Map<String, Integer> getComInfo(String dateStart, String dateEnd,Object projectId) {
+  private Map<String, Integer> getComInfo(String dateStart, String dateEnd, Object projectId) {
     int count = receptionService.count(new QueryWrapper<ReceptionEntity>()
-            .lambda()
-            .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd)
-            .eq(ReceptionEntity::getProjectId,projectId));
+      .lambda()
+      .gt(ReceptionEntity::getCreateTime, dateStart)
+      .lt(ReceptionEntity::getCreateTime, dateEnd)
+      .eq(ReceptionEntity::getProjectId, projectId));
 
     int countNew = receptionService.count(new QueryWrapper<ReceptionEntity>()
-            .lambda()
-            .eq(ReceptionEntity::getIsNew, 1)
-            .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd)
-            .eq(ReceptionEntity::getProjectId,projectId));
+      .lambda()
+      .eq(ReceptionEntity::getIsNew, 1)
+      .gt(ReceptionEntity::getCreateTime, dateStart)
+      .lt(ReceptionEntity::getCreateTime, dateEnd)
+      .eq(ReceptionEntity::getProjectId, projectId));
 
     int countOld = receptionService.count(new QueryWrapper<ReceptionEntity>()
-            .lambda()
-            .eq(ReceptionEntity::getIsNew, 0)
-            .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd)
-            .eq(ReceptionEntity::getProjectId,projectId));
+      .lambda()
+      .eq(ReceptionEntity::getIsNew, 0)
+      .gt(ReceptionEntity::getCreateTime, dateStart)
+      .lt(ReceptionEntity::getCreateTime, dateEnd)
+      .eq(ReceptionEntity::getProjectId, projectId));
 
     int countYcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
-            .lambda().eq(ReceptionEntity::getStatus,1)
-            .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd)
-            .eq(ReceptionEntity::getProjectId,projectId));
+      .lambda().eq(ReceptionEntity::getStatus, 1)
+      .gt(ReceptionEntity::getCreateTime, dateStart)
+      .lt(ReceptionEntity::getCreateTime, dateEnd)
+      .eq(ReceptionEntity::getProjectId, projectId));
 
 
     int countWcl = receptionService.count(new QueryWrapper<ReceptionEntity>()
-            .lambda().eq(ReceptionEntity::getStatus,0)
-            .gt(ReceptionEntity::getCreateTime,dateStart)
-            .lt(ReceptionEntity::getCreateTime,dateEnd)
-            .eq(ReceptionEntity::getProjectId,projectId));
+      .lambda().eq(ReceptionEntity::getStatus, 0)
+      .gt(ReceptionEntity::getCreateTime, dateStart)
+      .lt(ReceptionEntity::getCreateTime, dateEnd)
+      .eq(ReceptionEntity::getProjectId, projectId));
     Map<String, Integer> rs = new HashMap<>();
-    rs.put("countNew",countNew);
-    rs.put("countOld",countOld);
-    rs.put("countYcl",countYcl);
-    rs.put("countWcl",countWcl);
-    rs.put("count",count);
+    rs.put("countNew", countNew);
+    rs.put("countOld", countOld);
+    rs.put("countYcl", countYcl);
+    rs.put("countWcl", countWcl);
+    rs.put("count", count);
     return rs;
   }
 
@@ -459,9 +460,10 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString(),null);
+    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString(), null);
     return R.ok().put("page", new PageUtils(iPage));
   }
+
   /**
    * 逾期客户列表
    */
@@ -469,7 +471,7 @@ public class BusiManagerCustomerController extends AbstractController {
   public R allTimeoutList(@RequestParam Map<String, Object> params) {
     String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.timeoutPage(iPage, null, null,keywords);
+    iPage = busiCustomerService.timeoutPage(iPage, null, null, keywords);
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -483,7 +485,7 @@ public class BusiManagerCustomerController extends AbstractController {
 //    }
     String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId")==null?null:params.get("projectId").toString(),keywords,ParamResolvor.getInt(params, "stt"),ParamResolvor.getLong(params,"matchUserId"));
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId") == null ? null : params.get("projectId").toString(), keywords, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "matchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -496,7 +498,7 @@ public class BusiManagerCustomerController extends AbstractController {
       return R.error("参数异常");
     }
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString(),null, ParamResolvor.getInt(params, "stt"),ParamResolvor.getLong(params,"oldMatchUserId"));
+    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString(), null, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "oldMatchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -534,25 +536,7 @@ public class BusiManagerCustomerController extends AbstractController {
     if (ids.length < 1) {
       return R.ok();
     } else {
-      for (String id : ids) {
-        if(StringUtils.isEmpty(id)){
-          continue;
-        }
-        BusiCustomerRoamEntity roam = new BusiCustomerRoamEntity();
-        roam.setCreateTime(new Date());
-        roam.setCustomerId(Integer.parseInt(id));
-        roam.setRemark("回收，被" + getUser().getName() + "回收");
-        busiCustomerRoamService.save(roam);
-        BusiCustomerEntity entity = busiCustomerService.getById(id);
-        if (entity != null && !StringUtils.isEmpty(entity.getMatchUserId())) {
-          SysUserEntity sysUserEntity = sysUserService.getById(entity.getMatchUserId());
-          if (sysUserEntity != null) {
-            busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, id).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
-              .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 2).set(BusiCustomerEntity::getMatchUserId, null)
-            );
-          }
-        }
-      }
+      busiCustomerService.recovery(ids, getUser().getName());
     }
     return R.ok();
   }
@@ -589,7 +573,7 @@ public class BusiManagerCustomerController extends AbstractController {
           sysUserEntity = new SysUserEntity();
         }
         busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
-          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime,new Date())
+          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime, new Date())
         );
 
         i++;
