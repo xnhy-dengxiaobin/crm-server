@@ -80,7 +80,7 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
             busiCustomerRoamDao.insert(busiCustomerRoamEntity);
 
             //处理报备。关联报备记录，将其它相同号码的报备记录设置为无效
-            if(prepareId > 0){
+            if (prepareId > 0) {
                 PrepareEntity okPrepare = prepareDao.selectById(prepareId);
 
                 //先将其它相同客户号码的有效报备置为手工无效
@@ -88,9 +88,9 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
                 status.add(0);
                 status.add(10);
                 List<PrepareEntity> prepareEntities = prepareDao.selectList(new QueryWrapper<PrepareEntity>().in("status", status).eq("mobile", okPrepare.getMobile()));
-                if(CollectionUtils.isNotEmpty(prepareEntities)){
-                    for(PrepareEntity p : prepareEntities){
-                        if(p.getId() == prepareId){
+                if (CollectionUtils.isNotEmpty(prepareEntities)) {
+                    for (PrepareEntity p : prepareEntities) {
+                        if (p.getId() == prepareId) {
                             continue;
                         }
                         PrepareEntity pEntity = new PrepareEntity();
@@ -102,7 +102,7 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
                 //将当前报备设置为有效且关联客户id
                 PrepareEntity prepareEntity = new PrepareEntity();
-                prepareEntity.setId(((Long)prepareId).intValue());
+                prepareEntity.setId(((Long) prepareId).intValue());
                 prepareEntity.setCustomerId(busiCustomerEntity.getId());
                 prepareEntity.setStatus(10);
                 prepareDao.updateById(prepareEntity);
@@ -157,20 +157,21 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     }
 
     @Override
-    public List<Map> groupByDateCount(String endDate,Integer projectId){
-        List<Map> maps = baseMapper.groupByDateCount(endDate,projectId);
+    public List<Map> groupByDateCount(String endDate, Integer projectId) {
+        List<Map> maps = baseMapper.groupByDateCount(endDate, projectId);
         return maps;
     }
 
 
     @Override
-    public List<Map> groupByDateCountMonth(String endDate,Integer projectId){
-        List<Map> maps = baseMapper.groupByDateCountMonth(endDate,projectId);
+    public List<Map> groupByDateCountMonth(String endDate, Integer projectId) {
+        List<Map> maps = baseMapper.groupByDateCountMonth(endDate, projectId);
         return maps;
     }
+
     @Override
-    public List<Map> groupByDateCountYear(String endDate,Integer projectId){
-        List<Map> maps = baseMapper.groupByDateCountYear(endDate,projectId);
+    public List<Map> groupByDateCountYear(String endDate, Integer projectId) {
+        List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectId);
         return maps;
     }
 

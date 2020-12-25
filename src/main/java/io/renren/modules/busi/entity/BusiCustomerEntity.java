@@ -125,11 +125,22 @@ public class BusiCustomerEntity implements Serializable {
 	 * 客户来源
 	 */
 	private String source;
-
+	/**
+	 * 客户来源
+	 */
+	private Integer sourceId;
 	/**
 	 * 客户来源名称
 	 */
 	private String sourceName;
+	/**
+	 * 客户来源
+	 */
+	private Integer sourceUserId;
+	/**
+	 * 客户来源名称
+	 */
+	private String sourceUserName;
 
 	/**
 	 * 客户来源联系方式

@@ -108,7 +108,10 @@ public class ReceptionController extends AbstractController {
         busiCustomerEntity.setName(ParamResolvor.getString(customerMap, "name"));
         busiCustomerEntity.setSex(ParamResolvor.getString(customerMap, "sex"));
         busiCustomerEntity.setSource(ParamResolvor.getString(customerMap, "source"));
+        busiCustomerEntity.setSourceId(ParamResolvor.getInt(customerMap, "sourceId"));
         busiCustomerEntity.setSourceName(ParamResolvor.getString(customerMap, "sourceName"));
+        busiCustomerEntity.setSourceUserId(ParamResolvor.getInt(customerMap, "sourceUserId"));
+        busiCustomerEntity.setSourceUserName(ParamResolvor.getString(customerMap, "sourceUserName"));
         busiCustomerEntity.setSourceMobile(ParamResolvor.getString(customerMap, "sourceMobile"));
         busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId") + "");
         busiCustomerEntity.setOldMatchUserId(ParamResolvor.getInt(customerMap, "oldMatchUserId") + "");

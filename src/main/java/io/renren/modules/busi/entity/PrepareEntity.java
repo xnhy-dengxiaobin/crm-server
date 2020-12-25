@@ -66,6 +66,12 @@ public class PrepareEntity implements Serializable {
 	private String userId;
 
 	/**
+	 * 中介销售姓名
+	 */
+	@TableField(exist = false)
+	private String middleName;
+
+	/**
 	 * 经济人电话
 	 */
 	@TableField(exist = false)

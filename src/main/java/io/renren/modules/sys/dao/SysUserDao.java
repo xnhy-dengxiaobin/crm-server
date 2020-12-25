@@ -57,4 +57,6 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
    * @return
    */
   List<SysUserEntity> querySalesUserByProjectId(Map<String, Object> params);
+
+    List<SysUserEntity> slctMiddlemen(Map<String, Object> params);
 }

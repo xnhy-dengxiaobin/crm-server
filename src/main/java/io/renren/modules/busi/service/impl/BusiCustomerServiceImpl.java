@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
 import io.renren.modules.busi.dao.BusiCustomerDao;
 import io.renren.modules.busi.dao.ReceptionDao;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.BusiCustomerService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,9 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
         }
         if(params.get("desc") != null){
             busiCustomerEntityQueryWrapper.orderByDesc(params.get("desc").toString());
+        }
+        if(StringUtils.isNotEmpty(ParamResolvor.getString(params, "name"))){
+            busiCustomerEntityQueryWrapper.and(qw -> qw.like("name", ParamResolvor.getString(params, "name")));
         }
         IPage<BusiCustomerEntity> page = this.page(
                 new Query<BusiCustomerEntity>().getPage(params),

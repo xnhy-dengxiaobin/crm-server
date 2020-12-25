@@ -15,6 +15,7 @@
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
         <result property="userId" column="user_id"/>
+        <result property="middleName" column="middle_name"/>
         <result property="middleUserMobile" column="middle_user_mobile"/>
         <result property="middleTypeId" column="middle_type_id"/>
         <result property="middleTypeName" column="middle_type_name"/>
@@ -29,7 +30,7 @@
 
     <select id="gtById" resultType="PrepareEntity">
         select t1.*,t2.busi_status,t2.busi_status_updated_time,t3.name as project_name,
-        t4.mobile as middle_user_mobile,t4.middle_type_id,t4.middle_type_name
+        t4.name as middlename,t4.mobile as middle_user_mobile,t4.middle_type_id,t4.middle_type_name
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
