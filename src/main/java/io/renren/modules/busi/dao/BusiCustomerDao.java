@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 import java.util.Map;
@@ -28,4 +29,6 @@ public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
   List<Map> groupByDateCountMonth(String endDate, Integer projectId);
   List<Map> groupByDateCountYear(String endDate, Integer projectId);
 
+  @Select("select * from busi_customer where source='来电' and not exists(select 1 from busi_reception where customer_id = busi_customer.id) and date_add(create_time,interval 2 day) < now()")
+  List<BusiCustomerEntity> queryCallVisit();
 }
