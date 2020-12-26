@@ -70,16 +70,16 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
         //不属于当前经纪人->提示项目老客户
         if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
             //如果是渠道带过来的，首先检查客户是不是该渠道的
-            if(prepareId > 0){
+            if (prepareId > 0) {
                 //不是该渠道的，报错
                 PrepareEntity prepareEntity = prepareDao.gtById(busiCustomerEntity.getSourceUserId(), Long.valueOf(prepareId).intValue());
-                if(null == prepareEntity){
+                if (null == prepareEntity) {
                     throw new BusiException("项目老客户");
                 }
 
                 //是该渠道的，客户状态是来访并且已过保护期
-                if(cus.getBusiStatus() <= 30){
-                    if(new Date().after(prepareEntity.getExpired())){
+                if (cus.getBusiStatus() <= 30) {
+                    if (new Date().after(prepareEntity.getExpired())) {
                         throw new BusiException("已过保护期");
                     }
 
@@ -111,10 +111,12 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
             }
             receptionEntity.setIsNew(0);//老客户
         } else {
-            busiCustomerEntity.setMatchUserTime(new Date());
+            Date now = new Date();
+            busiCustomerEntity.setMatchUserTime(now);
             busiCustomerEntity.setProjectId(receptionEntity.getProjectId());
             busiCustomerEntity.setStatus(1);
             busiCustomerEntity.setBusiStatus(BusiStatusEnum.CUS_VISITED.getCode());
+            busiCustomerEntity.setBusiStatusUpdatedTime(now);
             busiCustomerDao.insert(busiCustomerEntity);
             receptionEntity.setIsNew(1);//新客户
 
@@ -154,14 +156,19 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
                 prepareEntity.setCustomerId(busiCustomerEntity.getId());
                 prepareEntity.setStatus(10);
                 //到访后的保护期
-                Date expired = DateUtils.addDateDays(new Date(), Constant.channelGranteePeriod);
+                Date expired = DateUtils.addDateDays(now, Constant.channelGranteePeriod);
                 prepareEntity.setExpired(expired);
                 prepareDao.updateById(prepareEntity);
 
                 //记录状态变更日志
+                //来访-来访
                 CustomerStatusLogEntity visitedLog = customerStatusLogService.visited(busiCustomerEntity.getId(), Long.valueOf(prepareId).intValue());
                 visitedLog.setUserId(receptionEntity.getReceptionistId());
                 customerStatusLogDao.insert(visitedLog);
+                //人工确客-接收
+                CustomerStatusLogEntity mannulLog = customerStatusLogService.mannulReceive(busiCustomerEntity.getId(), Long.valueOf(prepareId).intValue(), receptionEntity.getReceptionistName());
+                mannulLog.setUserId(receptionEntity.getReceptionistId());
+                customerStatusLogDao.insert(mannulLog);
             }
         }
 

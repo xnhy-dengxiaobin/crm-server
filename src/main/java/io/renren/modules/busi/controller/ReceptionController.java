@@ -96,6 +96,7 @@ public class ReceptionController extends AbstractController {
             Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
             ReceptionEntity receptionEntity = new ReceptionEntity();
             receptionEntity.setReceptionistId(getUserId().intValue());
+            receptionEntity.setReceptionistName(getUser().getName());
             receptionEntity.setProjectId(ParamResolvor.getInt(receptionMap, "projectId"));
             receptionEntity.setCustomerId(ParamResolvor.getInt(receptionMap, "customerId"));
             receptionEntity.setSalerId(ParamResolvor.getInt(receptionMap, "salerId"));

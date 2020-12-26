@@ -70,7 +70,7 @@
         <if test="customerStatus!=null and customerStatus !='' ">
             and t2.busi_status like '%${customerStatus}%'
         </if>
-        <if test="prepareStatus!=null and prepareStatus !='' ">
+        <if test="prepareStatus!=null ">
             and t1.status = #{prepareStatus}
         </if>
         <if test="start!=null">

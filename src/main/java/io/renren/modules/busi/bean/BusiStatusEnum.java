@@ -10,7 +10,7 @@ public enum BusiStatusEnum {
     PREPARE_EXPIRED(-30, "过期无效"),
     PREPARE_OK(10, "有效"),
 
-    CUS_PREPARED(20, "报备"),
+    CUS_PREPARED(20, "接收"),
     CUS_VISITED(30, "来访"),
     CUS_SOLICITED(40, "认筹"),
     CUS_SUBSCRIBED(50, "认购"),
