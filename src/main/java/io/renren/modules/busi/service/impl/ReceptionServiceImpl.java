@@ -13,6 +13,7 @@ import io.renren.modules.busi.bean.BusiStatusEnum;
 import io.renren.modules.busi.constant.Constant;
 import io.renren.modules.busi.dao.*;
 import io.renren.modules.busi.entity.*;
+import io.renren.modules.busi.exception.BusiException;
 import io.renren.modules.busi.service.CustomerStatusLogService;
 import io.renren.modules.busi.service.ReceptionService;
 import io.renren.modules.sys.dao.SetupDao;
@@ -60,15 +61,42 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity,
-                              BusiCustomerRoamEntity busiCustomerRoamEntity, long prepareId) {
+                              BusiCustomerRoamEntity busiCustomerRoamEntity, Integer prepareId) {
         BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
 
         //如果没有客户，说明是初次到访，将其它相同电话号码的客户报备置为手工无效；添加状态变更日志人工确客：接收；添加经纪人保护期。
         //如果客户已经存在->
-        //属于当前经纪人->更新经纪人保护期
-        //不属于当前经纪人->前经纪人是否还在保护期？是，登记无效，返回；否，更新当前经纪人的报备信息，设置customerId，记录经纪人变更转介路径
-
+        //属于当前经纪人->检查客户状态，是来访且在保护期内:更新经纪人保护期，是来访在保护期外：提示无效，在来访之上：不用做什么
+        //不属于当前经纪人->提示项目老客户
         if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
+            //如果是渠道带过来的，首先检查客户是不是该渠道的
+            if(prepareId > 0){
+                //不是该渠道的，报错
+                PrepareEntity prepareEntity = prepareDao.gtById(busiCustomerEntity.getSourceUserId(), Long.valueOf(prepareId).intValue());
+                if(null == prepareEntity){
+                    throw new BusiException("项目老客户");
+                }
+
+                //是该渠道的，客户状态是来访并且已过保护期
+                if(cus.getBusiStatus() <= 30){
+                    if(new Date().after(prepareEntity.getExpired())){
+                        throw new BusiException("已过保护期");
+                    }
+
+                    //客户状态是来访，在保护期内，更新保护期
+                    PrepareEntity pp = new PrepareEntity();
+                    pp.setId(prepareEntity.getId());
+                    Date expired = DateUtils.addDateDays(new Date(), 30);
+                    pp.setExpired(expired);
+                    prepareDao.updateById(pp);
+
+                    //记录保护期更新日志
+                    CustomerStatusLogEntity customerStatusLogEntity = customerStatusLogService.periodChangeVisited(cus.getId(), prepareId, expired);
+                    customerStatusLogEntity.setUserId(receptionEntity.getReceptionistId());
+                    customerStatusLogDao.insert(customerStatusLogEntity);
+                }
+            }
+
             if (!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
                 //换了置业顾问，重新设置分配时间
                 busiCustomerEntity.setMatchUserTime(new Date());
@@ -86,6 +114,7 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
             busiCustomerEntity.setMatchUserTime(new Date());
             busiCustomerEntity.setProjectId(receptionEntity.getProjectId());
             busiCustomerEntity.setStatus(1);
+            busiCustomerEntity.setBusiStatus(BusiStatusEnum.CUS_VISITED.getCode());
             busiCustomerDao.insert(busiCustomerEntity);
             receptionEntity.setIsNew(1);//新客户
 
@@ -121,7 +150,7 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
                 //将当前报备设置为有效且关联客户id
                 PrepareEntity prepareEntity = new PrepareEntity();
-                prepareEntity.setId(((Long) prepareId).intValue());
+                prepareEntity.setId(prepareId);
                 prepareEntity.setCustomerId(busiCustomerEntity.getId());
                 prepareEntity.setStatus(10);
                 //到访后的保护期

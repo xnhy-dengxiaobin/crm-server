@@ -214,7 +214,7 @@ public class BusiCustomerEntity implements Serializable {
 	/**
 	 * 业务状态:报备、到访、认筹、认购和签约
 	 */
-	private String busiStatus;
+	private Integer busiStatus;
 	/**
 	 * 业务状态更新时间
 	 */

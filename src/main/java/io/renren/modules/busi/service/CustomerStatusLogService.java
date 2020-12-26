@@ -42,7 +42,7 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         }
         Map<String, Object> actionMap = ParamResolvor.getMap(Constant.customerStatusLog, action);
         Map<String, Object> statusMap = ParamResolvor.getMap(actionMap, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$date$", DateUtils.format(new Date()));
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#date#", DateUtils.format(new Date()));
         String memo2 = ParamResolvor.getString(statusMap, "memo2");
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
@@ -70,7 +70,7 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         }
         Map<String, Object> actionMap = ParamResolvor.getMap(Constant.customerStatusLog, action);
         Map<String, Object> statusMap = ParamResolvor.getMap(actionMap, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$reason$", reason);
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#reason#", reason);
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
@@ -115,7 +115,7 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         String action = ActionEnum.VISITED.getLabel();
         String status = BusiStatusEnum.PREPARE_OK.getLabel();
         Map<String, Object> statusMap = getStatusMap(action, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$date$", DateUtils.format(new Date()));
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#date#", DateUtils.format(new Date()));
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
@@ -137,7 +137,7 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         String action = ActionEnum.MANNUL_AUDIT.getLabel();
         String status = BusiStatusEnum.CUS_VISITED.getLabel();
         Map<String, Object> statusMap = getStatusMap(action, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$date$", DateUtils.format(new Date()));
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#date#", DateUtils.format(new Date()));
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
@@ -159,7 +159,7 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         String action = ActionEnum.MANNUL_AUDIT.getLabel();
         String status = BusiStatusEnum.PREPARE_MANNUL_REJECT.getLabel();
         Map<String, Object> statusMap = getStatusMap(action, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$reason$", reason);
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#reason#", reason);
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
@@ -187,6 +187,28 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
         customerStatusLogEntity.setMemo2(memo2);
+        customerStatusLogEntity.setFoundTime(new Date());
+        customerStatusLogEntity.setCustomerId(customerId);
+        customerStatusLogEntity.setPrepareId(parepareId);
+        return customerStatusLogEntity;
+    }
+
+    /**
+     * 添加日志：保护期变更-来访
+     *
+     * @param customerId
+     * @param parepareId
+     * @return
+     */
+    default CustomerStatusLogEntity periodChangeVisited(int customerId, int parepareId, Date date) {
+        CustomerStatusLogEntity customerStatusLogEntity = new CustomerStatusLogEntity();
+        String action = ActionEnum.PROTECT_PERIOD_CHANGE.getLabel();
+        String status = BusiStatusEnum.CUS_VISITED.getLabel();
+        Map<String, Object> statusMap = getStatusMap(action, status);
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#date#", DateUtils.format(date));
+        customerStatusLogEntity.setAction(action);
+        customerStatusLogEntity.setStatus(status);
+        customerStatusLogEntity.setMemo1(memo1);
         customerStatusLogEntity.setFoundTime(new Date());
         customerStatusLogEntity.setCustomerId(customerId);
         customerStatusLogEntity.setPrepareId(parepareId);
@@ -251,8 +273,8 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         String action = ActionEnum.SUBSCRIBE.getLabel();
         String status = BusiStatusEnum.CUS_SUBSCRIBED.getLabel();
         Map<String, Object> statusMap = getStatusMap(action, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$room$", room);
-        String memo2 = rep(ParamResolvor.getString(statusMap, "memo2"), "$date$", DateUtils.format(new Date()));
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#room#", room);
+        String memo2 = rep(ParamResolvor.getString(statusMap, "memo2"), "#date#", DateUtils.format(new Date()));
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
@@ -275,9 +297,9 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         String action = ActionEnum.TRANSCTION_VOID.getLabel();
         String status = BusiStatusEnum.CUS_SUBSCRIBED_DISCARD.getLabel();
         Map<String, Object> statusMap = getStatusMap(action, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$reason$", reason);
-        String memo2 = rep(ParamResolvor.getString(statusMap, "memo2"), "$room$", room);
-        String memo3 = rep(ParamResolvor.getString(statusMap, "memo3"), "$date$", DateUtils.format(new Date()));
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#reason#", reason);
+        String memo2 = rep(ParamResolvor.getString(statusMap, "memo2"), "#room#", room);
+        String memo3 = rep(ParamResolvor.getString(statusMap, "memo3"), "#date#", DateUtils.format(new Date()));
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);
@@ -301,8 +323,8 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
         String action = ActionEnum.SIGN.getLabel();
         String status = BusiStatusEnum.CUS_SIGNED.getLabel();
         Map<String, Object> statusMap = getStatusMap(action, status);
-        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "$room$", room);
-        String memo2 = rep(ParamResolvor.getString(statusMap, "memo2"), "$date$", DateUtils.format(new Date()));
+        String memo1 = rep(ParamResolvor.getString(statusMap, "memo1"), "#room#", room);
+        String memo2 = rep(ParamResolvor.getString(statusMap, "memo2"), "#date#", DateUtils.format(new Date()));
         customerStatusLogEntity.setAction(action);
         customerStatusLogEntity.setStatus(status);
         customerStatusLogEntity.setMemo1(memo1);

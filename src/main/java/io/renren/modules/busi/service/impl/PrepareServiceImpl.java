@@ -1,7 +1,9 @@
 package io.renren.modules.busi.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.constant.Constant;
 import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
 import org.apache.commons.lang.StringUtils;
@@ -107,6 +109,7 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
             prepare.setCreatedTime(new Date());
             prepare.setUpdatedTime(new Date());
             prepare.setStatusUpdatedTime(new Date());
+            prepare.setExpired(DateUtils.addDateDays(new Date(), Constant.prepareValidPeriod));
             getBaseMapper().insert(prepare);
             msg="报备成功";
         }
