@@ -156,4 +156,8 @@ public class SysUserEntity implements Serializable {
 
   @TableField(exist = false)
   private List<Long> projectIds;
+
+  private Long teamId;
+
+  private String teamName;
 }

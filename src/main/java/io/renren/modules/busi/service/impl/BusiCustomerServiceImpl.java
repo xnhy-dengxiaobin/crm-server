@@ -3,6 +3,7 @@ package io.renren.modules.busi.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
@@ -13,11 +14,9 @@ import io.renren.modules.busi.dao.ReceptionDao;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
-import io.renren.modules.busi.service.BusiCustomerRoamService;
 import io.renren.modules.busi.service.BusiCustomerService;
 import io.renren.modules.sys.dao.SysUserDao;
 import io.renren.modules.sys.entity.SysUserEntity;
-import io.renren.modules.sys.service.SysUserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,31 +37,40 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   @Autowired
   private SysUserDao sysUserDao;
 
-  @Override
-  public PageUtils queryPage(Map<String, Object> params) {
-    QueryWrapper<BusiCustomerEntity> busiCustomerEntityQueryWrapper = new QueryWrapper<>();
-    if (params.get("matchUserId") != null) {
-      busiCustomerEntityQueryWrapper.eq("match_user_id", params.get("matchUserId"));
-    }
-    if (params.get("followUserId") != null) {
-      busiCustomerEntityQueryWrapper.and(qw -> qw.ne("follow_user_id", params.get("followUserId")).or().isNull("follow_user_id"));
-    }
-    if (params.get("condition") != null && !"".equals(params.get("condition"))) {
-      busiCustomerEntityQueryWrapper.and(qw -> qw.like("name", params.get("condition")).or().like("mobile_phone", params.get("condition")));
-    }
-    if (params.get("desc") != null) {
-      busiCustomerEntityQueryWrapper.orderByDesc(params.get("desc").toString());
-    }
-    if (StringUtils.isNotEmpty(ParamResolvor.getString(params, "name"))) {
-      busiCustomerEntityQueryWrapper.and(qw -> qw.like("name", ParamResolvor.getString(params, "name")));
-    }
-    IPage<BusiCustomerEntity> page = this.page(
-      new Query<BusiCustomerEntity>().getPage(params),
-      busiCustomerEntityQueryWrapper
-    );
+    @Override
+    public PageUtils queryPage(Map<String, Object> params) {
+        QueryWrapper<BusiCustomerEntity> busiCustomerEntityQueryWrapper = new QueryWrapper<>();
+        if(params.get("matchUserId") != null){
+            busiCustomerEntityQueryWrapper.eq("match_user_id",params.get("matchUserId"));
+        }
+        if(params.get("followUserId") != null){
+            busiCustomerEntityQueryWrapper.and(qw->qw.ne("follow_user_id",params.get("followUserId")).or().isNull("follow_user_id"));
+        }
+        if(params.get("condition") != null && !"".equals(params.get("condition"))){
+            busiCustomerEntityQueryWrapper.and(qw->qw.like("name",params.get("condition")).or().like("mobile_phone",params.get("condition")));
+        }
+        if(params.get("desc") != null){
+            busiCustomerEntityQueryWrapper.orderByDesc(params.get("desc").toString());
+        }
+        if(params.get("invalid") != null){
+            busiCustomerEntityQueryWrapper.lambda().eq(BusiCustomerEntity::getInvalid,params.get("invalid"));
+        }
+        if(params.get("projectId") != null){
+            busiCustomerEntityQueryWrapper.lambda().eq(BusiCustomerEntity::getProjectId,params.get("projectId"));
+        }
+        if(params.get("status") != null){
+            busiCustomerEntityQueryWrapper.lambda().eq(BusiCustomerEntity::getStatus,params.get("status"));
+        }
+        if (StringUtils.isNotEmpty(ParamResolvor.getString(params, "name"))) {
+            busiCustomerEntityQueryWrapper.and(qw -> qw.like("name", ParamResolvor.getString(params, "name")));
+        }
+        IPage<BusiCustomerEntity> page = this.page(
+                new Query<BusiCustomerEntity>().getPage(params),
+                busiCustomerEntityQueryWrapper
+        );
 
-    return new PageUtils(page);
-  }
+        return new PageUtils(page);
+    }
 
   @Override
   public IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId, String projectId) {
@@ -88,6 +96,16 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   public long countTimeout(Object projectId) {
     return baseMapper.countTimeout(projectId);
   }
+    @Override
+    public long countRepetition(Object projectId) {
+        return baseMapper.countRepetition(projectId);
+    }
+
+    @Override
+    public long countCollide(Object projectId) {
+        return baseMapper.countCollide(projectId);
+    }
+
 
   @Override
   public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {
@@ -135,6 +153,38 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
     List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectId);
     return maps;
   }
+    @Override
+    public PageUtils groupRepetition(Map<String, Object> params){
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+        List<Map> list = getBaseMapper().groupRepetition(params);
+        Long cnt = getBaseMapper().countRepetition(params.get("projectId"));
+        Page<Map> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(list);
+        return new PageUtils(page);
+    }
+    @Override
+    public PageUtils collideList(Map<String, Object> params){
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+        List<Map> list = getBaseMapper().collideList(params);
+        Long cnt = getBaseMapper().countRepetition(params.get("projectId"));
+        Page<Map> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(list);
+        return new PageUtils(page);
+    }
 
   @Override
   public void recovery(String[] ids,String userName) {
