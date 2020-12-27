@@ -10,10 +10,11 @@ public enum BusiStatusEnum {
     PREPARE_EXPIRED(-30, "过期无效"),
     PREPARE_OK(10, "有效"),
 
-    CUS_PREPARED(20, "报备"),
+    CUS_PREPARED(20, "接收"),
     CUS_VISITED(30, "来访"),
     CUS_SOLICITED(40, "认筹"),
     CUS_SUBSCRIBED(50, "认购"),
+    CUS_SUBSCRIBED_DISCARD(55, "认购作废"),
     CUS_SIGNED(60, "签约");
 
     private int code;
@@ -22,5 +23,13 @@ public enum BusiStatusEnum {
     private BusiStatusEnum(int code, String label) {
         this.code = code;
         this.label = label;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }

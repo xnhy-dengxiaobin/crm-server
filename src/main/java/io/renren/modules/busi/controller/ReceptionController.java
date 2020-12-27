@@ -6,6 +6,7 @@ import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
 import io.renren.modules.busi.entity.ReceptionEntity;
+import io.renren.modules.busi.exception.BusiException;
 import io.renren.modules.busi.service.BusiCustomerService;
 import io.renren.modules.busi.service.ReceptionService;
 import io.renren.modules.sys.controller.AbstractController;
@@ -89,43 +90,51 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody Map<String, Object> params) {
-        Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
+        try {
+            Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
 
-        Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
-        ReceptionEntity receptionEntity = new ReceptionEntity();
-        receptionEntity.setReceptionistId(getUserId().intValue());
-        receptionEntity.setProjectId(ParamResolvor.getInt(receptionMap, "projectId"));
-        receptionEntity.setCustomerId(ParamResolvor.getInt(receptionMap, "customerId"));
-        receptionEntity.setSalerId(ParamResolvor.getInt(receptionMap, "salerId"));
-        receptionEntity.setCnt(ParamResolvor.getInt(receptionMap, "cnt"));
-        receptionEntity.setMemo(ParamResolvor.getString(receptionMap, "memo"));
-        receptionEntity.setStatus(0);
-        receptionEntity.setCreateTime(new Date());
+            Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
+            ReceptionEntity receptionEntity = new ReceptionEntity();
+            receptionEntity.setReceptionistId(getUserId().intValue());
+            receptionEntity.setReceptionistName(getUser().getName());
+            receptionEntity.setProjectId(ParamResolvor.getInt(receptionMap, "projectId"));
+            receptionEntity.setCustomerId(ParamResolvor.getInt(receptionMap, "customerId"));
+            receptionEntity.setSalerId(ParamResolvor.getInt(receptionMap, "salerId"));
+            receptionEntity.setCnt(ParamResolvor.getInt(receptionMap, "cnt"));
+            receptionEntity.setMemo(ParamResolvor.getString(receptionMap, "memo"));
+            receptionEntity.setStatus(0);
+            receptionEntity.setCreateTime(new Date());
 
-        BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
-        busiCustomerEntity.setId(ParamResolvor.getIntAsDefault(customerMap, "id", 0));
-        busiCustomerEntity.setMobilePhone(ParamResolvor.getString(customerMap, "mobilePhone"));
-        busiCustomerEntity.setName(ParamResolvor.getString(customerMap, "name"));
-        busiCustomerEntity.setSex(ParamResolvor.getString(customerMap, "sex"));
-        busiCustomerEntity.setSource(ParamResolvor.getString(customerMap, "source"));
-        busiCustomerEntity.setSourceName(ParamResolvor.getString(customerMap, "sourceName"));
-        busiCustomerEntity.setSourceMobile(ParamResolvor.getString(customerMap, "sourceMobile"));
-        busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId") + "");
-        busiCustomerEntity.setOldMatchUserId(ParamResolvor.getInt(customerMap, "oldMatchUserId") + "");
-        busiCustomerEntity.setOldMatchUserName(ParamResolvor.getString(customerMap, "oldMatchUserName") + "");
-        busiCustomerEntity.setCreateTime(new Date());
+            BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
+            busiCustomerEntity.setId(ParamResolvor.getIntAsDefault(customerMap, "id", 0));
+            busiCustomerEntity.setMobilePhone(ParamResolvor.getString(customerMap, "mobilePhone"));
+            busiCustomerEntity.setName(ParamResolvor.getString(customerMap, "name"));
+            busiCustomerEntity.setSex(ParamResolvor.getString(customerMap, "sex"));
+            busiCustomerEntity.setSource(ParamResolvor.getString(customerMap, "source"));
+            busiCustomerEntity.setSourceId(ParamResolvor.getInt(customerMap, "sourceId"));
+            busiCustomerEntity.setSourceName(ParamResolvor.getString(customerMap, "sourceName"));
+            busiCustomerEntity.setSourceUserId(ParamResolvor.getInt(customerMap, "sourceUserId"));
+            busiCustomerEntity.setSourceUserName(ParamResolvor.getString(customerMap, "sourceUserName"));
+            busiCustomerEntity.setSourceMobile(ParamResolvor.getString(customerMap, "sourceMobile"));
+            busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId") + "");
+            busiCustomerEntity.setOldMatchUserId(ParamResolvor.getInt(customerMap, "oldMatchUserId") + "");
+            busiCustomerEntity.setOldMatchUserName(ParamResolvor.getString(customerMap, "oldMatchUserName") + "");
+            busiCustomerEntity.setCreateTime(new Date());
 
-        SysUserEntity matchUser = sysUserService.getById(busiCustomerEntity.getMatchUserId());
-        BusiCustomerRoamEntity busiCustomerRoamEntity = new BusiCustomerRoamEntity();
-        busiCustomerRoamEntity.setUserId(getUserId().intValue());
-        busiCustomerRoamEntity.setRemark("分配，被" + getUser().getName() + "分配至" + matchUser.getName());
-        busiCustomerRoamEntity.setCreateTime(new Date());
+            SysUserEntity matchUser = sysUserService.getById(busiCustomerEntity.getMatchUserId());
+            BusiCustomerRoamEntity busiCustomerRoamEntity = new BusiCustomerRoamEntity();
+            busiCustomerRoamEntity.setUserId(getUserId().intValue());
+            busiCustomerRoamEntity.setRemark("分配，被" + getUser().getName() + "分配至" + matchUser.getName());
+            busiCustomerRoamEntity.setCreateTime(new Date());
 
-        long prepareId = ParamResolvor.getLongAsDefault(params, "prepareId", 0);
+            int prepareId = ParamResolvor.getIntAsDefault(params, "prepareId", 0);
 
-        receptionService.saveReception(receptionEntity, busiCustomerEntity, busiCustomerRoamEntity, prepareId);
+            receptionService.saveReception(receptionEntity, busiCustomerEntity, busiCustomerRoamEntity, prepareId);
 
-        return R.ok();
+            return R.ok();
+        } catch (BusiException e) {
+            return R.error(e.getMessage());
+        }
     }
 
     /**

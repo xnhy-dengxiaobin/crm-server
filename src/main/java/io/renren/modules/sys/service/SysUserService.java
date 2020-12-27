@@ -90,4 +90,11 @@ public interface SysUserService extends IService<SysUserEntity> {
    * @return
    */
   List<SysUserEntity> querySalesUserByProjectId(Long projectId);
+
+	/**
+	 * 查询经纪人信息
+	 * @param params
+	 * @return
+	 */
+    List<SysUserEntity> qryMiddlemen(Map<String, Object> params);
 }

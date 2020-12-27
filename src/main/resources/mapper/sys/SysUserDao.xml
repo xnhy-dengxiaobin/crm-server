@@ -2,49 +2,62 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.renren.modules.sys.dao.SysUserDao">
-	<!-- 查询用户的所有权限 -->
-	<select id="queryAllPerms" resultType="string">
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="string">
 		select m.perms from sys_user_role ur
 			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
 			LEFT JOIN sys_menu m on rm.menu_id = m.menu_id
 		where ur.user_id = #{userId}
 	</select>
 
-	<!-- 查询用户的所有菜单ID -->
-	<select id="queryAllMenuId" resultType="long">
+    <!-- 查询用户的所有菜单ID -->
+    <select id="queryAllMenuId" resultType="long">
 		select distinct rm.menu_id from sys_user_role ur
 			LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
 		where ur.user_id = #{userId}
 	</select>
 
-	<select id="queryByUserName" resultType="io.renren.modules.sys.entity.SysUserEntity">
+    <select id="queryByUserName" resultType="io.renren.modules.sys.entity.SysUserEntity">
 		select * from sys_user where username = #{username}
 	</select>
-  <select id="queryNormalFollow" resultType="io.renren.modules.sys.entity.SysUserEntity">
+    <select id="queryNormalFollow" resultType="io.renren.modules.sys.entity.SysUserEntity">
     select * from (select match_user_id,count(1) as count from busi_customer
     WHERE
     DATEDIFF(now(),match_user_time) &lt;= (select `value` from sys_setup where key_n='逾期时间')
      and project_id =#{projectId} and status = 1 group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
   </select>
-  <select id="queryTimeoutList" resultType="io.renren.modules.sys.entity.SysUserEntity">
+    <select id="queryTimeoutList" resultType="io.renren.modules.sys.entity.SysUserEntity">
     select * from (select match_user_id,count(1) as count from busi_customer
     WHERE DATEDIFF(now(),match_user_time) > (select `value` from sys_setup where key_n='逾期时间') and project_id =#{projectId} and status = 1 group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
   </select>
-  <select id="querySalesUserByProjectId" resultType="io.renren.modules.sys.entity.SysUserEntity">
-    select t2.user_id,t2.username,t2.email,t2.mobile,t2.head,t2.name,t2.create_time,t3.id as is_signed
-    from busi_user_project t1
-    left join sys_user t2 on t1.user_id = t2.user_id
-    left join busi_sign_on t3 on t2.user_id=t3.user_id
-    where 1=1
-    <if test="projectId!=null">
-      and t1.project_id =#{projectId}
-    </if>
-    and app_role = 2
-    and status=1
-    and t3.sign_on_date=#{today}
-  </select>
+    <select id="querySalesUserByProjectId" resultType="io.renren.modules.sys.entity.SysUserEntity">
+        select t2.user_id,t2.username,t2.email,t2.mobile,t2.head,t2.name,t2.create_time,t3.id as is_signed
+        from busi_user_project t1
+        left join sys_user t2 on t1.user_id = t2.user_id
+        left join busi_sign_on t3 on t2.user_id=t3.user_id
+        where 1=1
+        <if test="projectId!=null">
+            and t1.project_id =#{projectId}
+        </if>
+        and app_role = 2
+        and status=1
+        and t3.sign_on_date=#{today}
+    </select>
 
-
-
+    <select id="slctMiddlemen" resultType="io.renren.modules.sys.entity.SysUserEntity">
+        select t1.*
+        from sys_user t1
+        inner join busi_user_project t2 on t1.user_id = t2.user_id
+        where t1.status=1
+        <if test="projectId!=null and projectId > 0">
+            and t2.project_id =#{projectId}
+        </if>
+        <if test="middleTypeId!=null and middleTypeId > 0">
+            and t1.middle_type_id =#{middleTypeId}
+        </if>
+        <if test="name!=null and name!=''">
+            and t1.name like '%${name}%'
+        </if>
+    </select>
 
 </mapper>

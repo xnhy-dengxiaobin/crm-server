@@ -35,8 +35,7 @@ public class CustomerStatusLogServiceImpl extends ServiceImpl<CustomerStatusLogD
         return getBaseMapper().selectList(new QueryWrapper<CustomerStatusLogEntity>()
                 .eq("prepare_id", prepareId)
                 .or()
-                .eq(customerId > 0, "customer_id", customerId)
+                .eq(customerId > 0, "customer_id", customerId).orderByDesc("found_time")
         );
-
     }
 }

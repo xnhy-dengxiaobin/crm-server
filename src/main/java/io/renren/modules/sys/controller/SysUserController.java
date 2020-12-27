@@ -91,6 +91,16 @@ public class SysUserController extends AbstractController {
     }
 
     /**
+     * 项目下、某个身份下所有经纪人
+     */
+    @PostMapping("/slctMiddlemen")
+    public R slctMiddlemen(@RequestBody Map<String, Object> params) {
+        List<SysUserEntity> list = sysUserService.qryMiddlemen(params);
+
+        return R.ok().put("datas", list);
+    }
+
+    /**
      * 获取登录的用户信息
      */
     @GetMapping("/info")
@@ -212,4 +222,5 @@ public class SysUserController extends AbstractController {
 
         return R.ok();
     }
+
 }

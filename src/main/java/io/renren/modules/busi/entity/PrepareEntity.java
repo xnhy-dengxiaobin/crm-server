@@ -66,6 +66,12 @@ public class PrepareEntity implements Serializable {
 	private String userId;
 
 	/**
+	 * 中介销售姓名
+	 */
+	@TableField(exist = false)
+	private String middleName;
+
+	/**
 	 * 经济人电话
 	 */
 	@TableField(exist = false)
@@ -117,4 +123,9 @@ public class PrepareEntity implements Serializable {
 	 * 最近报备时间，可以重复报备，录入记录时默认为created_time
 	 */
 	private Date updatedTime;
+
+	/**
+	 * 保护期截至日期
+	 */
+	private Date expired;
 }
