@@ -28,7 +28,10 @@
         <result property="channel" column="channel"/>
         <result property="comeCount" column="come_count"/>
         <result property="source" column="source"/>
+        <result property="sourceId" column="source_id"/>
         <result property="sourceName" column="source_name"/>
+        <result property="sourceUserId" column="source_user_id"/>
+        <result property="sourceUserName" column="source_user_name"/>
         <result property="sourceMobile" column="source_mobile"/>
         <result property="followMode" column="follow_mode"/>
         <result property="familyStructure" column="family_structure"/>
