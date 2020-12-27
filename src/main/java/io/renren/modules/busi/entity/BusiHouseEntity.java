@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -74,11 +75,19 @@ public class BusiHouseEntity implements Serializable {
 	 */
 	private Integer projectId;
 
-	
+
 	private Integer groupId;
 	/**
 	 * 创建时间
 	 */
 	private Date createTime;
+
+
+	@TableField(exist = false)
+	private String projectName;
+
+
+	@TableField(exist = false)
+	private String groupName;
 
 }
