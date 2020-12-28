@@ -7,6 +7,7 @@ import io.renren.modules.busi.entity.BusiHouseEntity;
 import io.renren.modules.busi.entity.BusiHouseGroupEntity;
 import io.renren.modules.busi.service.BusiHouseGroupService;
 import io.renren.modules.busi.service.BusiHouseService;
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("busi/busihousegroup")
-public class BusiHouseGroupController {
+public class BusiHouseGroupController extends AbstractController {
     @Autowired
     private BusiHouseGroupService busiHouseGroupService;
     @Autowired
@@ -39,11 +40,37 @@ public class BusiHouseGroupController {
     @RequestMapping("/listByProjectId/{pid}")
     public R listByProjectId(@PathVariable("pid") Integer pid){
         List<BusiHouseGroupEntity> list = busiHouseGroupService.list(new QueryWrapper<BusiHouseGroupEntity>().eq("parent_id", pid).eq("type", "栋"));
-        for (BusiHouseGroupEntity busiHouseGroupEntity : list) {
-            Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId,busiHouseGroupEntity.getId()));
-            Integer ys = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId,busiHouseGroupEntity.getId()).ne(BusiHouseEntity::getStatus,"1"));
-            busiHouseGroupEntity.setSaleSum(ys+"");
-            busiHouseGroupEntity.setSum(zs+"");
+        if(getUser().getAppRole() == 2) {
+            for (BusiHouseGroupEntity busiHouseGroupEntity : list) {
+                Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()));
+                QueryWrapper<BusiHouseEntity> busiHouseEntityQueryWrapper = new QueryWrapper<>();
+                busiHouseEntityQueryWrapper.lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId());
+                busiHouseEntityQueryWrapper.lambda().and(wrapper -> wrapper.ne(BusiHouseEntity::getStatus, "1").or().eq(BusiHouseEntity::getControl, 1));
+                Integer ys = busiHouseService.count(busiHouseEntityQueryWrapper);
+
+                busiHouseGroupEntity.setSaleSum(ys + "");
+                busiHouseGroupEntity.setSum(zs + "");
+            }
+        }
+        if(getUser().getAppRole() == 1) {
+            for (BusiHouseGroupEntity busiHouseGroupEntity : list) {
+                Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()));
+                Integer ds = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
+                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"1").ne(BusiHouseEntity::getControl,1));
+                Integer xk = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
+                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"10")
+                        .and(wrapper -> wrapper.ne(BusiHouseEntity::getStatus, "1").or().eq(BusiHouseEntity::getControl, 1)));
+
+                Integer rg = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
+                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"20"));
+                Integer qy = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
+                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"30"));
+                busiHouseGroupEntity.setZs(zs);
+                busiHouseGroupEntity.setDs(ds);
+                busiHouseGroupEntity.setXk(xk);
+                busiHouseGroupEntity.setRg(rg);
+                busiHouseGroupEntity.setQy(qy);
+            }
         }
         return R.ok().put("list", list);
     }

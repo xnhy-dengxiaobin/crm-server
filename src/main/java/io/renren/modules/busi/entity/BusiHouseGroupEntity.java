@@ -60,6 +60,19 @@ public class BusiHouseGroupEntity implements Serializable {
 
 
 	@TableField(exist = false)
-	private Integer ys;
+	private Integer ds;
+
+	@TableField(exist = false)
+	private Integer xk;
+
+	@TableField(exist = false)
+	private Integer rg;
+
+	@TableField(exist = false)
+	private Integer qy;
+
+	@TableField(exist = false)
+	private Integer zs;
+
 
 }
