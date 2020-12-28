@@ -3,14 +3,53 @@
 
 <mapper namespace="io.renren.modules.busi.dao.MiddleTypeDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+	<!-- 可根据自己的需求，是否要使用
     <resultMap type="io.renren.modules.busi.entity.MiddleTypeEntity" id="middleTypeMap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="type" column="type"/>
         <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name"/>
         <result property="status" column="status"/>
-    </resultMap>
+    </resultMap>-->
 
-
+    <select id="slct" resultType="MiddleTypeEntity">
+        select t1.*,
+        t2.name as parent_name
+        from busi_middle_type t1
+        left join busi_middle_type t2 on t1.parent_id = t2.id
+        <where>
+            <if test=" id != null and id > 0 ">
+                and t1.id = #{id}
+            </if>
+            <if test="parentId!=null and parentId >0 ">
+                and t1.parent_id=#{parentId}
+            </if>
+            <if test="name!=null and name!='' ">
+                and t1.name like '%${name}%'
+            </if>
+            <if test="parentName!=null and parentName!='' ">
+                and t2.parent_name like '%${parentName}%'
+            </if>
+        </where>
+    </select>
+    <select id="cnt" resultType="int">
+        select count(*)
+        from busi_middle_type t1
+        left join busi_middle_type t2 on t1.parent_id = t2.id
+        <where>
+            <if test=" id != null and id > 0 ">
+                and t1.id = #{id}
+            </if>
+            <if test="parentId!=null and parentId >0 ">
+                and t1.parent_id=#{parentId}
+            </if>
+            <if test="name!=null and name!='' ">
+                and t1.name like '%${name}%'
+            </if>
+            <if test="parentName!=null and parentName!='' ">
+                and t2.parent_name like '%${parentName}%'
+            </if>
+        </where>
+    </select>
 </mapper>

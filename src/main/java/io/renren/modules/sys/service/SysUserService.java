@@ -102,4 +102,8 @@ public interface SysUserService extends IService<SysUserEntity> {
 	 * @return
 	 */
     List<SysUserEntity> qryMiddlemen(Map<String, Object> params);
+
+	PageUtils middleManPage(Map<String, Object> params);
+
+	void audit(Map<String, Object> params);
 }

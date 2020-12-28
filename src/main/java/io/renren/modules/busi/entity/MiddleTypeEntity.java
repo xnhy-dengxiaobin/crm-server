@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -37,5 +38,11 @@ public class MiddleTypeEntity implements Serializable {
 	private Integer status;
 
 	private Integer parentId;
+
+	/**
+	 *
+	 */
+	@TableField(exist = false)
+	private String parentName;
 
 }
