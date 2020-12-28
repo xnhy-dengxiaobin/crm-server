@@ -8,8 +8,10 @@ import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
 import com.github.houbb.pinyin.util.PinyinHelper;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
+import io.renren.modules.busi.entity.MiddleTypeEntity;
 import io.renren.modules.busi.service.BusiCustomerFollowService;
 import io.renren.modules.busi.service.BusiCustomerService;
+import io.renren.modules.busi.service.MiddleTypeService;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysUserService;
 import org.apache.commons.lang.RandomStringUtils;
@@ -38,6 +40,9 @@ public class ExcelTest {
     @Autowired
     private BusiCustomerFollowService followService;
 
+    @Autowired
+    private MiddleTypeService middleTypeService;
+
     @Test
     public void userInfoExcel(){
         ImportParams params = new ImportParams();
@@ -47,12 +52,50 @@ public class ExcelTest {
         System.out.println(list);
         List<SysUserEntity> sysUserEntities = new ArrayList<>();
         for (Map<String, Object> map : list) {
+            String dbMiddleName = null;
+            Integer dbMiddleId = null;
+            String middleName = toString(map.get("身份信息"));
+            String suoshu = toString(map.get("所属公司"));
             SysUserEntity user = new SysUserEntity();
-            String phone = toString(map.get("经纪人电话")).replace(" ", "");
+            String phone = toString(map.get("经纪人电话")).replace("\t", "");
             user.setUsername(phone);
             user.setName(toString(map.get("经纪人名称")));
             user.setMobile(phone);
-            user.setMiddleTypeName(toString(map.get("身份信息")));
+            if(middleName != null){
+                MiddleTypeEntity one = middleTypeService.getOne(new QueryWrapper<MiddleTypeEntity>().lambda().eq(MiddleTypeEntity::getName, middleName));
+                if(one == null){
+                    MiddleTypeEntity middleTypeEntity = new MiddleTypeEntity();
+                    middleTypeEntity.setName(middleName);
+                    middleTypeEntity.setType("1");
+                    middleTypeEntity.setStatus(1);
+                    middleTypeService.save(middleTypeEntity);
+                    dbMiddleName = middleName;
+                    dbMiddleId = middleTypeEntity.getId();
+                    one = middleTypeEntity;
+                }else {
+                    dbMiddleName = one.getName();
+                    dbMiddleId = one.getId();
+                }
+                if(middleName.equals("中介公司") && suoshu != null){ // 如果等于中介公司并且所属公司不为空
+                    MiddleTypeEntity s = middleTypeService.getOne(new QueryWrapper<MiddleTypeEntity>().lambda().eq(MiddleTypeEntity::getName, suoshu));
+                    if(s == null){
+                        MiddleTypeEntity middleTypeEntity = new MiddleTypeEntity();
+                        middleTypeEntity.setName(suoshu);
+                        middleTypeEntity.setType("1");
+                        middleTypeEntity.setStatus(1);
+                        middleTypeEntity.setParentId(one.getId());
+                        middleTypeService.save(middleTypeEntity);
+                        dbMiddleName = middleName;
+                        dbMiddleId = middleTypeEntity.getId();
+                    }else{
+                        dbMiddleName = s.getName();
+                        dbMiddleId = s.getId();
+                    }
+
+                }
+            }
+            user.setMiddleTypeName(dbMiddleName);
+            user.setMiddleTypeId(dbMiddleId != null?dbMiddleId+"":null);
             String status = toString(map.get("禁用状态"));
             user.setStatus(status.equals("未禁用")? 1:0);
             user.setSex(toString(map.get("经纪人性别")));
