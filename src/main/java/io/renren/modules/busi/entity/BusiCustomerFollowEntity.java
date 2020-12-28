@@ -64,6 +64,8 @@ public class BusiCustomerFollowEntity implements Serializable {
 	 */
 	private String createName;
 
+	private String matchUserId;
+
 	/**
 	 * 无效原因
 	 */
@@ -75,5 +77,13 @@ public class BusiCustomerFollowEntity implements Serializable {
 	 */
 	@TableField(exist = false)
 	private String invalidCause;
+
+	@TableField(exist = false)
+	private String mobilePhone;
+
+
+	@TableField(exist = false)
+	private String name;
+
 
 }

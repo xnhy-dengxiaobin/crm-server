@@ -73,12 +73,12 @@ public class BusiControlLogController extends AbstractController {
         if(busiControlLog.getControlStatus() == 1){
             BusiHouseEntity busiHouseEntity = new BusiHouseEntity();
             busiHouseEntity.setId(busiControlLog.getHouseId());
-            busiHouseEntity.setStatus("10");
+            busiHouseEntity.setControl(1);
             busiHouseService.updateById(busiHouseEntity);
         }else if(busiControlLog.getControlStatus() == 0){
             BusiHouseEntity busiHouseEntity = new BusiHouseEntity();
             busiHouseEntity.setId(busiControlLog.getHouseId());
-            busiHouseEntity.setStatus("1");
+            busiHouseEntity.setControl(0);
             busiHouseService.updateById(busiHouseEntity);
         }
         else{

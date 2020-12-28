@@ -2,11 +2,9 @@ package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.annotation.SysLog;
-import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.service.BusiProjectService;
-import io.renren.modules.sys.entity.SysMenuEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +35,9 @@ public class BusiProjectController {
     @RequestMapping("/listByParentId/{pid}")
     public R listByParentId(@PathVariable("pid") Integer pid){
         List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("parent_id", pid));
+        if(rsList == null || rsList.size() == 0){
+            rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("id", pid));
+        }
         return R.ok().put("list", rsList);
     }
 

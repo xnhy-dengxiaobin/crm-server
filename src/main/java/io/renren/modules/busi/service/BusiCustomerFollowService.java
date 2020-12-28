@@ -26,5 +26,8 @@ public interface BusiCustomerFollowService extends IService<BusiCustomerFollowEn
      * @param busiCustomerFollow
      */
     void saveFollow(BusiCustomerFollowEntity busiCustomerFollow, BusiCustomerEntity busiCustomerEntity);
+
+
+    PageUtils listPage(Map<String, Object> params);
 }
 
