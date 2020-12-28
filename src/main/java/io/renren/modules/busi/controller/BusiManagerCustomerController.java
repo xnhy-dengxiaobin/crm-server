@@ -398,6 +398,7 @@ public class BusiManagerCustomerController extends AbstractController {
     return rs;
   }
 
+
   /**
    * 客户分组统计
    */
@@ -410,7 +411,12 @@ public class BusiManagerCustomerController extends AbstractController {
         .put("timeoutCount", busiCustomerService
           .countTimeout(params.get("projectId")))
         .put("normalCount", busiCustomerService.countNormal(params.get("projectId")))
-        .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)));
+        .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)))
+        .put("repetitionCount",busiCustomerService.countRepetition(params.get("projectId")))
+        .put("collideCount",busiCustomerService.countCollide(params.get("projectId")))
+        .put("invalidCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
+                .lambda().eq(BusiCustomerEntity::getProjectId,params.get("projectId"))
+                .eq(BusiCustomerEntity::getInvalid,1).eq(BusiCustomerEntity::getStatus,1)));
     }
   }
 
@@ -488,6 +494,39 @@ public class BusiManagerCustomerController extends AbstractController {
     iPage = busiCustomerService.publicPage(iPage, params.get("projectId") == null ? null : params.get("projectId").toString(), keywords, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "matchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
+
+  /**
+   * 无效客户
+   */
+  @RequestMapping("/invalidList")
+  public R invalidList(@RequestParam Map<String, Object> params) {
+    if (params.get("projectId") == null) {
+      return R.error("参数异常");
+    }
+    params.put("invalid",1);
+    params.put("status",1);
+    PageUtils pageUtils = busiCustomerService.queryPage(params);
+    return R.ok().put("page",pageUtils);
+  }
+
+  /**
+   * 重复客户分组统计
+   */
+  @RequestMapping("/groupRepetitionList")
+  public R groupRepetitionList(@RequestParam Map<String, Object> params) {
+    PageUtils maps = busiCustomerService.groupRepetition(params);
+    return R.ok().put("page", maps);
+  }
+
+  /**
+   * 撞到客户统计
+   */
+  @RequestMapping("/collideList")
+  public R collideList(@RequestParam Map<String, Object> params) {
+    PageUtils maps = busiCustomerService.collideList(params);
+    return R.ok().put("page", maps);
+  }
+
 
   /**
    * 垃圾箱

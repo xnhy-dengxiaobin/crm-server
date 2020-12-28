@@ -39,13 +39,27 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
    */
   long countTimeout(Object projectId);
 
+    /**
+     * 根据项目ID 统计重复客户
+     * @param projectId
+     * @return
+     */
+    long countRepetition(Object projectId);
+
   /**
-   * 根据完整电话号码或者后四位查询
-   *
-   * @param params
+   * 根据项目ID 统计撞单客户
+   * @param projectId
    * @return
    */
-  List<BusiCustomerEntity> queryByPhone(Map<String, Object> params);
+    long countCollide(Object projectId);
+
+
+    /**
+     * 根据完整电话号码或者后四位查询
+     * @param params
+     * @return
+     */
+    List<BusiCustomerEntity> queryByPhone(Map<String, Object> params);
 
   /**
    * 查询 2天没有到访的来电客户
@@ -69,5 +83,21 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
   List<Map> groupByDateCountYear(String endDate, Integer projectId);
 
   void recovery(String[] ids,String userName);
+
+  /**
+   * 查询重复客户
+    * @param params
+   * @return
+   */
+  PageUtils groupRepetition(Map<String, Object> params);
+
+  /**
+   * 查询撞单客户
+   * @param params
+   * @return
+   */
+  PageUtils collideList(Map<String, Object> params);
+
+
 }
 

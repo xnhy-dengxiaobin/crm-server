@@ -18,7 +18,6 @@ import io.renren.common.exception.RRException;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
-import io.renren.modules.busi.dao.BusiUserProjectDao;
 import io.renren.modules.busi.service.BusiUserProjectService;
 import io.renren.modules.sys.dao.SysUserDao;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -163,6 +162,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
 
 		//用户和项目关系
 		busiUserProjectService.increaseOrModify(user.getUserId(), user.getProjectIds());
+	}
+
+	@Override
+	public void updateTeam(SysUserEntity user){
+		baseMapper.updateTeam(user.getTeamId(),user.getTeamName(),user.getUserId());
 	}
 
 	@Override

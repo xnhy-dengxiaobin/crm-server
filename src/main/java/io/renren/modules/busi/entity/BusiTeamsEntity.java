@@ -7,35 +7,29 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 中介来源，类型
  *
- * @author liuh
- * @email 18067435857@163.com
- * @date 2020-12-14 22:01:22
+ *
+ * @author æå¤§é¾
+ * @email 870455116@qq.com
+ * @date 2020-12-25 10:23:57
  */
 @Data
-@TableName("busi_middle_type")
-public class MiddleTypeEntity implements Serializable {
+@TableName("busi_teams")
+public class BusiTeamsEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 主键，自增长
+	 *
 	 */
 	@TableId
 	private Integer id;
 	/**
-	 * 名称
+	 *
 	 */
-	private String name;
+	private String teamName;
 	/**
 	 *
 	 */
-	private String type;
-	/**
-	 *
-	 */
-	private Integer status;
-
-	private Integer parentId;
+	private Integer projectId;
 
 }

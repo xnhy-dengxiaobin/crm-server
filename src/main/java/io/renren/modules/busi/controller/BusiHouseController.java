@@ -45,8 +45,7 @@ public class BusiHouseController {
     @RequestMapping("/list")
     @RequiresPermissions("busi:busihouse:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = busiHouseService.queryPage(params);
-
+        PageUtils page = busiHouseService.listPage(params);
         return R.ok().put("page", page);
     }
 

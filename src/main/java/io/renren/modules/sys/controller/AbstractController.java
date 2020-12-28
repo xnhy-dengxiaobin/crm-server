@@ -12,6 +12,10 @@ import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Controller公共组件
@@ -20,12 +24,21 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
+
 	protected SysUserEntity getUser() {
 		return (SysUserEntity) SecurityUtils.getSubject().getPrincipal();
 	}
 
 	protected Long getUserId() {
 		return getUser().getUserId();
+	}
+
+	protected Integer getProjectId(){
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		String projectId = request.getHeader("projectId");
+		if(projectId != null || !projectId.equals("")){
+			return Integer.parseInt(projectId);
+		}
+		return null;
 	}
 }

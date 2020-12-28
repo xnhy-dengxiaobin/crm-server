@@ -82,6 +82,9 @@
             <if test=" endDate!=null and endDate !='' ">
                 and br.create_time &lt; #{endDate}
             </if>
+            <if test=" projectId!=null and projectId !='' ">
+                and br.project_id = #{projectId}
+            </if>
         </where>
         order by br.create_time desc
         limit #{offset},#{limit}
@@ -101,6 +104,9 @@
             </if>
             <if test=" endDate!=null and endDate !='' ">
                 and br.create_time &lt; #{endDate}
+            </if>
+            <if test=" projectId!=null and projectId !='' ">
+                and br.project_id = #{projectId}
             </if>
         </where>
     </select>

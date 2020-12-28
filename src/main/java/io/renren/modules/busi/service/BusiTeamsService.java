@@ -2,20 +2,19 @@ package io.renren.modules.busi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
-import io.renren.modules.busi.entity.BusiHouseEntity;
+import io.renren.modules.busi.entity.BusiTeamsEntity;
 
 import java.util.Map;
 
 /**
- * 房源
+ * 
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
- * @date 2020-11-22 23:09:02
+ * @date 2020-12-25 10:23:57
  */
-public interface BusiHouseService extends IService<BusiHouseEntity> {
+public interface BusiTeamsService extends IService<BusiTeamsEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
-    PageUtils listPage(Map<String, Object> params);
 }
 

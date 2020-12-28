@@ -221,4 +221,13 @@ public class BusiCustomerEntity implements Serializable {
 	 * 业务状态更新时间
 	 */
   private Date busiStatusUpdatedTime;
+
+	/**
+	 * 是否无效
+	 */
+	private Integer invalid;
+	/**
+	 * 无效原因
+	 */
+ 	private String invalidCause;
 }

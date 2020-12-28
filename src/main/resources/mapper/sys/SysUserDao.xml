@@ -59,5 +59,9 @@
             and t1.name like '%${name}%'
         </if>
     </select>
+    <update id="updateTeam" parameterType="map">
+		update sys_user set team_id = #{teamId}, team_name = #{teamName} where user_id = #{userId}
+	</update>
+
 
 </mapper>

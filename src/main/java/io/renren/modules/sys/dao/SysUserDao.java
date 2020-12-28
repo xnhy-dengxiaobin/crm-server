@@ -11,6 +11,7 @@ package io.renren.modules.sys.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,9 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
    * @return
    */
   List<SysUserEntity> querySalesUserByProjectId(Map<String, Object> params);
+
+  int updateTeam(@Param("teamId") Long paramKey, @Param("teamName") String paramValue,  @Param("userId") Long userId);
+
 
     List<SysUserEntity> slctMiddlemen(Map<String, Object> params);
 }
