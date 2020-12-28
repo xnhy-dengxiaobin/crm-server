@@ -3,8 +3,10 @@ package io.renren.modules.busi.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
+import io.renren.modules.busi.entity.BusiHouseEntity;
 import io.renren.modules.busi.entity.BusiHouseGroupEntity;
 import io.renren.modules.busi.service.BusiHouseGroupService;
+import io.renren.modules.busi.service.BusiHouseService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ import java.util.Map;
 public class BusiHouseGroupController {
     @Autowired
     private BusiHouseGroupService busiHouseGroupService;
+    @Autowired
+    private BusiHouseService busiHouseService;
 
 
     /**
@@ -35,6 +39,12 @@ public class BusiHouseGroupController {
     @RequestMapping("/listByProjectId/{pid}")
     public R listByProjectId(@PathVariable("pid") Integer pid){
         List<BusiHouseGroupEntity> list = busiHouseGroupService.list(new QueryWrapper<BusiHouseGroupEntity>().eq("parent_id", pid).eq("type", "栋"));
+        for (BusiHouseGroupEntity busiHouseGroupEntity : list) {
+            Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId,busiHouseGroupEntity.getId()));
+            Integer ys = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId,busiHouseGroupEntity.getId()).ne(BusiHouseEntity::getStatus,"1"));
+            busiHouseGroupEntity.setSaleSum(ys+"");
+            busiHouseGroupEntity.setSum(zs+"");
+        }
         return R.ok().put("list", list);
     }
 

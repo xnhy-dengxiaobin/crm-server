@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -15,5 +17,8 @@ import java.time.LocalDate;
  */
 @Mapper
 public interface BusiCustomerFollowDao extends BaseMapper<BusiCustomerFollowEntity> {
-  public Integer toDayCount(String projectId, LocalDate localDate);
+  Integer toDayCount(String projectId, LocalDate localDate);
+  List<BusiCustomerFollowEntity> listPage(Map<String, Object> params);
+
+  Integer listPageCount(Map<String, Object> params);
 }

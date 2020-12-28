@@ -45,10 +45,8 @@ public class BusiCustomerFollowController extends AbstractController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("busi:busicustomerfollow:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = busiCustomerFollowService.queryPage(params);
-
+    public R list(@RequestBody Map<String, Object> params){
+        PageUtils page = busiCustomerFollowService.listPage(params);
         return R.ok().put("page", page);
     }
 
