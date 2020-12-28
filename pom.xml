@@ -259,6 +259,11 @@
 			<artifactId>weixin-java-pay</artifactId>
 			<version>${wx.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>cn.afterturn</groupId>
+			<artifactId>easypoi-base</artifactId>
+			<version>4.2.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
