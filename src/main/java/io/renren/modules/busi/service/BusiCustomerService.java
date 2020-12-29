@@ -74,13 +74,13 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
    */
   void perfect(BusiCustomerEntity busiCustomerEntity);
 
-  List<Map> groupByDateCountDay(String endDate, Integer projectId);
+  List<Map> groupByDateCountDay(String endDate, String[] projectIds);
 
-  List<Map> groupByDateCountWeek(String endDate, Integer projectId);
+  List<Map> groupByDateCountWeek(String endDate, String[] projectIds);
 
-  List<Map> groupByDateCountMonth(String endDate, Integer projectId);
+  List<Map> groupByDateCountMonth(String endDate, String[] projectIds);
 
-  List<Map> groupByDateCountYear(String endDate, Integer projectId);
+  List<Map> groupByDateCountYear(String endDate,String[] projectIds);
 
   void recovery(String[] ids,String userName);
 

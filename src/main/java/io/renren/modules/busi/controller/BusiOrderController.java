@@ -30,7 +30,6 @@ public class BusiOrderController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("busi:busiorder:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = busiOrderService.queryPage(params);
 

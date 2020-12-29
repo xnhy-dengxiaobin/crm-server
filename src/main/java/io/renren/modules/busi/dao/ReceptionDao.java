@@ -22,10 +22,10 @@ public interface ReceptionDao extends BaseMapper<ReceptionEntity> {
     List<ReceptionEntity> listBySalerId(Map<String, Object> params);
     Long listBySalerIdCnt(Map<String, Object> params);
 
-    List<Map> groupByDateCount(String endDate,Integer projectId);
+    List<Map> groupByDateCount(String endDate,String[] projectIds);
 
-    List<Map> groupByDateCountMonth(String endDate,Integer projectId);
+    List<Map> groupByDateCountMonth(String endDate,String [] projectIds);
 
-    List<Map> groupByDateCountYear(String endDate,Integer projectId);
+    List<Map> groupByDateCountYear(String endDate,String [] projectIds);
 
 }
