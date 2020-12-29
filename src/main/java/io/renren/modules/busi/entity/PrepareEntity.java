@@ -95,7 +95,14 @@ public class PrepareEntity implements Serializable {
 	 * 状态
 	 */
 	private Integer status;
-
+	/**
+	 * 顾问ID
+	 */
+	private Integer matchUserId;
+	/**
+	 * 顾问姓名
+	 */
+	private String matchUserName;
 	/**
 	 * 状态更新时间
 	 */

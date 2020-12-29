@@ -42,9 +42,11 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         String mobile = (String) params.get("mobile");
+        String name = (String) params.get("name");
+        String status = (String) params.get("status");
         IPage<PrepareEntity> page = this.page(
                 new Query<PrepareEntity>().getPage(params),
-                new QueryWrapper<PrepareEntity>().like(StringUtils.isNotBlank(mobile), "mobile", mobile)
+                new QueryWrapper<PrepareEntity>().like(StringUtils.isNotBlank(mobile), "mobile", mobile).like(StringUtils.isNotBlank(name), "name", name)
         );
 
         return new PageUtils(page);
