@@ -1,22 +1,22 @@
 package io.renren.modules.busi.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import io.renren.modules.busi.dao.*;
-import io.renren.modules.busi.entity.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
-
+import io.renren.modules.busi.dao.*;
+import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.BusiCustomerFollowService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 
 @Service("busiCustomerFollowService")
@@ -68,5 +68,22 @@ public class BusiCustomerFollowServiceImpl extends ServiceImpl<BusiCustomerFollo
                 busiCustomerProjectDao.insert(entity);
             }
         }
+    }
+
+    @Override
+    public PageUtils listPage(Map<String, Object> params) {
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+        List<BusiCustomerFollowEntity> list = getBaseMapper().listPage(params);
+        Integer cnt = getBaseMapper().listPageCount(params);
+        Page<BusiCustomerFollowEntity> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(list);
+        return new PageUtils(page);
     }
 }

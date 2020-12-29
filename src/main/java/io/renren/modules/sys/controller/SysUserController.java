@@ -20,6 +20,7 @@ import io.renren.common.validator.Assert;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.common.validator.group.AddGroup;
 import io.renren.common.validator.group.UpdateGroup;
+import io.renren.modules.app.entity.UserEntity;
 import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.service.BusiUserProjectService;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -223,4 +224,31 @@ public class SysUserController extends AbstractController {
         return R.ok();
     }
 
+    /**
+     * 所有经纪人列表
+     */
+    @GetMapping("/listMiddleMan")
+    public R listMiddleMan(@RequestParam Map<String, Object> params) {
+        //只有超级管理员，才能查看所有管理员列表
+        if (getUserId() != Constant.SUPER_ADMIN) {
+            params.put("createUserId", getUserId());
+        }
+        PageUtils page = sysUserService.middleManPage(params);
+
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 修改用户
+     */
+    @SysLog("审核经纪人")
+    @PostMapping("/auditMiddleMan")
+    @RequiresPermissions("sys:user:audit")
+    public R auditMiddleMan(@RequestBody Map<String, Object> params) {
+        SysUserEntity user = new SysUserEntity();
+
+        sysUserService.audit(params);
+
+        return R.ok();
+    }
 }

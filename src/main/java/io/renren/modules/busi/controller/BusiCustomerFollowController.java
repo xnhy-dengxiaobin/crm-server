@@ -45,10 +45,8 @@ public class BusiCustomerFollowController extends AbstractController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("busi:busicustomerfollow:list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = busiCustomerFollowService.queryPage(params);
-
+    public R list(@RequestBody Map<String, Object> params){
+        PageUtils page = busiCustomerFollowService.listPage(params);
         return R.ok().put("page", page);
     }
 
@@ -84,8 +82,8 @@ public class BusiCustomerFollowController extends AbstractController {
         SysUserEntity user = getUser();
         busiCustomerFollow.setCreateName(user.getName());
         busiCustomerFollow.setCreateTime(new Date());
-
         Date date = new Date();
+        BusiCustomerEntity customerEntity = busiCustomerService.getById(busiCustomerFollow.getCustomerId());
         BusiCustomerEntity busiCustomerEntity = new BusiCustomerEntity();
         busiCustomerEntity.setId(busiCustomerFollow.getCustomerId());
         busiCustomerEntity.setUpdateTime(date);
@@ -94,9 +92,23 @@ public class BusiCustomerFollowController extends AbstractController {
         busiCustomerEntity.setFollowDate(date);
         busiCustomerEntity.setFollowNextDate(busiCustomerFollow.getNextDate());
         busiCustomerEntity.setFollowUserId(getUserId());
-
         busiCustomerFollowService.saveFollow(busiCustomerFollow, busiCustomerEntity);
-
+        //是否将用户置为无效
+        if(busiCustomerFollow.getInvalid() != null && busiCustomerFollow.getInvalid() == 1){
+            BusiCustomerEntity updateCustomer = new BusiCustomerEntity();
+            updateCustomer.setId(busiCustomerFollow.getCustomerId());
+            updateCustomer.setInvalid(1);
+            updateCustomer.setInvalidCause(busiCustomerFollow.getInvalidCause());
+            busiCustomerService.updateById(updateCustomer);
+        }
+        //如果用户为无效用户则置为有效
+        if(customerEntity.getInvalid() == 1){
+            BusiCustomerEntity updateCustomer = new BusiCustomerEntity();
+            updateCustomer.setId(busiCustomerFollow.getCustomerId());
+            updateCustomer.setInvalid(0);
+            updateCustomer.setInvalidCause(busiCustomerFollow.getInvalidCause());
+            busiCustomerService.updateById(updateCustomer);
+        }
         return R.ok();
     }
 

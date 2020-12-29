@@ -13,6 +13,7 @@
         <result property="nextDate" column="next_date"/>
         <result property="createTime" column="create_time"/>
         <result property="createName" column="create_name"/>
+        <result property="matchUserId" column="match_user_id"/>
 
     </resultMap>
   <select id="toDayCount" resultType="integer">
@@ -21,5 +22,62 @@
     ) where t2.project_id=#{projectId} and t1.create_time >= #{localDate}
   </select>
 
+    <select id="listPage" resultType="io.renren.modules.busi.entity.BusiCustomerFollowEntity">
+        select t1.*, t2.name ,t2.mobile_phone mobilePhone from busi_customer_follow t1 left join busi_customer t2 on t1.customer_id = t2.id
+        where 1=1
+        <if test="matchUserId!=null and matchUserId.toString()!=''">
+            and t1.match_user_id = #{matchUserId}
+        </if>
+        <if test="condition!=null and condition.toString()!=''">
+            and ( t2.name LIKE CONCAT('%',#{condition},'%') or t2.mobile_phone LIKE CONCAT('%',#{condition},'%'))
+        </if>
+        <if test="addDate!=null and addDate.size()!= 0">
+            and t2.create_time > #{addDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and t2.create_time &lt; #{addDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        </if>
+        <if test="followDate!=null and followDate.size()!= 0">
+            and t1.create_time > #{followDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and t1.create_time &lt; #{followDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        </if>
+
+        <if test="checkTypes!=null and checkTypes.size()!= 0">
+           and t1.mode IN
+            <foreach collection="checkTypes" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+
+        </if>
+
+
+        order by t1.create_time desc
+        limit #{offset},#{limit}
+   </select>
+
+    <select id="listPageCount" resultType="integer">
+        select count(1) from busi_customer_follow t1 left join busi_customer t2 on t1.customer_id = t2.id
+        where 1=1
+        <if test="matchUserId!=null and matchUserId.toString()!=''">
+            and t1.match_user_id = #{matchUserId}
+        </if>
+        <if test="condition!=null and condition.toString()!=''">
+            and ( t2.name LIKE CONCAT('%',#{condition},'%') or t2.mobile_phone LIKE CONCAT('%',#{condition},'%'))
+        </if>
+        <if test="addDate!=null and addDate.size()!= 0">
+            and t2.create_time > #{addDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and t2.create_time &lt; #{addDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        </if>
+        <if test="followDate!=null and followDate.size()!= 0">
+            and t1.create_time > #{followDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and t1.create_time &lt; #{followDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        </if>
+
+        <if test="checkTypes!=null and checkTypes.size()!= 0">
+            and t1.mode IN
+            <foreach collection="checkTypes" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+
+        </if>
+   </select>
 
 </mapper>

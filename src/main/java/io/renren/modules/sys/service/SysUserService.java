@@ -61,6 +61,11 @@ public interface SysUserService extends IService<SysUserEntity> {
 	void update(SysUserEntity user);
 
 	/**
+	 * 修改团队
+	 */
+	void updateTeam(SysUserEntity user);
+
+	/**
 	 * 删除用户
 	 */
 	void deleteBatch(Long[] userIds);
@@ -97,4 +102,8 @@ public interface SysUserService extends IService<SysUserEntity> {
 	 * @return
 	 */
     List<SysUserEntity> qryMiddlemen(Map<String, Object> params);
+
+	PageUtils middleManPage(Map<String, Object> params);
+
+	void audit(Map<String, Object> params);
 }

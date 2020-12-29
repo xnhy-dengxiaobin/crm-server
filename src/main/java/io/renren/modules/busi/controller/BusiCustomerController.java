@@ -46,6 +46,7 @@ public class BusiCustomerController extends AbstractController {
     public R myList(@RequestParam Map<String, Object> params){
         params.put("matchUserId",getUserId() +"");
         params.put("desc","follow_date");
+        params.put("projectId",getProjectId());
         PageUtils page = busiCustomerService.queryPage(params);
         return R.ok().put("page", page);
     }
@@ -57,6 +58,7 @@ public class BusiCustomerController extends AbstractController {
     public R myNewList(@RequestParam Map<String, Object> params){
         params.put("matchUserId",getUserId() +"");
         params.put("followUserId",getUserId());
+        params.put("projectId",getProjectId());
         PageUtils page = busiCustomerService.queryPage(params);
         return R.ok().put("page", page);
     }
@@ -67,8 +69,11 @@ public class BusiCustomerController extends AbstractController {
     @RequestMapping("/followList")
     public R followList(@RequestParam Map<String, Object> params){
         QueryWrapper<BusiCustomerEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().le(BusiCustomerEntity::getFollowNextDate,getEndTime())
-                    .eq(BusiCustomerEntity::getMatchUserId,getUserId()).orderByDesc(BusiCustomerEntity::getFollowNextDate);
+        queryWrapper.lambda()
+                    .le(BusiCustomerEntity::getFollowNextDate,getEndTime())
+                    .eq(BusiCustomerEntity::getMatchUserId,getUserId())
+                    .eq(BusiCustomerEntity::getProjectId,getProjectId())
+                    .orderByDesc(BusiCustomerEntity::getFollowNextDate);
         IPage<BusiCustomerEntity> page = busiCustomerService.page(
                 new Query<BusiCustomerEntity>().getPage(params),
                 queryWrapper
@@ -134,8 +139,15 @@ public class BusiCustomerController extends AbstractController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody BusiCustomerEntity busiCustomer){
-        busiCustomerService.perfect(busiCustomer);
-
+        if (busiCustomer.getId() != null) {
+            busiCustomerService.perfect(busiCustomer);
+        }else {
+            busiCustomer.setSource("来电");
+            busiCustomer.setMatchUserId(getUserId()+"");
+            busiCustomer.setMatchUserTime(new Date());
+            busiCustomer.setProjectId(getProjectId());
+            busiCustomerService.save(busiCustomer);
+        }
         return R.ok();
     }
 

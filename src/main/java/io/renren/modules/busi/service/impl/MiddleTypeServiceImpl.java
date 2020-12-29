@@ -1,5 +1,8 @@
 package io.renren.modules.busi.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.entity.ReceptionEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +24,19 @@ public class MiddleTypeServiceImpl extends ServiceImpl<MiddleTypeDao, MiddleType
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
-        IPage<MiddleTypeEntity> page = this.page(
-                new Query<MiddleTypeEntity>().getPage(params),
-                new QueryWrapper<MiddleTypeEntity>()
-        );
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+
+        List<MiddleTypeEntity> slct = getBaseMapper().slct(params);
+        Integer cnt = getBaseMapper().cnt(params);
+        Page<MiddleTypeEntity> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(slct);
 
         return new PageUtils(page);
     }

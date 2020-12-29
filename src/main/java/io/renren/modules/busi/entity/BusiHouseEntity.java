@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -74,11 +75,62 @@ public class BusiHouseEntity implements Serializable {
 	 */
 	private Integer projectId;
 
-	
+
 	private Integer groupId;
 	/**
 	 * 创建时间
 	 */
 	private Date createTime;
+	/**
+	 * 房间guid roomguid
+	 */
+	private String guid;
+	/**
+	 * 项目guid projguid
+	 */
+	private String projectGuid;
+	/**
+	 * 楼栋guid bldguid
+	 */
+	private String bldGuid;
+	/**
+	 * 单元号 unitno
+	 */
+	private String unit;
+	/**
+	 * 房间号 no
+	 */
+	private String no;
+	/**
+	 * 房间号-带楼层 room
+	 */
+	private String room;
+	/**
+	 * 房间编号 roomcode
+	 */
+	private String roomCode;
+	/**
+	 * 出售、出租 salerentable
+	 */
+	private String saleRentable;
+	/**
+	 * 销控状态1:被销控
+	 */
+	private Integer control;
+	/**
+	 * 销控日期 slcontroldate
+	 */
+	private Date controlDate;
+	/**
+	 * 同步时间
+	 */
+	private Date syncTime;
+
+	@TableField(exist = false)
+	private String projectName;
+
+
+	@TableField(exist = false)
+	private String groupName;
 
 }

@@ -69,6 +69,12 @@ public class ReceptionEntity implements Serializable {
 	 * 接待员id
 	 */
 	private Integer receptionistId;
+
+	/**
+	 * 接待员姓名
+	 */
+	@TableField(exist = false)
+	private String receptionistName;
 	/**
 	 * 访问时间
 	 */

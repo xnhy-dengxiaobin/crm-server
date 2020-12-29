@@ -16,5 +16,6 @@ import java.util.Map;
 public interface BusiHouseService extends IService<BusiHouseEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+    PageUtils listPage(Map<String, Object> params);
 }
 

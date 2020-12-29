@@ -1,8 +1,11 @@
 package io.renren.modules.busi.dao;
 
-import io.renren.modules.busi.entity.MiddleTypeEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.renren.modules.busi.entity.MiddleTypeEntity;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 中介来源，类型
@@ -13,5 +16,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface MiddleTypeDao extends BaseMapper<MiddleTypeEntity> {
-	
+
+    List<MiddleTypeEntity> slct(Map<String, Object> params);
+
+    Integer cnt(Map<String, Object> params);
 }

@@ -121,6 +121,7 @@ public class BusiCustomerEntity implements Serializable {
 	 * 来访次数
 	 */
 	private Integer comeCount;
+
 	/**
 	 * 客户来源
 	 */
@@ -130,7 +131,7 @@ public class BusiCustomerEntity implements Serializable {
 	 */
 	private Integer sourceId;
 	/**
-	 * 客户来源名称
+	 * 客户来源渠道名称
 	 */
 	private String sourceName;
 	/**
@@ -141,6 +142,7 @@ public class BusiCustomerEntity implements Serializable {
 	 * 客户来源名称
 	 */
 	private String sourceUserName;
+
 
 	/**
 	 * 客户来源联系方式
@@ -214,9 +216,18 @@ public class BusiCustomerEntity implements Serializable {
 	/**
 	 * 业务状态:报备、到访、认筹、认购和签约
 	 */
-	private String busiStatus;
+	private Integer busiStatus;
 	/**
 	 * 业务状态更新时间
 	 */
   private Date busiStatusUpdatedTime;
+
+	/**
+	 * 是否无效
+	 */
+	private Integer invalid;
+	/**
+	 * 无效原因
+	 */
+ 	private String invalidCause;
 }

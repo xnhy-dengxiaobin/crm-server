@@ -20,7 +20,30 @@
         <result property="projectId" column="project_id"/>
         <result property="groupId" column="group_id"/>
         <result property="createTime" column="create_time"/>
+        <result property="guid" column="guid"/>
+        <result property="projectGuid" column="project_guid"/>
+        <result property="bldGuid" column="bld_guid"/>
+        <result property="unit" column="unit"/>
+        <result property="no" column="no"/>
+        <result property="room" column="room"/>
+        <result property="roomCode" column="room_code"/>
+        <result property="saleRentable" column="sale_rentable"/>
+        <result property="control" column="control"/>
+        <result property="controlDate" column="control_date"/>
+        <result property="syncTime" column="sync_time"/>
     </resultMap>
 
+
+    <select id="listPage" resultType="io.renren.modules.busi.entity.BusiHouseEntity">
+      select bh.*,bhg.name groupName,bp.name projectName from busi_house bh
+        left join busi_house_group bhg on bh.group_id = bhg.id
+        left join busi_project bp on bhg.parent_id = bp.id limit #{offset},#{limit}
+    </select>
+
+    <select id="listPageCount" resultType="long">
+      select count(1) from busi_house bh
+        left join busi_house_group bhg on bh.group_id = bhg.id
+        left join busi_project bp on bhg.parent_id = bp.id
+    </select>
 
 </mapper>

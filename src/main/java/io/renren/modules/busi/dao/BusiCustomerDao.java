@@ -22,12 +22,17 @@ public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
     List<BusiCustomerEntity> selectByPhone(String phone);
   long countNormal(Object projectId);
   long countTimeout(Object projectId);
-
+  long countRepetition(Object projectId);
+  long countCollide(Object projectId);
 
   List<Map> groupByDateCountDay(String endDate, Integer projectId);
   List<Map> groupByDateCountWeek(String endDate, Integer projectId);
   List<Map> groupByDateCountMonth(String endDate, Integer projectId);
   List<Map> groupByDateCountYear(String endDate, Integer projectId);
+  List<Map> groupRepetition(Map<String, Object> params);
+  List<Map> collideList(Map<String, Object> params);
+
+
 
   @Select("select * from busi_customer where source='来电' and not exists(select 1 from busi_reception where customer_id = busi_customer.id) and date_add(create_time,interval 2 day) < now()")
   List<BusiCustomerEntity> queryCallVisit();

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiHouseEntity;
+import io.renren.modules.busi.entity.BusiHouseGroupEntity;
+import io.renren.modules.busi.service.BusiHouseGroupService;
 import io.renren.modules.busi.service.BusiHouseService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ import java.util.Map;
 public class BusiHouseController {
     @Autowired
     private BusiHouseService busiHouseService;
+    @Autowired
+    private BusiHouseGroupService houseGroupService;
 
 
     /**
@@ -34,10 +38,19 @@ public class BusiHouseController {
      */
     @RequestMapping("/listByGroupId/{gid}")
     public R listByGroupId(@PathVariable("gid") Integer gid){
+
         List<BusiHouseEntity> list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>().eq("group_id", gid));
         return R.ok().put("list", list);
     }
 
+    /**
+     * 列表
+     */
+    @RequestMapping("/unitListByGroupId/{gid}")
+    public R unitListByGroupId(@PathVariable("gid") Integer gid){
+        List<BusiHouseGroupEntity> danyuan = houseGroupService.list(new QueryWrapper<BusiHouseGroupEntity>().lambda().eq(BusiHouseGroupEntity::getParentId, gid));
+        return R.ok().put("list", danyuan);
+    }
 
     /**
      * 列表
@@ -45,8 +58,7 @@ public class BusiHouseController {
     @RequestMapping("/list")
     @RequiresPermissions("busi:busihouse:list")
     public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = busiHouseService.queryPage(params);
-
+        PageUtils page = busiHouseService.listPage(params);
         return R.ok().put("page", page);
     }
 
