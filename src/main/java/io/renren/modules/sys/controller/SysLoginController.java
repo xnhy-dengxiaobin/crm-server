@@ -140,6 +140,40 @@ public class SysLoginController extends AbstractController {
         return r;
     }
 
+    /**
+     * 登录
+     */
+    @PostMapping("/sys/wx/saveLogin")
+    public Map<String, Object> wxSaveLogin(@RequestBody SysLoginForm form)throws IOException {
+        //用户信息
+        SysUserEntity user = sysUserService.queryByUserName(form.getUsername());
+        //账号不存在、密码错误
+        if(user == null || !user.getPassword().equals(new Sha256Hash(form.getPassword(), user.getSalt()).toHex())) {
+            return R.error("账号或密码不正确");
+        }
+
+        //账号锁定
+        if(user.getStatus() == 0){
+            return R.error("账号已被锁定,请联系管理员");
+        }
+        user.setUnionId(form.getUnionId());
+        user.setOpenId(form.getOpenId());
+        user.setNickName(form.getNickName());
+        user.setAvatarUrl(form.getAvatarUrl());
+        user.setPassword(null);
+        sysUserService.update(user);
+
+        //生成token，并保存到数据库
+        R r = sysUserTokenService.createToken(user.getUserId(), user.getKeepLoginDays());
+        r.put("head",user.getHead());
+        r.put("appRole",user.getAppRole());
+        r.put("name",user.getName());
+        r.put("mobile",user.getMobile());
+        r.put("middleTypeName",user.getMiddleTypeName());
+        r.put("userId",user.getUserId());
+        return r;
+    }
+
 	/**
 	 * 退出
 	 */
