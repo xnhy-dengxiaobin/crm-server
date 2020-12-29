@@ -36,7 +36,7 @@ public abstract class AbstractController {
 	protected Integer getProjectId(){
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		String projectId = request.getHeader("projectId");
-		if(projectId != null || !projectId.equals("")){
+		if(projectId != null && !projectId.equals("")){
 			return Integer.parseInt(projectId);
 		}
 		return null;

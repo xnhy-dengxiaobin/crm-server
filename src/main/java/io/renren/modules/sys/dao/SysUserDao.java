@@ -9,6 +9,7 @@
 package io.renren.modules.sys.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.renren.modules.busi.entity.MiddleTypeEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -63,4 +64,8 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 
 
     List<SysUserEntity> slctMiddlemen(Map<String, Object> params);
+
+  List<MiddleTypeEntity> selectMiddleMan(Map<String, Object> params);
+
+  Integer cntMiddleMan(Map<String, Object> params);
 }

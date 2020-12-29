@@ -22,6 +22,7 @@ public class SysLoginForm {
     private String captcha;
     private String uuid;
     private String unionId;
-
-
+    private String nickName;
+    private String avatarUrl;
+    private String openId;
 }

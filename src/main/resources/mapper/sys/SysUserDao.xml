@@ -63,5 +63,69 @@
 		update sys_user set team_id = #{teamId}, team_name = #{teamName} where user_id = #{userId}
 	</update>
 
+    <!--经纪人管理-->
+    <select id="selectMiddleMan" resultType="SysUserEntity">
+        select *
+        from sys_user
+        where coalesce(middle_type_id,0)!=0
+        <if test="id!=null and id>0">
+            and id =#{id}
+        </if>
+        <if test="mobile!=null and mobile!=''">
+            and mobile like '%${mobile}%'
+        </if>
+        <if test="middleTypeId!=null and middleTypeId > 0">
+            and middle_type_id =#{middleTypeId}
+        </if>
+        <if test="middleTypeName!=null and middleTypeName!=''">
+            and middle_type_name like '%${middleTypeName}%'
+        </if>
+        <if test="start!=null and start!=''">
+                and create_time >= '%${start}%'
+        </if>
+        <if test="end!=null and end!=''">
+            <![CDATA[
+                and create_time <= '%${end}%'
+            ]]>
+        </if>
+        <if test="status!=null">
+            and status =#{status}
+        </if>
+        <if test="auditStatus!=null">
+            and audit_status =#{auditStatus}
+        </if>
+        limit #{offset},#{limit}
+    </select>
 
+    <select id="cntMiddleMan" resultType="int">
+        select count(*)
+        from sys_user
+        where coalesce(middle_type_id,0)!=0
+        <if test="id!=null and id>0">
+            and id =#{id}
+        </if>
+        <if test="mobile!=null and mobile!=''">
+            and mobile like '%${mobile}%'
+        </if>
+        <if test="middleTypeId!=null and middleTypeId > 0">
+            and middle_type_id =#{middleTypeId}
+        </if>
+        <if test="middleTypeName!=null and middleTypeName!=''">
+            and middle_type_name like '%${middleTypeName}%'
+        </if>
+        <if test="start!=null and start!=''">
+            and create_time >= '%${start}%'
+        </if>
+        <if test="end!=null and end!=''">
+            <![CDATA[
+                and create_time <= '%${end}%'
+            ]]>
+        </if>
+        <if test="status!=null">
+            and status =#{status}
+        </if>
+        <if test="auditStatus!=null">
+            and audit_status =#{auditStatus}
+        </if>
+    </select>
 </mapper>
