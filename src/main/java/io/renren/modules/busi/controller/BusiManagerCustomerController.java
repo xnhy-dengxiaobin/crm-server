@@ -174,7 +174,7 @@ public class BusiManagerCustomerController extends AbstractController {
     } else {
       Date date = new Date();
       Calendar calendar = Calendar.getInstance();
-      calendar.setFirstDayOfWeek(Calendar.MONDAY);//设置星期一为一周开始的第一天
+      calendar.setFirstDayOfWeek(Calendar.SUNDAY);//设置星期一为一周开始的第一天
       calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
       Integer weekNum;
       calendar.setTimeInMillis(date.getTime());//时间戳
