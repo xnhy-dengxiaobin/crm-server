@@ -161,7 +161,6 @@ public class SysLoginController extends AbstractController {
         user.setNickName(form.getNickName());
         user.setAvatarUrl(form.getAvatarUrl());
         user.setPassword(null);
-
         sysUserService.update(user);
 
         //生成token，并保存到数据库
