@@ -7,7 +7,7 @@ import io.renren.modules.busi.entity.BusiOrderEntity;
 import java.util.Map;
 
 /**
- * 
+ *
  *
  * @author æå¤§é¾
  * @email 870455116@qq.com
@@ -16,5 +16,8 @@ import java.util.Map;
 public interface BusiOrderService extends IService<BusiOrderEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+
+    PageUtils listPage(Map<String, Object> params);
 }
 

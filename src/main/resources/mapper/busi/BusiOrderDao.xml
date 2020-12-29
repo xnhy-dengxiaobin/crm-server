@@ -34,60 +34,41 @@
 
 
     <select id="listPage" resultType="io.renren.modules.busi.entity.BusiOrderEntity">
-        select t1.*, t2.name ,t2.mobile_phone mobilePhone from busi_customer_follow t1 left join busi_customer t2 on t1.customer_id = t2.id
+        select bh.name name,bo.*,
+        (select GROUP_CONCAT(concat(bc.name,bc.mobile_phone) SEPARATOR '\r') from busi_customer_order bco left join busi_customer bc on bc.id = bco.customer_id where bco.order_id = bo.id) customerInfo
+        from busi_order bo
+        left join busi_house bh on bo.room_id = bh.id
+
         where 1=1
-        <if test="matchUserId!=null and matchUserId.toString()!=''">
-            and t1.match_user_id = #{matchUserId}
-        </if>
         <if test="condition!=null and condition.toString()!=''">
-            and ( t2.name LIKE CONCAT('%',#{condition},'%') or t2.mobile_phone LIKE CONCAT('%',#{condition},'%'))
+            and customerInfo LIKE CONCAT('%',#{condition},'%')
         </if>
-        <if test="addDate!=null and addDate.size()!= 0">
-            and t2.create_time > #{addDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
-            and t2.create_time &lt; #{addDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        <if test="house!=null and house.toString()!=''">
+            and bh.name LIKE CONCAT('%',#{house},'%')
         </if>
-        <if test="followDate!=null and followDate.size()!= 0">
-            and t1.create_time > #{followDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
-            and t1.create_time &lt; #{followDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        <if test="createdDate!=null and createdDate.size()!= 0">
+            and bo.created_time > #{createdDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and bo.created_time &lt; #{createdDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
         </if>
-
-        <if test="checkTypes!=null and checkTypes.size()!= 0">
-            and t1.mode IN
-            <foreach collection="checkTypes" item="id" index="index" open="(" close=")" separator=",">
-                #{id}
-            </foreach>
-
-        </if>
-
-
-        order by t1.create_time desc
+        order by bo.created_time desc
         limit #{offset},#{limit}
     </select>
 
     <select id="listPageCount" resultType="integer">
-        select count(1) from busi_customer_follow t1 left join busi_customer t2 on t1.customer_id = t2.id
+        select
+          count(1)
+        from busi_order bo
+        left join busi_house bh on bo.room_id = bh.id
         where 1=1
-        <if test="matchUserId!=null and matchUserId.toString()!=''">
-            and t1.match_user_id = #{matchUserId}
-        </if>
         <if test="condition!=null and condition.toString()!=''">
-            and ( t2.name LIKE CONCAT('%',#{condition},'%') or t2.mobile_phone LIKE CONCAT('%',#{condition},'%'))
+            and (select count(1) busi_customer_order  bco left join busi_customer bc on bco.customer_id = bc.id and bco.order_id = bo.id and bc.name like )
         </if>
-        <if test="addDate!=null and addDate.size()!= 0">
-            and t2.create_time > #{addDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
-            and t2.create_time &lt; #{addDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        <if test="house!=null and house.toString()!=''">
+            and bh.name LIKE CONCAT('%',#{house},'%')
         </if>
-        <if test="followDate!=null and followDate.size()!= 0">
-            and t1.create_time > #{followDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
-            and t1.create_time &lt; #{followDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
-        </if>
-
-        <if test="checkTypes!=null and checkTypes.size()!= 0">
-            and t1.mode IN
-            <foreach collection="checkTypes" item="id" index="index" open="(" close=")" separator=",">
-                #{id}
-            </foreach>
-
+        <if test="createdDate!=null and createdDate.size()!= 0">
+            and bo.created_time > #{createdDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and bo.created_time &lt; #{createdDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
         </if>
     </select>
 </mapper>
