@@ -99,10 +99,10 @@ public class SysLoginController extends AbstractController {
       return R.error("账号或密码不正确");
     }
 
-    //账号锁定
-    if(user.getStatus() == 0){
-      return R.error("账号已被锁定,请联系管理员");
-    }
+//    //账号锁定
+//    if(user.getStatus() == 0){
+//      return R.error("账号已被锁定,请联系管理员");
+//    }
 
     //生成token，并保存到数据库
     R r = sysUserTokenService.createToken(user.getUserId(), user.getKeepLoginDays());
@@ -124,10 +124,10 @@ public class SysLoginController extends AbstractController {
             return R.error("用户信息出错");
         }
 
-        //账号锁定
-        if(user.getStatus() == 0){
-            return R.error("账号已被锁定,请联系管理员");
-        }
+//        //账号锁定
+//        if(user.getStatus() == 0){
+//            return R.error("账号已被锁定,请联系管理员");
+//        }
 
         //生成token，并保存到数据库
         R r = sysUserTokenService.createToken(user.getUserId(), user.getKeepLoginDays());
@@ -135,6 +135,7 @@ public class SysLoginController extends AbstractController {
         r.put("appRole",user.getAppRole());
         r.put("name",user.getName());
         r.put("mobile",user.getMobile());
+        r.put("status",user.getStatus());
         r.put("middleTypeName",user.getMiddleTypeName());
         r.put("userId",user.getUserId());
         return r;
@@ -147,6 +148,7 @@ public class SysLoginController extends AbstractController {
     public Map<String, Object> wxSaveLogin(@RequestBody SysLoginForm form)throws IOException {
         //用户信息
         SysUserEntity user = sysUserService.queryByUserName(form.getUsername());
+        user.setStatus(0);
         //账号不存在、密码错误
         if(user == null || !user.getPassword().equals(new Sha256Hash(form.getPassword(), user.getSalt()).toHex())) {
             return R.error("账号或密码不正确");
@@ -169,6 +171,7 @@ public class SysLoginController extends AbstractController {
         r.put("appRole",user.getAppRole());
         r.put("name",user.getName());
         r.put("mobile",user.getMobile());
+        r.put("status",user.getStatus());
         r.put("middleTypeName",user.getMiddleTypeName());
         r.put("userId",user.getUserId());
         return r;
