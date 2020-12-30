@@ -219,10 +219,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         //查询用户创建的角色列表
         List<Long> roleIdList = sysRoleService.queryRoleIdList(user.getCreateUserId());
 
-        //判断是否越权
-        if (!roleIdList.containsAll(user.getRoleIdList())) {
-            throw new RRException("新增用户所选角色，不是本人创建");
-        }
+//        //判断是否越权
+//        if (!roleIdList.containsAll(user.getRoleIdList())) {
+//            throw new RRException("新增用户所选角色，不是本人创建");
+//        }
     }
 
     @Override
