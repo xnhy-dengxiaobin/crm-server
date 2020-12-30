@@ -149,4 +149,36 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         params.put("id", id);
         return getBaseMapper().gtById(null, id);
     }
+
+    @Override
+    public PageUtils listPage4Admin(Map<String, Object> params) {
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+
+        List<PrepareEntity> list = getBaseMapper().selectPage4Admin(params);
+        long cnt = getBaseMapper().cnt(params);
+
+        Page<PrepareEntity> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(list);
+
+        return new PageUtils(page);
+    }
+
+    @Override
+    public void refreshExpired(List<Integer> ids) {
+        for (Integer id : ids) {
+            PrepareEntity prepareEntity = getBaseMapper().selectById(id);
+            PrepareEntity p = new PrepareEntity();
+            p.setId(id);
+            Date d = prepareEntity.getExpired() == null ? new Date() : prepareEntity.getExpired();
+            p.setExpired(DateUtils.addDateDays(d, Constant.channelGranteePeriod));
+            getBaseMapper().updateById(p);
+        }
+    }
 }

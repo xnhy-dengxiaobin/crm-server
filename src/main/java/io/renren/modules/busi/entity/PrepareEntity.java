@@ -61,9 +61,24 @@ public class PrepareEntity implements Serializable {
 	private String projectName;
 
 	/**
-	 * 中介销售ID
+	 * 经纪人id
 	 */
 	private String userId;
+
+	/**
+	 * 经纪人name
+	 */
+	private String userName;
+
+	/**
+	 * 置业顾问id
+	 */
+	private String matchUserId;
+
+	/**
+	 * 置业顾问name
+	 */
+	private String matchUserName;
 
 	/**
 	 * 中介销售姓名
