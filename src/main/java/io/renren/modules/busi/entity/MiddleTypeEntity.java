@@ -45,4 +45,6 @@ public class MiddleTypeEntity implements Serializable {
 	@TableField(exist = false)
 	private String parentName;
 
+	@TableField(exist = false)
+	private Integer chparent;
 }

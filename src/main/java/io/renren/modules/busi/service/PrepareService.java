@@ -5,6 +5,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.busi.entity.PrepareEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,5 +31,9 @@ public interface PrepareService extends IService<PrepareEntity> {
      * @return
      */
     PrepareEntity gtById(Integer id);
+
+    PageUtils listPage4Admin(Map<String, Object> params);
+
+    void refreshExpired(List<Integer> ids);
 }
 

@@ -20,4 +20,8 @@ public interface MiddleTypeDao extends BaseMapper<MiddleTypeEntity> {
     List<MiddleTypeEntity> slct(Map<String, Object> params);
 
     Integer cnt(Map<String, Object> params);
+
+    List<MiddleTypeEntity> mdparent(Map<String, Object> params);
+
+    List<MiddleTypeEntity> mdchild(Map<String, Object> params);
 }

@@ -20,4 +20,7 @@ public interface PrepareDao extends BaseMapper<PrepareEntity> {
     long cnt(Map<String, Object> params);
 
     PrepareEntity gtById(Integer userId, Integer id);
+
+    List<PrepareEntity> selectPage4Admin(Map<String, Object> params);
+    List<PrepareEntity> count4Admin(Map<String, Object> params);
 }

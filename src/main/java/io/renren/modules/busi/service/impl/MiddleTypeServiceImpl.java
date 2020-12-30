@@ -43,6 +43,11 @@ public class MiddleTypeServiceImpl extends ServiceImpl<MiddleTypeDao, MiddleType
 
     @Override
     public List<MiddleTypeEntity> qryLst(Map<String, Object> params) {
-        return getBaseMapper().selectByMap(params);
+        long parentId = ParamResolvor.getLongAsDefault(params,"parentId",0);
+        if(parentId > 0) {
+            return getBaseMapper().mdchild(params);
+        }else{
+            return getBaseMapper().mdparent(params);
+        }
     }
 }
