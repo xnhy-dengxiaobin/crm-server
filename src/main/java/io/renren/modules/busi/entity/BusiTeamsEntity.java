@@ -32,4 +32,6 @@ public class BusiTeamsEntity implements Serializable {
 	 */
 	private Integer projectId;
 
+	private String area;
+
 }
