@@ -117,7 +117,6 @@ public class BusiTeamsController {
      * 保存
      */
     @RequestMapping("/save")
-    @RequiresPermissions("busi:busiteams:save")
     public R save(@RequestBody BusiTeamsEntity busiTeams){
 		busiTeamsService.save(busiTeams);
 
