@@ -70,14 +70,25 @@ public class BusiControlLogController extends AbstractController {
      */
     @RequestMapping("/save")
     public R save(@RequestBody BusiControlLogEntity busiControlLog){
+        if(busiControlLog.getHouseIds() != null && busiControlLog.getHouseIds().size() > 0){
+            for (String houseId : busiControlLog.getHouseIds()) {
+                doSave(busiControlLog,Integer.parseInt(houseId));
+            }
+        }else {
+            doSave(busiControlLog,busiControlLog.getHouseId());
+        }
+        return R.ok();
+    }
+
+    private void doSave(BusiControlLogEntity busiControlLog,Integer id) {
         if(busiControlLog.getControlStatus() == 1){
             BusiHouseEntity busiHouseEntity = new BusiHouseEntity();
-            busiHouseEntity.setId(busiControlLog.getHouseId());
+            busiHouseEntity.setId(id);
             busiHouseEntity.setControl(1);
             busiHouseService.updateById(busiHouseEntity);
         }else if(busiControlLog.getControlStatus() == 0){
             BusiHouseEntity busiHouseEntity = new BusiHouseEntity();
-            busiHouseEntity.setId(busiControlLog.getHouseId());
+            busiHouseEntity.setId(id);
             busiHouseEntity.setControl(0);
             busiHouseService.updateById(busiHouseEntity);
         }
@@ -87,8 +98,7 @@ public class BusiControlLogController extends AbstractController {
         busiControlLog.setCreateId(getUserId());
         busiControlLog.setCreateName(getUser().getName());
         busiControlLog.setCreateTime(new Date());
-		busiControlLogService.save(busiControlLog);
-        return R.ok();
+        busiControlLogService.save(busiControlLog);
     }
 
     /**

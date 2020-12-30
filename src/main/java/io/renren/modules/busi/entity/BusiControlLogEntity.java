@@ -1,11 +1,13 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 销控日志
@@ -48,5 +50,13 @@ public class BusiControlLogEntity implements Serializable {
 	 * 创建时间
 	 */
 	private Date createTime;
+
+
+	/**
+	 * 房源id
+	 */
+
+	@TableField(exist = false)
+	private List<String> houseIds;
 
 }
