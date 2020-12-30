@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiCustomerOrderEntity;
-import io.renren.modules.busi.vo.BusiCustomerOrderVO;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +18,5 @@ public interface BusiCustomerOrderService extends IService<BusiCustomerOrderEnti
 
     PageUtils queryPage(Map<String, Object> params);
     PageUtils queryPageByWrapper(Map<String, Object> params, LambdaQueryWrapper<BusiCustomerOrderEntity> wrapper);
-    List<BusiCustomerOrderVO> queryListInfo(String[] ids);
 }
 

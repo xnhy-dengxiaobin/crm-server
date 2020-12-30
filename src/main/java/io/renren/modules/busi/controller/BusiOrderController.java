@@ -1,13 +1,18 @@
 package io.renren.modules.busi.controller;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.common.exception.RRException;
 import io.renren.common.utils.PageUtils;
+import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerOrderEntity;
 import io.renren.modules.busi.entity.BusiOrderEntity;
 import io.renren.modules.busi.service.BusiCustomerOrderService;
 import io.renren.modules.busi.service.BusiOrderService;
+import io.renren.modules.busi.vo.BusiOrderVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +36,16 @@ public class BusiOrderController {
     @Autowired
     private BusiCustomerOrderService customerOrderService;
 
+    /**
+     * 催收列表
+     */
+    @RequestMapping("/dataPreparedList")
+    @RequiresPermissions("busi:order:prompt:list")
+    public R prompt(@RequestBody Map<String, Object> params) {
+      IPage<BusiOrderVO> page = new Query<BusiOrderVO>().getPage(params);
+      busiOrderService.promptPage(page,params.get("condition")==null?"":params.get("condition").toString());
+      return R.ok().put("page", new PageUtils(page));
+    }
     /**
      * 列表
      */
@@ -103,6 +118,16 @@ public class BusiOrderController {
   @RequiresPermissions("busi:busiorder:delete")
   public R delete(@RequestBody Integer[] ids) {
     busiOrderService.removeByIds(Arrays.asList(ids));
+
+    return R.ok();
+  }
+  /**
+   * 删除
+   */
+  @RequestMapping("/complete")
+  @RequiresPermissions("busi:order:prompt:confirm")
+  public R complete(@RequestBody Integer[] ids) {
+    busiOrderService.update(new UpdateWrapper<BusiOrderEntity>().lambda().set(BusiOrderEntity::getDataPrepared,0).in(BusiOrderEntity::getId,ids));
 
     return R.ok();
   }

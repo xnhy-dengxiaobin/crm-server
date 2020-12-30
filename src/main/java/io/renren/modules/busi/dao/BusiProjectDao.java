@@ -4,6 +4,8 @@ import io.renren.modules.busi.entity.BusiProjectEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 项目
  * 
@@ -13,5 +15,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface BusiProjectDao extends BaseMapper<BusiProjectEntity> {
-	
+
+    List<BusiProjectEntity> queryGroupList(Long userId);
 }

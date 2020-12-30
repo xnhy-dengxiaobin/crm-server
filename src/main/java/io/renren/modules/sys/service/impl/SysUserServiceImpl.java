@@ -136,10 +136,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
         //保存用户与角色关系
         sysUserRoleService.saveOrUpdate(user.getUserId(), user.getRoleIdList());
 
-        List<Long> ps= new ArrayList<>();
-        ps.add(user.getProjectId());
-        user.setProjectIds(ps);
-
         //用户和项目关系
         busiUserProjectService.increaseOrModify(user.getUserId(), user.getProjectIds());
     }

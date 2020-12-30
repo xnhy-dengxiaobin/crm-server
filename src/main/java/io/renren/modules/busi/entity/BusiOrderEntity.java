@@ -137,6 +137,10 @@ public class BusiOrderEntity implements Serializable {
 	 */
 	private Integer dataPrepared;
 
+  /**
+   * 对应的项目ID
+   */
+	private Integer projectId;
 
 	@TableField(exist=false)
 	private String customerInfo;

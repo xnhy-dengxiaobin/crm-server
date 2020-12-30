@@ -4,11 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiProjectEntity;
+import io.renren.modules.busi.entity.PrepareEntity;
 import io.renren.modules.busi.service.BusiProjectService;
+import io.renren.modules.busi.service.PrepareService;
+import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +49,26 @@ public class BusiProjectController {
      * 列表
      */
     @RequestMapping("/listParent")
-    public R listParent(){
-        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("parent_id",426));
+    public R listParent(@RequestBody SysUserEntity user){
+//        List<BusiProjectEntity> rsUsers = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("user_id", user.getUserId()));
+//        String userSring = "";
+//        for(BusiProjectEntity rsUser:rsUsers){
+//            if(userSring.equals("")){
+//                userSring = rsUser.getId().toString();
+//            }else{
+//                userSring = userSring + "," + rsUser.getId().toString();
+//            }
+//        }
+        List<BusiProjectEntity> rsList = busiProjectService.queryGroupList(user.getUserId());
+        return R.ok().put("list", rsList);
+    }
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listGroup")
+    public R listGroup(){
+        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().like("name","美程-"));
         return R.ok().put("list", rsList);
     }
 
