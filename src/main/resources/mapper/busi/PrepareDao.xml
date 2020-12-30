@@ -150,4 +150,22 @@
             <include refid="condition"></include>
         </where>
     </select>
+    <select id="selectCheckList" resultType="PrepareEntity">
+        select *
+        from busi_prepare
+        <where>
+            <if test=" name!=null and name !='' ">
+                and name like '%${name}%'
+            </if>
+            <if test=" createTime !=null and createTime !='' ">
+                and datediff(created_time, #{createTime}) = 0 and status > 0 and customer_id is null
+            </if>
+        </where>
+        limit #{offset},#{limit}
+    </select>
+    <select id="checkCnt" resultType="long">
+        select count(*)
+        from busi_prepare
+        where status > 0 and customer_id is null
+    </select>
 </mapper>

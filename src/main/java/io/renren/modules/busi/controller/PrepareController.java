@@ -37,6 +37,16 @@ public class PrepareController extends AbstractController {
     /**
      * 列表
      */
+    @RequestMapping("/lst")
+    public R lst(@RequestBody Map<String, Object> params){
+        PageUtils page = prepareService.qryPage(params);
+
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 列表
+     */
     @RequestMapping("/list")
     @RequiresPermissions("busi:prepare:list")
     public R list(@RequestParam Map<String, Object> params){
