@@ -1,10 +1,8 @@
 package io.renren.modules.busi.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.renren.modules.busi.vo.BusiCustomerOrderVO;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,13 +35,7 @@ public class BusiCustomerOrderServiceImpl extends ServiceImpl<BusiCustomerOrderD
       new Query<BusiCustomerOrderEntity>().getPage(params),
       wrapper
     );
-
     return new PageUtils(page);
-  }
-
-  @Override
-  public List<BusiCustomerOrderVO> queryListInfo(String[] ids) {
-    return baseMapper.queryListInfo(ids);
   }
 
 }
