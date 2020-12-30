@@ -3,6 +3,7 @@ package io.renren.modules.busi.controller;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -147,8 +148,8 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/refresh")
     @RequiresPermissions("busi:prepare:update")
-    public R refreshExpired(@RequestBody List<Integer>  ids){
-        prepareService.refreshExpired(ids);
+    public R refreshExpired(@RequestBody Map<String, Object> params){
+        prepareService.refreshExpired(ParamResolvor.getCommonList(params, "ids"));
 
         return R.ok();
     }
