@@ -8,6 +8,7 @@
         <result property="id" column="id"/>
         <result property="teamName" column="team_name"/>
         <result property="projectId" column="project_id"/>
+        <result property="area" column="area"/>
     </resultMap>
 
 

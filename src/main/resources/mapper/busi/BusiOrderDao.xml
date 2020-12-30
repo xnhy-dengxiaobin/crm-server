@@ -33,4 +33,42 @@
     </resultMap>
 
 
+    <select id="listPage" resultType="io.renren.modules.busi.entity.BusiOrderEntity">
+        select bh.name name,bo.*,
+        (select GROUP_CONCAT(concat(bc.name,bc.mobile_phone) SEPARATOR '\r') from busi_customer_order bco left join busi_customer bc on bc.id = bco.customer_id where bco.order_id = bo.id) customerInfo
+        from busi_order bo
+        left join busi_house bh on bo.room_id = bh.id
+
+        where 1=1
+        <if test="condition!=null and condition.toString()!=''">
+            and customerInfo LIKE CONCAT('%',#{condition},'%')
+        </if>
+        <if test="house!=null and house.toString()!=''">
+            and bh.name LIKE CONCAT('%',#{house},'%')
+        </if>
+        <if test="createdDate!=null and createdDate.size()!= 0">
+            and bo.created_time > #{createdDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and bo.created_time &lt; #{createdDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        </if>
+        order by bo.created_time desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="listPageCount" resultType="integer">
+        select
+          count(1)
+        from busi_order bo
+        left join busi_house bh on bo.room_id = bh.id
+        where 1=1
+        <if test="condition!=null and condition.toString()!=''">
+            and (select count(1) busi_customer_order  bco left join busi_customer bc on bco.customer_id = bc.id and bco.order_id = bo.id and bc.name like )
+        </if>
+        <if test="house!=null and house.toString()!=''">
+            and bh.name LIKE CONCAT('%',#{house},'%')
+        </if>
+        <if test="createdDate!=null and createdDate.size()!= 0">
+            and bo.created_time > #{createdDate[0],javaType=java.lang.String,jdbcType=TIMESTAMP}
+            and bo.created_time &lt; #{createdDate[1],javaType=java.lang.String,jdbcType=TIMESTAMP}
+        </if>
+    </select>
 </mapper>

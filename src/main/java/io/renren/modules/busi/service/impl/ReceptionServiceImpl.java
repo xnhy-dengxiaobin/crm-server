@@ -8,7 +8,6 @@ import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
-import io.renren.modules.busi.bean.ActionEnum;
 import io.renren.modules.busi.bean.BusiStatusEnum;
 import io.renren.modules.busi.constant.Constant;
 import io.renren.modules.busi.dao.*;
@@ -16,14 +15,15 @@ import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.exception.BusiException;
 import io.renren.modules.busi.service.CustomerStatusLogService;
 import io.renren.modules.busi.service.ReceptionService;
-import io.renren.modules.sys.dao.SetupDao;
-import io.renren.modules.sys.dao.SysConfigDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 
 @Service("receptionService")
@@ -216,21 +216,21 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     }
 
     @Override
-    public List<Map> groupByDateCount(String endDate, Integer projectId) {
-        List<Map> maps = baseMapper.groupByDateCount(endDate, projectId);
+    public List<Map> groupByDateCount(String endDate, String[] projectIds) {
+        List<Map> maps = baseMapper.groupByDateCount(endDate, projectIds);
         return maps;
     }
 
 
     @Override
-    public List<Map> groupByDateCountMonth(String endDate, Integer projectId) {
-        List<Map> maps = baseMapper.groupByDateCountMonth(endDate, projectId);
+    public List<Map> groupByDateCountMonth(String endDate,String [] projectIds) {
+        List<Map> maps = baseMapper.groupByDateCountMonth(endDate, projectIds);
         return maps;
     }
 
     @Override
-    public List<Map> groupByDateCountYear(String endDate, Integer projectId) {
-        List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectId);
+    public List<Map> groupByDateCountYear(String endDate,String [] projectIds) {
+        List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectIds);
         return maps;
     }
 

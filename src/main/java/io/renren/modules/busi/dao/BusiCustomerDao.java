@@ -25,10 +25,10 @@ public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
   long countRepetition(Object projectId);
   long countCollide(Object projectId);
 
-  List<Map> groupByDateCountDay(String endDate, Integer projectId);
-  List<Map> groupByDateCountWeek(String endDate, Integer projectId);
-  List<Map> groupByDateCountMonth(String endDate, Integer projectId);
-  List<Map> groupByDateCountYear(String endDate, Integer projectId);
+  List<Map> groupByDateCountDay(String endDate, String[] projectIds);
+  List<Map> groupByDateCountWeek(String endDate, String[] projectIds);
+  List<Map> groupByDateCountMonth(String endDate, String[] projectIds);
+  List<Map> groupByDateCountYear(String endDate, String[] projectIds);
   List<Map> groupRepetition(Map<String, Object> params);
   List<Map> collideList(Map<String, Object> params);
 

@@ -131,4 +131,25 @@ public class PrepareController extends AbstractController {
 
         return R.ok().put("prepare", prepare);
     }
+
+    /***********************4 后台**************************/
+    /**
+     * 查询和客户相关联的列表
+     */
+    @RequestMapping("/listPage4Admin")
+    public R listPage4Admin(@RequestBody Map<String, Object> params){
+        PageUtils page = prepareService.listPage4Admin(params);
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 修改
+     */
+    @RequestMapping("/refresh")
+    @RequiresPermissions("busi:prepare:update")
+    public R refreshExpired(@RequestBody List<Integer>  ids){
+        prepareService.refreshExpired(ids);
+
+        return R.ok();
+    }
 }
