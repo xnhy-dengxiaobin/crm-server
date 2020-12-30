@@ -8,8 +8,8 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
- * 
+ *
+ *
  * @author æå¤§é¾
  * @email 870455116@qq.com
  * @date 2020-12-29 00:08:46
@@ -20,7 +20,7 @@ public class BusiCustomerOrderEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 *
 	 */
 	@TableId
 	private Integer id;
@@ -40,5 +40,9 @@ public class BusiCustomerOrderEntity implements Serializable {
 	 * 订单guid
 	 */
 	private String orderGuid;
+  /**
+   * 催收状态0无需催收，1需要催收，2催收完成
+   */
+	private Integer dataPrepared;
 
 }
