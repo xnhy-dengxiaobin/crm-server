@@ -42,7 +42,21 @@ public class BusiHouseController {
         List<BusiHouseEntity> list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>().eq("group_id", gid));
         return R.ok().put("list", list);
     }
-
+    /**
+     * 列表
+     */
+    @RequestMapping("/controlListByGroupId/{gid}/{iscontrol}")
+    public R controlListByGroupId(@PathVariable("gid") Integer gid,@PathVariable("iscontrol") Integer iscontrol){
+        List<BusiHouseEntity> list;
+        if(iscontrol == 1){
+             list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>()
+                    .lambda().eq(BusiHouseEntity::getGroupId, gid).eq(BusiHouseEntity::getControl,1));
+        }else {
+             list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>()
+                    .lambda().eq(BusiHouseEntity::getGroupId, gid).eq(BusiHouseEntity::getStatus,"1").ne(BusiHouseEntity::getControl,1));
+        }
+        return R.ok().put("list", list);
+    }
     /**
      * 列表
      */

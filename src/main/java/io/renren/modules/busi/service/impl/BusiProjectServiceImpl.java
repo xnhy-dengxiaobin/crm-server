@@ -1,6 +1,10 @@
 package io.renren.modules.busi.service.impl;
 
+import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.entity.MiddleTypeEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +28,11 @@ public class BusiProjectServiceImpl extends ServiceImpl<BusiProjectDao, BusiProj
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<BusiProjectEntity> queryGroupList(Long userId) {
+        return getBaseMapper().queryGroupList(userId);
     }
 
 }
