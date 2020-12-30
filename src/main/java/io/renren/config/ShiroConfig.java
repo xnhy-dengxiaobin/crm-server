@@ -66,7 +66,7 @@ public class ShiroConfig {
     filterMap.put("/sys/user/wxSave", "anon"); //经纪人注册时查询所有能够选择的身份标签
     filterMap.put("/wx/mini/getUserInfo", "anon"); //经纪人注册时查询所有能够选择的身份标签
     filterMap.put("/sys/wx/login", "anon"); //微信登陆
-    filterMap.put("/busi/busiproject/listParent", "anon"); //注册时或取项目
+    filterMap.put("/busi/busiproject/listGroup", "anon"); //注册时或取项目
     filterMap.put("/sys/wx/saveLogin", "anon"); //微信绑定并登陆
     filterMap.put("/favicon.ico", "anon");
     filterMap.put("/**", "oauth2");
