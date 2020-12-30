@@ -3,6 +3,7 @@ package io.renren.modules.busi.controller;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -130,5 +131,26 @@ public class PrepareController extends AbstractController {
         PrepareEntity prepare = prepareService.gtById(id);
 
         return R.ok().put("prepare", prepare);
+    }
+
+    /***********************4 后台**************************/
+    /**
+     * 查询和客户相关联的列表
+     */
+    @RequestMapping("/listPage4Admin")
+    public R listPage4Admin(@RequestBody Map<String, Object> params){
+        PageUtils page = prepareService.listPage4Admin(params);
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 修改
+     */
+    @RequestMapping("/refresh")
+    @RequiresPermissions("busi:prepare:update")
+    public R refreshExpired(@RequestBody Map<String, Object> params){
+        prepareService.refreshExpired(ParamResolvor.getCommonList(params, "ids"));
+
+        return R.ok();
     }
 }

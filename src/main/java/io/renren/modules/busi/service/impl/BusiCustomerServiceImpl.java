@@ -131,26 +131,26 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   }
 
   @Override
-  public List<Map> groupByDateCountWeek(String endDate, Integer projectId) {
-    List<Map> maps = baseMapper.groupByDateCountWeek(endDate, projectId);
+  public List<Map> groupByDateCountWeek(String endDate, String[] projectIds) {
+    List<Map> maps = baseMapper.groupByDateCountWeek(endDate, projectIds);
     return maps;
   }
 
   @Override
-  public List<Map> groupByDateCountDay(String endDate, Integer projectId) {
-    List<Map> maps = baseMapper.groupByDateCountDay(endDate, projectId);
+  public List<Map> groupByDateCountDay(String endDate, String[] projectIds) {
+    List<Map> maps = baseMapper.groupByDateCountDay(endDate, projectIds);
     return maps;
   }
 
   @Override
-  public List<Map> groupByDateCountMonth(String endDate, Integer projectId) {
-    List<Map> maps = baseMapper.groupByDateCountMonth(endDate, projectId);
+  public List<Map> groupByDateCountMonth(String endDate, String[] projectIds) {
+    List<Map> maps = baseMapper.groupByDateCountMonth(endDate, projectIds);
     return maps;
   }
 
   @Override
-  public List<Map> groupByDateCountYear(String endDate, Integer projectId) {
-    List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectId);
+  public List<Map> groupByDateCountYear(String endDate, String[] projectIds) {
+    List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectIds);
     return maps;
   }
     @Override

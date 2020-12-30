@@ -1,5 +1,6 @@
 package io.renren.modules.busi.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -135,5 +136,12 @@ public class BusiOrderEntity implements Serializable {
 	 * 0：资料已收齐，1：资料未收齐
 	 */
 	private Integer dataPrepared;
+
+
+	@TableField(exist=false)
+	private String customerInfo;
+
+	@TableField(exist=false)
+	private String name;
 
 }

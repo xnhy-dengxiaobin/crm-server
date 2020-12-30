@@ -45,7 +45,6 @@
             <foreach collection="checkTypes" item="id" index="index" open="(" close=")" separator=",">
                 #{id}
             </foreach>
-
         </if>
 
 

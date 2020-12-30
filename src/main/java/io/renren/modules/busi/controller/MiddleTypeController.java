@@ -92,7 +92,7 @@ public class MiddleTypeController {
      * 列表
      */
     @RequestMapping("/lst")
-    public R lst(@RequestParam Map<String, Object> params) {
+    public R lst(@RequestBody Map<String, Object> params) {
         List<MiddleTypeEntity> middleTypeEntities = middleTypeService.qryLst(params);
 
         return R.ok().put("list", middleTypeEntities);

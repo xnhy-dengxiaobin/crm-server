@@ -165,4 +165,16 @@ public class SysUserEntity implements Serializable {
    * 经济人，审核状态
    */
   private Integer auditStatus;
+
+  /**
+   * 意向楼ID
+   */
+  @TableField(exist = false)
+  private Long projectId;
+
+  /**
+   * 意向项目名称
+   */
+  @TableField(exist = false)
+  private String projectName;
 }

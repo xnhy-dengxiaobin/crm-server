@@ -142,10 +142,34 @@
     <select id="groupByDateCountDay" resultType="map">
         SELECT
         date as fullDate ,DATE_FORMAT(date,'%m-%d') as dateAbscissa
-        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '自然到访'  and b.project_id = #{projectId} ) zrdf
-        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '渠道客户' and b.project_id = #{projectId} ) qdkh
-        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '老客户'  and b.project_id = #{projectId} ) lkh
-        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '老带新'  and b.project_id = #{projectId} ) ldx
+        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '自然到访'  and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if> ) zrdf
+        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '渠道客户' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qdkh
+        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '老客户'  and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) lkh
+        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '老带新'  and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ldx
         from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  day)AS 'date' FROM
             (
                 SELECT * from
@@ -158,14 +182,38 @@
 
     <select id="groupByDateCountWeek" resultType="map">
         SELECT
-        WEEK(date,5),endDate  as fullDate, CONCAT(DATE_FORMAT(date,'%m-%d'),DATE_FORMAT( date_add(DATE(endDate),INTERVAL  1  day),'%m-%d')) as dateAbscissa
-        ,(select count(1) from busi_customer b where WEEK(b.create_time,5) = WEEK(date,5) and DATE_FORMAT(b.create_time,'%Y') = yearDate and source = '自然到访' and b.project_id = #{projectId}) zrdf
-        ,(select count(1) from busi_customer b where WEEK(b.create_time,5) = WEEK(date,5) and DATE_FORMAT(b.create_time,'%Y') = yearDate and source = '渠道客户'and b.project_id = #{projectId}) qdkh
-        ,(select count(1) from busi_customer b where WEEK(b.create_time,5) = WEEK(date,5) and DATE_FORMAT(b.create_time,'%Y') = yearDate and source = '老客户' and b.project_id = #{projectId}) lkh
-        ,(select count(1) from busi_customer b where WEEK(b.create_time,5) = WEEK(date,5) and DATE_FORMAT(b.create_time,'%Y') = yearDate and source = '老带新' and b.project_id = #{projectId}) ldx
+        WEEK(date,6),endDate  as fullDate, CONCAT(DATE_FORMAT(date,'%m-%d'),DATE_FORMAT( date_add(DATE(endDate),INTERVAL  1  day),'%m-%d')) as dateAbscissa
+        ,(select count(1) from busi_customer b where WEEK(b.create_time,6) = WEEK(date,6) and (DATE_FORMAT(b.create_time,'%Y') = yearDate or DATE_FORMAT(b.create_time,'%Y') = yearDate2 ) and source = '自然到访' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) zrdf
+        ,(select count(1) from busi_customer b where WEEK(b.create_time,6) = WEEK(date,6) and (DATE_FORMAT(b.create_time,'%Y') = yearDate or DATE_FORMAT(b.create_time,'%Y') = yearDate2 ) and source = '渠道客户'and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qdkh
+        ,(select count(1) from busi_customer b where WEEK(b.create_time,6) = WEEK(date,6) and (DATE_FORMAT(b.create_time,'%Y') = yearDate or DATE_FORMAT(b.create_time,'%Y') = yearDate2 ) and source = '老客户' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) lkh
+        ,(select count(1) from busi_customer b where WEEK(b.create_time,6) = WEEK(date,6) and (DATE_FORMAT(b.create_time,'%Y') = yearDate or DATE_FORMAT(b.create_time,'%Y') = yearDate2 ) and source = '老带新' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ldx
         from(
-        select numlist2.date,date_add(DATE(date),INTERVAL  -1  week) endDate,DATE_FORMAT(date,'%Y') yearDate from (
-        SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  week)AS 'date',id FROM
+        select numlist2.date,date_add(DATE(date),INTERVAL  -1  week) endDate,(CASE dn WHEN 53 THEN DATE_FORMAT(DATE_ADD(date, INTERVAL -1 YEAR),'%Y')  ELSE DATE_FORMAT(date,'%Y') END) as yearDate ,  DATE_FORMAT(date,'%Y') as yearDate2 from (
+        SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  week)AS 'date', week(date_sub(DATE(#{endDate}),INTERVAL numlist.id week),6) dn,id FROM
         (
         SELECT i AS id FROM num where i &lt;=4 ORDER BY i asc
         ) AS numlist
@@ -176,10 +224,34 @@
     <select id="groupByDateCountMonth" resultType="map">
         SELECT
         date as fullDate ,DATE_FORMAT(date,'%Y %m') as dateAbscissa
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '自然到访' and b.project_id = #{projectId}) zrdf
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '渠道客户' and b.project_id = #{projectId}) qdkh
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '老客户' and b.project_id = #{projectId}) lkh
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '老带新' and b.project_id = #{projectId}) ldx
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '自然到访' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) zrdf
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '渠道客户' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qdkh
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '老客户' and
+        <if test="projectIds!=null">
+        b.project_id in
+        <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        </if>) lkh
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '老带新' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ldx
         from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  MONTH)AS 'date' FROM
         (
         SELECT * from
@@ -192,10 +264,34 @@
     <select id="groupByDateCountYear" resultType="map">
         SELECT
         date as fullDate ,DATE_FORMAT(date,'%Y') as dateAbscissa
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '自然到访' and b.project_id = #{projectId}) zrdf
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '渠道客户' and b.project_id = #{projectId}) qdkh
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '老客户' and b.project_id = #{projectId}) lkh
-        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '老带新' and b.project_id = #{projectId}) ldx
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '自然到访' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) zrdf
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '渠道客户' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qdkh
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '老客户' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) lkh
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '老带新' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ldx
         from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  YEAR)AS 'date' FROM
         (
         SELECT * from
