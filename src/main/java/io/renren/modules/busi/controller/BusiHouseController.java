@@ -70,7 +70,6 @@ public class BusiHouseController {
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("busi:busihouse:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = busiHouseService.listPage(params);
         return R.ok().put("page", page);

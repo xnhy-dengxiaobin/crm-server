@@ -35,15 +35,50 @@
 
 
     <select id="listPage" resultType="io.renren.modules.busi.entity.BusiHouseEntity">
-      select bh.*,bhg.name groupName,bp.name projectName from busi_house bh
-        left join busi_house_group bhg on bh.group_id = bhg.id
-        left join busi_project bp on bhg.parent_id = bp.id limit #{offset},#{limit}
+        select bhg2.parent_id,bp.name projectName, bhg2.name dong,bhg.name unit,bh.*  from busi_house bh
+            left join busi_house_group bhg on bh.group_id = bhg.id
+            left join busi_house_group bhg2 on bhg2.id = bhg.parent_id
+            left join busi_project bp on bhg2.parent_id = bp.id
+        where 1=1
+        <if test="projectId!=null and projectId.toString()!=''">
+            and bp.id = #{projectId}
+        </if>
+        <if test="dong!=null and dong.toString()!=''">
+            and bhg2.id = #{dong}
+        </if>
+        <if test="unit!=null and unit.toString()!=''">
+            and bhg.id = #{unit}
+        </if>
+        <if test="control!=null and control==1">
+            and (bh.control = 1 or bh.status = '10')
+        </if>
+        <if test="control!=null and control==0">
+            and (bh.control != 1 and bh.status = '1')
+        </if>
+        limit #{offset},#{limit}
     </select>
 
     <select id="listPageCount" resultType="long">
-      select count(1) from busi_house bh
+        select count(1)  from busi_house bh
         left join busi_house_group bhg on bh.group_id = bhg.id
-        left join busi_project bp on bhg.parent_id = bp.id
+        left join busi_house_group bhg2 on bhg2.id = bhg.parent_id
+        left join busi_project bp on bhg2.parent_id = bp.id
+        where 1=1
+        <if test="projectId!=null and projectId.toString()!=''">
+            and bp.id = #{projectId}
+        </if>
+        <if test="dong!=null and dong.toString()!=''">
+            and bhg2.id = #{dong}
+        </if>
+        <if test="unit!=null and unit.toString()!=''">
+            and bhg.id = #{unit}
+        </if>
+        <if test="control!=null and control==1">
+            and (bh.control = 1 or bh.status = '10')
+        </if>
+        <if test="control!=null and control==0">
+            and (bh.control != 1 and bh.status = '1')
+        </if>
     </select>
 
 </mapper>

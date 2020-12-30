@@ -75,15 +75,20 @@ public class BusiHouseGroupController extends AbstractController {
         return R.ok().put("list", list);
     }
 
-
+    /**
+     * 列表
+     */
+    @RequestMapping("/listAdminByProjectId/{pid}")
+    public R listAdminByProjectId(@PathVariable("pid") Integer pid){
+        List<BusiHouseGroupEntity> list = busiHouseGroupService.list(new QueryWrapper<BusiHouseGroupEntity>().eq("parent_id", pid).eq("type", "栋"));
+        return R.ok().put("list", list);
+    }
     /**
      * 列表
      */
     @RequestMapping("/list")
-    @RequiresPermissions("busi:busihousegroup:list")
     public R list(@RequestParam Map<String, Object> params){
         PageUtils page = busiHouseGroupService.queryPage(params);
-
         return R.ok().put("page", page);
     }
 

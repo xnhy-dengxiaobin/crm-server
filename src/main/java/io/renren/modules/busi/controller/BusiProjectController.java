@@ -46,7 +46,7 @@ public class BusiProjectController {
      */
     @RequestMapping("/listParent")
     public R listParent(){
-        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().isNull("parent_id"));
+        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("parent_id",426));
         return R.ok().put("list", rsList);
     }
 

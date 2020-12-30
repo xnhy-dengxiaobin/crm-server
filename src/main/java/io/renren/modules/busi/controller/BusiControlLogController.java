@@ -95,6 +95,7 @@ public class BusiControlLogController extends AbstractController {
         else{
             throw new RRException("无效状态");
         }
+        busiControlLog.setHouseId(id);
         busiControlLog.setCreateId(getUserId());
         busiControlLog.setCreateName(getUser().getName());
         busiControlLog.setCreateTime(new Date());
