@@ -7,6 +7,7 @@ import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.entity.PrepareEntity;
 import io.renren.modules.busi.service.BusiProjectService;
 import io.renren.modules.busi.service.PrepareService;
+import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("busi/busiproject")
-public class BusiProjectController {
+public class BusiProjectController extends AbstractController {
     @Autowired
     private BusiProjectService busiProjectService;
 
@@ -48,7 +49,7 @@ public class BusiProjectController {
      * 列表
      */
     @RequestMapping("/listParent")
-    public R listParent(@RequestBody SysUserEntity user){
+    public R listParent(@RequestBody(required = false) SysUserEntity user){
 //        List<BusiProjectEntity> rsUsers = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("user_id", user.getUserId()));
 //        String userSring = "";
 //        for(BusiProjectEntity rsUser:rsUsers){
@@ -58,7 +59,7 @@ public class BusiProjectController {
 //                userSring = userSring + "," + rsUser.getId().toString();
 //            }
 //        }
-        List<BusiProjectEntity> rsList = busiProjectService.queryGroupList(user.getUserId());
+        List<BusiProjectEntity> rsList = busiProjectService.queryGroupList(getUserId());
         return R.ok().put("list", rsList);
     }
 
