@@ -83,6 +83,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/wx/save")
     public R wxsave(@RequestBody PrepareEntity prepare){
+        prepare.setUserName(getUser().getName());
         String msg = prepareService.wxSave(prepare, getUserId());
         if(msg.indexOf("拒收无效")>0){
             return R.error(msg);
