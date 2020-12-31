@@ -46,7 +46,7 @@ public class BusiCustomerController extends AbstractController {
     public R myList(@RequestParam Map<String, Object> params){
         params.put("matchUserId",getUserId() +"");
         params.put("desc","follow_date");
-        params.put("projectId",getProjectId());
+//        params.put("projectId",getProjectId());
         PageUtils page = busiCustomerService.queryPage(params);
         return R.ok().put("page", page);
     }
@@ -58,7 +58,7 @@ public class BusiCustomerController extends AbstractController {
     public R myNewList(@RequestParam Map<String, Object> params){
         params.put("matchUserId",getUserId() +"");
         params.put("followUserId",getUserId());
-        params.put("projectId",getProjectId());
+//        params.put("projectId",getProjectId());
         PageUtils page = busiCustomerService.queryPage(params);
         return R.ok().put("page", page);
     }
@@ -72,7 +72,7 @@ public class BusiCustomerController extends AbstractController {
         queryWrapper.lambda()
                     .le(BusiCustomerEntity::getFollowNextDate,getEndTime())
                     .eq(BusiCustomerEntity::getMatchUserId,getUserId())
-                    .eq(BusiCustomerEntity::getProjectId,getProjectId())
+//                    .eq(BusiCustomerEntity::getProjectId,getProjectId())
                     .orderByDesc(BusiCustomerEntity::getFollowNextDate);
         IPage<BusiCustomerEntity> page = busiCustomerService.page(
                 new Query<BusiCustomerEntity>().getPage(params),

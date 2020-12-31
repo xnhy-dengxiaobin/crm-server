@@ -57,7 +57,7 @@ public class ReceptionController extends AbstractController {
     public R listBySalerId(@RequestBody Map<String, Object> params) {
         params.put("salerId", getUserId());
         params.put("status", ParamResolvor.getIntAsDefault(params, "status", -1) + "");
-        params.put("projectId",getProjectId());
+//        params.put("projectId",getProjectId());
         PageUtils maps = receptionService.listBySalerId(params);
         return R.ok().put("page", maps);
     }
