@@ -37,6 +37,16 @@ public class PrepareController extends AbstractController {
     /**
      * 列表
      */
+    @RequestMapping("/lst")
+    public R lst(@RequestBody Map<String, Object> params){
+        PageUtils page = prepareService.qryPage(params);
+
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 列表
+     */
     @RequestMapping("/list")
     @RequiresPermissions("busi:prepare:list")
     public R list(@RequestParam Map<String, Object> params){
@@ -73,6 +83,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/wx/save")
     public R wxsave(@RequestBody PrepareEntity prepare){
+        prepare.setUserName(getUser().getName());
         String msg = prepareService.wxSave(prepare, getUserId());
         if(msg.indexOf("拒收无效")>0){
             return R.error(msg);

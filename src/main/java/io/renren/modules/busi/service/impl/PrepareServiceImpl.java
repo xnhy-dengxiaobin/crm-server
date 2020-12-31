@@ -7,7 +7,6 @@ import io.renren.modules.busi.constant.Constant;
 import io.renren.modules.busi.dao.CustomerStatusLogDao;
 import io.renren.modules.busi.entity.CustomerStatusLogEntity;
 import io.renren.modules.busi.entity.PrepareCheckEntity;
-import io.renren.modules.busi.entity.ReceptionEntity;
 import io.renren.modules.busi.service.CustomerStatusLogService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +149,25 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         return getBaseMapper().gtById(null, id);
+    }
+
+    @Override
+    public PageUtils qryPage(Map<String, Object> params) {
+        long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+        long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+        long offset = (currentPage - 1) * limit;
+        params.put("offset", offset);
+        params.put("limit", limit); //将string转为long
+
+        List<PrepareEntity> slct = getBaseMapper().selectCheckList(params);;
+        Long cnt = getBaseMapper().checkCnt(params);
+        Page<PrepareEntity> page = new Page<>();
+        page.setCurrent(currentPage);
+        page.setSize(limit);
+        page.setTotal(cnt);
+        page.setRecords(slct);
+
+        return new PageUtils(page);
     }
 
     @Override

@@ -13,8 +13,11 @@
     <select id="queryGroupList" resultType="MiddleTypeEntity">
         SELECT t.* FROM busi_project t LEFT JOIN busi_user_project t1 on t1.project_id = t.id
         <where>
-            <if test=" userId != null and userId > 0 ">
+            <if test=" userId != null and userId > 0 and userId != 1">
                 and t1.user_id = #{userId}
+            </if>
+            <if test=" userId != null and userId > 0 and userId == 1">
+                and t.name like '美程-%'
             </if>
         </where>
     </select>
