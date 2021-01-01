@@ -109,6 +109,16 @@ public class SysUserEntity implements Serializable {
   private String name;
 
   /**
+   * 证件
+   */
+  private String certificate;
+
+  /**
+   * 证件号
+   */
+  private String certificateType;
+
+  /**
    * openId
    */
   private String openId;
