@@ -15,7 +15,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.houbb.heaven.util.lang.StringUtil;
 import com.github.houbb.pinyin.constant.enums.PinyinStyleEnum;
 import com.github.houbb.pinyin.util.PinyinHelper;
-import io.renren.common.exception.RRException;
 import io.renren.common.utils.Constant;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
@@ -186,19 +185,19 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     }
 
     @Override
-    public List<SysUserEntity> queryNormalFollow(Long projectId) {
-        return baseMapper.queryNormalFollow(projectId);
+    public List<SysUserEntity> queryNormalFollow(List<Integer> projectIds) {
+        return baseMapper.queryNormalFollow(projectIds);
     }
 
     @Override
-    public List<SysUserEntity> queryTimeoutList(Long projectId) {
-        return baseMapper.queryTimeoutList(projectId);
+    public List<SysUserEntity> queryTimeoutList(List<Integer> projectIds) {
+        return baseMapper.queryTimeoutList(projectIds);
     }
 
     @Override
-    public List<SysUserEntity> querySalesUserByProjectId(Long projectId) {
+    public List<SysUserEntity> querySalesUserByProjectId(List<Integer> projectIds) {
         HashMap<String, Object> params = new HashMap<>();
-        params.put("projectId", projectId);
+        params.put("projectIds",projectIds);
         params.put("today", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         return baseMapper.querySalesUserByProjectId(params);

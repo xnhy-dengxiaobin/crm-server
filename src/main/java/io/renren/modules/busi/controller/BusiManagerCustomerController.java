@@ -406,20 +406,19 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/groupList")
   public R groupList(@RequestParam Map<String, Object> params) {
-    if (null == params.get("projectId")) {
-      return R.error("请选择当前要查看的项目");
-    } else {
-      return R.ok()
+    List<Integer> projectIds = getProjectIds();
+
+    return R.ok()
         .put("timeoutCount", busiCustomerService
-          .countTimeout(params.get("projectId")))
-        .put("normalCount", busiCustomerService.countNormal(params.get("projectId")))
-        .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getProjectId, params.get("projectId")).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)))
-        .put("repetitionCount",busiCustomerService.countRepetition(params.get("projectId")))
-        .put("collideCount",busiCustomerService.countCollide(params.get("projectId")))
+          .countTimeout(projectIds))
+        .put("normalCount", busiCustomerService.countNormal(projectIds))
+        .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getProjectId, projectIds).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)))
+        .put("repetitionCount",busiCustomerService.countRepetition(projectIds))
+        .put("collideCount",busiCustomerService.countCollide(projectIds))
         .put("invalidCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
-                .lambda().eq(BusiCustomerEntity::getProjectId,params.get("projectId"))
+                .lambda().in(BusiCustomerEntity::getProjectId,projectIds)
                 .eq(BusiCustomerEntity::getInvalid,1).eq(BusiCustomerEntity::getStatus,1)));
-    }
+
   }
 
   /**
@@ -427,11 +426,8 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/groupNormalFollowList")
   public R groupNormalFollowList(@RequestParam Map<String, Object> params) {
-    if (null == params.get("projectId")) {
-      return R.error("请选择当前要查看的项目");
-    } else {
-      return R.ok().put("datas", sysUserService.queryNormalFollow(Long.valueOf(params.get("projectId").toString())));
-    }
+      List<Integer> projectIds = getProjectIds();
+      return R.ok().put("datas", sysUserService.queryNormalFollow(projectIds));
   }
 
   /**
@@ -439,11 +435,9 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/groupTimeoutList")
   public R groupTimeoutList(@RequestParam Map<String, Object> params) {
-    if (null == params.get("projectId")) {
-      return R.error("请选择当前要查看的项目");
-    } else {
-      return R.ok().put("datas", sysUserService.queryTimeoutList(Long.valueOf(params.get("projectId").toString())));
-    }
+    List<Integer> projectIds = getProjectIds();
+    return R.ok().put("datas", sysUserService.queryTimeoutList(projectIds));
+
   }
 
   /**
@@ -451,11 +445,9 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/normalFollowList")
   public R List(@RequestParam Map<String, Object> params) {
-    if (params.get("userId") == null || params.get("projectId") == null) {
-      return R.error("参数异常");
-    }
+    List<Integer> projectIds = getProjectIds();
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString(), params.get("projectId").toString());
+    iPage = busiCustomerService.normalFollowPage(iPage, params.get("userId").toString(), projectIds);
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -491,9 +483,10 @@ public class BusiManagerCustomerController extends AbstractController {
 //    if (params.get("projectId") == null) {
 //      return R.error("参数异常");
 //    }
+    List<Integer> projectIds = getProjectIds();
     String keywords = ParamResolvor.getString(params, "keyword");
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId") == null ? null : params.get("projectId").toString(), keywords, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "matchUserId"));
+    iPage = busiCustomerService.publicPage(iPage, projectIds, keywords, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "matchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -516,6 +509,8 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/groupRepetitionList")
   public R groupRepetitionList(@RequestParam Map<String, Object> params) {
+    List<Integer> projectIds = getProjectIds();
+    params.put("projectIds",projectIds);
     PageUtils maps = busiCustomerService.groupRepetition(params);
     return R.ok().put("page", maps);
   }
@@ -525,6 +520,8 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/collideList")
   public R collideList(@RequestParam Map<String, Object> params) {
+    List<Integer> projectIds = getProjectIds();
+    params.put("projectIds",projectIds);
     PageUtils maps = busiCustomerService.collideList(params);
     return R.ok().put("page", maps);
   }
@@ -535,11 +532,9 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/rubbishList")
   public R rubbishList(@RequestParam Map<String, Object> params) {
-    if (params.get("projectId") == null) {
-      return R.error("参数异常");
-    }
+    List<Integer> projectIds = getProjectIds();
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.publicPage(iPage, params.get("projectId").toString(), null, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "oldMatchUserId"));
+    iPage = busiCustomerService.publicPage(iPage, projectIds, null, ParamResolvor.getInt(params, "stt"), ParamResolvor.getLong(params, "oldMatchUserId"));
     return R.ok().put("page", new PageUtils(iPage));
   }
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -16,14 +17,14 @@ import java.util.Map;
  */
 @Mapper
 public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
-  IPage<BusiCustomerEntity> normalFollowPage(IPage page, String userId,String projectId);
+  IPage<BusiCustomerEntity> normalFollowPage(IPage page, String userId, @Param("projectIds") List<Integer> projectIds);
   IPage<BusiCustomerEntity> timeoutPage(IPage page, String userId,String projectId,String keywords);
-  IPage<BusiCustomerEntity> publicPage(IPage page, String projectId,String keywords, Integer stt, Long matchUserId);
+  IPage<BusiCustomerEntity> publicPage(IPage page, @Param("projectIds") List<Integer> projectIds, String keywords, Integer stt, Long matchUserId);
     List<BusiCustomerEntity> selectByPhone(String phone);
-  long countNormal(Object projectId);
-  long countTimeout(Object projectId);
-  long countRepetition(Object projectId);
-  long countCollide(Object projectId);
+  long countNormal(@Param("projectIds") List<Integer> projectIds);
+  long countTimeout(@Param("projectIds") List<Integer> projectIds);
+  long countRepetition(@Param("projectIds") List<Integer> projectIds);
+  long countCollide(@Param("projectIds") List<Integer> projectIds);
 
   List<Map> groupByDateCountDay(String endDate, String[] projectIds);
   List<Map> groupByDateCountWeek(String endDate, String[] projectIds);

@@ -59,15 +59,21 @@
   </select>
   <select id="countNormal" resultType="long">
     select count(t1.id) from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
-    <if test="projectId!=null">
-      and t1.project_id=#{projectId}
+    <if test="projectIds!=null">
+        and t1.project_id in
+        <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </if>
     and t1.status =1 and t1.match_user_id is not null and  DATEDIFF(now(),t1.match_user_time) &lt;= (select `value` from sys_setup where key_n='逾期时间')
   </select>
   <select id="countTimeout" resultType="long">
     select count(t1.id) from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
-    <if test="projectId!=null">
-      and t1.project_id=#{projectId}
+    <if test="projectIds!=null">
+        and t1.project_id in
+        <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </if>
     and t1.status =1 and t1.match_user_id is not null and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
   </select>
@@ -75,8 +81,11 @@
     <select id="countRepetition" resultType="long">
         select count(1) from (
           select count(1) c,mobile_phone from busi_customer where status != 3
-        <if test="projectId!=null">
-            and project_id=#{projectId}
+        <if test="projectIds!=null">
+            and project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
         </if>
           GROUP BY mobile_phone
         ) t where t.c > 1;
@@ -84,9 +93,12 @@
 
   <select id="normalFollowPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
     select t1.*,t2.name as projectName,t3.name as matchName from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
-    <if test="projectId!=null">
-      and t1.project_id=#{projectId}
-    </if>
+  <if test="projectIds!=null">
+      and t1.project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+          #{id}
+      </foreach>
+  </if>
     <if test="userId!=null">
       and t1.match_user_id = #{userId}
     </if>
@@ -116,8 +128,11 @@
     <if test="keywords!=null and keywords.toString()!=''">
       and instr(t1.mobile_phone,#{keywords})
     </if>
-    <if test="projectId!=null">
-     and t1.project_id=#{projectId}
+    <if test="projectIds!=null">
+     and t1.project_id in
+        <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </if>
       <if test="stt==1">
           and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
@@ -323,8 +338,11 @@
     <select id="countCollide" resultType="long">
         select count(1) from (
         select count(1) c,mobile_phone from busi_customer bc1 where status != 3
-        <if test="projectId!=null">
-          and project_id=#{projectId}
+        <if test="projectIds!=null">
+            and project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
         </if>
         GROUP BY mobile_phone HAVING c > 1
         ) t where (select count(1) c2 from busi_customer bc2 where bc2.status != 3 and bc2.mobile_phone = t.mobile_phone GROUP BY bc2.match_user_id HAVING c2 = 1 LIMIT 1)

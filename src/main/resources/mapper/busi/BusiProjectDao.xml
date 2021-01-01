@@ -11,7 +11,7 @@
         <result property="parentId" column="parent_id"/>
     </resultMap>
     <select id="queryGroupList" resultType="MiddleTypeEntity">
-        SELECT t.* FROM busi_project t LEFT JOIN busi_user_project t1 on t1.project_id = t.id
+        SELECT DISTINCT t.* FROM busi_project t LEFT JOIN busi_user_project t1 on t1.project_id = t.id
         <where>
             <if test=" userId != null and userId > 0 and userId != 1">
                 and t1.user_id = #{userId}

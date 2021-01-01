@@ -73,8 +73,8 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
     }
 
   @Override
-  public IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId, String projectId) {
-    return baseMapper.normalFollowPage(page, userId, projectId);
+  public IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds) {
+    return baseMapper.normalFollowPage(page, userId, projectIds);
   }
 
   @Override
@@ -83,27 +83,27 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
   }
 
   @Override
-  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId, String keywords, Integer stt, Long matchUserId) {
-    return baseMapper.publicPage(page, projectId, keywords, stt, matchUserId);
+  public IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, List<Integer> projectIds, String keywords, Integer stt, Long matchUserId) {
+    return baseMapper.publicPage(page, projectIds, keywords, stt, matchUserId);
   }
 
   @Override
-  public long countNormal(Object projectId) {
-    return baseMapper.countNormal(projectId);
+  public long countNormal(List<Integer> projectIds) {
+    return baseMapper.countNormal(projectIds);
   }
 
   @Override
-  public long countTimeout(Object projectId) {
-    return baseMapper.countTimeout(projectId);
+  public long countTimeout(List<Integer> projectIds) {
+    return baseMapper.countTimeout(projectIds);
   }
     @Override
-    public long countRepetition(Object projectId) {
-        return baseMapper.countRepetition(projectId);
+    public long countRepetition(List<Integer> projectIds) {
+        return baseMapper.countRepetition(projectIds);
     }
 
     @Override
-    public long countCollide(Object projectId) {
-        return baseMapper.countCollide(projectId);
+    public long countCollide(List<Integer> projectIds) {
+        return baseMapper.countCollide(projectIds);
     }
 
 
@@ -126,8 +126,7 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
     receptionEntity.setStatus(1);//已处理
     receptionDao.update(receptionEntity,
       new UpdateWrapper<ReceptionEntity>()
-        .eq("customer_id", busiCustomerEntity.getId())
-        .eq("saler_id", busiCustomerEntity.getMatchUserId()));
+        .eq("customer_id", busiCustomerEntity.getId()));
   }
 
   @Override
@@ -161,7 +160,7 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
         List<Map> list = getBaseMapper().groupRepetition(params);
-        Long cnt = getBaseMapper().countRepetition(params.get("projectId"));
+        Long cnt = getBaseMapper().countRepetition((List<Integer>) params.get("projectIds"));
         Page<Map> page = new Page<>();
         page.setCurrent(currentPage);
         page.setSize(limit);
@@ -177,7 +176,7 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
         List<Map> list = getBaseMapper().collideList(params);
-        Long cnt = getBaseMapper().countRepetition(params.get("projectId"));
+        Long cnt = getBaseMapper().countRepetition((List<Integer>) params.get("projectIds"));
         Page<Map> page = new Page<>();
         page.setCurrent(currentPage);
         page.setSize(limit);

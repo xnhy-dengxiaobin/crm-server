@@ -20,7 +20,6 @@ import io.renren.common.validator.Assert;
 import io.renren.common.validator.ValidatorUtils;
 import io.renren.common.validator.group.AddGroup;
 import io.renren.common.validator.group.UpdateGroup;
-import io.renren.modules.app.entity.UserEntity;
 import io.renren.modules.busi.entity.BusiProjectEntity;
 import io.renren.modules.busi.service.BusiUserProjectService;
 import io.renren.modules.sys.entity.SysUserEntity;
@@ -86,7 +85,8 @@ public class SysUserController extends AbstractController {
      */
     @PostMapping("/salesByProjectId")
     public R salesByProjectId(@RequestParam(required = false) Long projectId) {
-        List list = sysUserService.querySalesUserByProjectId(projectId);
+        List<Integer> projectIds = getProjectIds();
+        List list = sysUserService.querySalesUserByProjectId(projectIds);
 
         return R.ok().put("datas", list);
     }

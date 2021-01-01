@@ -140,6 +140,7 @@ public class BusiCustomerController extends AbstractController {
     @RequestMapping("/update")
     public R update(@RequestBody BusiCustomerEntity busiCustomer){
         if (busiCustomer.getId() != null) {
+            busiCustomer.setMatchUserId(getUserId()+"");
             busiCustomerService.perfect(busiCustomer);
         }else {
             busiCustomer.setSource("来电");

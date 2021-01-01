@@ -17,41 +17,41 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
 
   PageUtils queryPage(Map<String, Object> params);
 
-  IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId, String projectId);
+  IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds);
 
   IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId, String projectId, String keywords);
 
-  IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page, String projectId, String keywords, Integer stt, Long matchUserId);
+  IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page,  List<Integer> projectIds, String keywords, Integer stt, Long matchUserId);
 
   /**
    * 根据项目ID 统计正常跟进数量
    *
-   * @param projectId
+   * @param projectIds
    * @return
    */
-  long countNormal(Object projectId);
+  long countNormal(List<Integer> projectIds);
 
   /**
    * 根据项目ID 统计超时跟进数量
    *
-   * @param projectId
+   * @param projectIds
    * @return
    */
-  long countTimeout(Object projectId);
+  long countTimeout(List<Integer> projectIds);
 
     /**
      * 根据项目ID 统计重复客户
-     * @param projectId
+     * @param projectIds
      * @return
      */
-    long countRepetition(Object projectId);
+    long countRepetition(List<Integer> projectIds);
 
   /**
    * 根据项目ID 统计撞单客户
-   * @param projectId
+   * @param projectIds
    * @return
    */
-    long countCollide(Object projectId);
+    long countCollide(List<Integer> projectIds);
 
 
     /**

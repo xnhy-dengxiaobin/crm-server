@@ -43,16 +43,16 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
 
   /**
    * 根据projectId 查询正常跟进客户
-   * @param projectId
+   * @param projectIds
    * @return
    */
-  List<SysUserEntity> queryNormalFollow(Long projectId);
+  List<SysUserEntity> queryNormalFollow(@Param("projectIds") List<Integer> projectIds);
   /**
    * 根据projectId 查询逾期客户
-   * @param projectId
+   * @param projectIds
    * @return
    */
-  List<SysUserEntity> queryTimeoutList(Long projectId);
+  List<SysUserEntity> queryTimeoutList(@Param("projectIds") List<Integer> projectIds);
 
   /**
    * 根据projectId 查询置业顾问

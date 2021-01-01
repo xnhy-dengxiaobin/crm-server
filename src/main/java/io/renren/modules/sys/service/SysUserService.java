@@ -79,22 +79,22 @@ public interface SysUserService extends IService<SysUserEntity> {
 	boolean updatePassword(Long userId, String password, String newPassword);
   /**
    * 根据projectId 查询正常跟进客户
-   * @param projectId
+   * @param projectIds
    * @return
    */
-  List<SysUserEntity> queryNormalFollow(Long projectId);
+  List<SysUserEntity> queryNormalFollow(List<Integer> projectIds);
   /**
    * 根据projectId 查询逾期客户
-   * @param projectId
+   * @param projectIds
    * @return
    */
-  List<SysUserEntity> queryTimeoutList(Long projectId);
+  List<SysUserEntity> queryTimeoutList(List<Integer> projectIds);
 
   /**
    * 根据projectId 查询置业顾问
    * @return
    */
-  List<SysUserEntity> querySalesUserByProjectId(Long projectId);
+  List<SysUserEntity> querySalesUserByProjectId(List<Integer> projectIds);
 
 	/**
 	 * 查询经纪人信息
