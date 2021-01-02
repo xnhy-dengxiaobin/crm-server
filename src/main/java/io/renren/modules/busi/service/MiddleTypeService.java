@@ -24,5 +24,12 @@ public interface MiddleTypeService extends IService<MiddleTypeEntity> {
      * @return
      */
     List<MiddleTypeEntity> qryLst(Map<String, Object> params);
+
+    /**
+     * 查询wx所有符合条件的记录
+     * @param params
+     * @return
+     */
+    List<MiddleTypeEntity> qryWxList(Map<String, Object> params);
 }
 

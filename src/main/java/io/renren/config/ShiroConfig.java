@@ -62,7 +62,7 @@ public class ShiroConfig {
     filterMap.put("/swagger-resources/**", "anon");
     filterMap.put("/captcha.jpg", "anon");
     filterMap.put("/busi/houselayout/downloadFP/**", "anon"); //下载户型图片
-    filterMap.put("/busi/middletype/lst", "anon"); //经纪人注册时查询所有能够选择的身份标签
+    filterMap.put("/busi/middletype/wxList", "anon"); //经纪人注册时查询所有能够选择的身份标签
     filterMap.put("/sys/user/wxSave", "anon"); //经纪人注册时查询所有能够选择的身份标签
     filterMap.put("/wx/mini/getUserInfo", "anon"); //经纪人注册时查询所有能够选择的身份标签
     filterMap.put("/sys/wx/login", "anon"); //微信登陆

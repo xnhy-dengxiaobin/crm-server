@@ -100,4 +100,12 @@ public class MiddleTypeController extends AbstractController {
 
         return R.ok().put("list", middleTypeEntities);
     }
+    /**
+     * wx列表
+     */
+    @RequestMapping("/wxList")
+    public R wxList(@RequestBody Map<String, Object> params) {
+        List<MiddleTypeEntity> middleTypeEntities = middleTypeService.qryWxList(params);
+        return R.ok().put("list", middleTypeEntities);
+    }
 }
