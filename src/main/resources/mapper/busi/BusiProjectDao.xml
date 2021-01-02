@@ -10,14 +10,14 @@
         <result property="createTime" column="create_time"/>
         <result property="parentId" column="parent_id"/>
     </resultMap>
-    <select id="queryGroupList" resultType="MiddleTypeEntity">
+    <select id="queryGroupList" resultType="BusiProjectEntity">
         SELECT distinct t.* FROM busi_project t LEFT JOIN busi_user_project t1 on t1.project_id = t.id
         <where>
             <if test=" userId != null and userId > 0 and userId != 1">
                 and t1.user_id = #{userId}
             </if>
             <if test=" userId != null and userId > 0 and userId == 1">
-                and t.name like '美程-%'
+                and t.level = 2000
             </if>
         </where>
     </select>

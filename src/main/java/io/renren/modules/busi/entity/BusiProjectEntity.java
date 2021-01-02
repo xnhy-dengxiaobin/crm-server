@@ -29,6 +29,14 @@ public class BusiProjectEntity implements Serializable {
 	 * 项目名称
 	 */
 	private String name;
+
+	/**
+	 * 项目短名称
+	 */
+	private String shortName;
+
+	private int level;
+
 	/**
 	 * 创建时间
 	 */
