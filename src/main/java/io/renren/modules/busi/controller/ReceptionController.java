@@ -118,6 +118,7 @@ public class ReceptionController extends AbstractController {
             busiCustomerEntity.setSourceUserName(ParamResolvor.getString(customerMap, "sourceUserName"));
             busiCustomerEntity.setSourceMobile(ParamResolvor.getString(customerMap, "sourceMobile"));
             busiCustomerEntity.setMatchUserId(ParamResolvor.getInt(customerMap, "matchUserId") + "");
+            busiCustomerEntity.setMatchUserName(ParamResolvor.getString(customerMap, "matchUserName"));
             busiCustomerEntity.setOldMatchUserId(ParamResolvor.getInt(customerMap, "oldMatchUserId") + "");
             busiCustomerEntity.setOldMatchUserName(ParamResolvor.getString(customerMap, "oldMatchUserName") + "");
             busiCustomerEntity.setCreateTime(new Date());

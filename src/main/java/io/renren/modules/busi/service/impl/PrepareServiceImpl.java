@@ -4,18 +4,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.constant.Constant;
+import io.renren.modules.busi.dao.BusiUserProjectDao;
 import io.renren.modules.busi.dao.CustomerStatusLogDao;
-import io.renren.modules.busi.entity.CustomerStatusLogEntity;
-import io.renren.modules.busi.entity.PrepareCheckEntity;
+import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.CustomerStatusLogService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,7 +22,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 
 import io.renren.modules.busi.dao.PrepareDao;
-import io.renren.modules.busi.entity.PrepareEntity;
 import io.renren.modules.busi.service.PrepareService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +34,9 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
 
     @Autowired
     private CustomerStatusLogDao customerStatusLogDao;
+
+    @Autowired
+    private BusiUserProjectDao busiUserProjectDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -178,6 +178,19 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
 
+        //获取当前用户所有有权限的楼盘
+        /*List<BusiProjectEntity> userProjects = busiUserProjectDao.selectProjectByUser(ParamResolvor.getLong(params, "userId"));
+        List<Long> projectIds = new ArrayList<>();
+        for(BusiProjectEntity up : userProjects){
+            List<BusiUserProjectEntity> children = busiUserProjectDao.selectList(new QueryWrapper<BusiUserProjectEntity>().eq("parent_id", up.getId()));
+            if(CollectionUtils.isEmpty(children)){
+                continue;
+            }
+            for(BusiProjectEntity child : userProjects){
+                projectIds.add(Long.valueOf(child.getId()));
+            }
+        }
+        params.put("projectIds", projectIds);*/
         List<PrepareEntity> list = getBaseMapper().selectPage4Admin(params);
         long cnt = getBaseMapper().count4Admin(params);
 
