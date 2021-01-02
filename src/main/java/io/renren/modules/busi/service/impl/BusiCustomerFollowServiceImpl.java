@@ -71,13 +71,13 @@ public class BusiCustomerFollowServiceImpl extends ServiceImpl<BusiCustomerFollo
     }
 
     @Override
-    public PageUtils listPage(Map<String, Object> params) {
+    public PageUtils listPage(Map<String, Object> params,List<Integer> projectIds) {
         long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
         long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
         long offset = (currentPage - 1) * limit;
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
-        List<BusiCustomerFollowEntity> list = getBaseMapper().listPage(params);
+        List<BusiCustomerFollowEntity> list = getBaseMapper().listPage(params,projectIds);
         Integer cnt = getBaseMapper().listPageCount(params);
         Page<BusiCustomerFollowEntity> page = new Page<>();
         page.setCurrent(currentPage);

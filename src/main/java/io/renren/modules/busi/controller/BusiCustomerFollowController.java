@@ -46,7 +46,8 @@ public class BusiCustomerFollowController extends AbstractController {
      */
     @RequestMapping("/list")
     public R list(@RequestBody Map<String, Object> params){
-        PageUtils page = busiCustomerFollowService.listPage(params);
+        List<Integer> projectIds = getProjectIds();
+        PageUtils page = busiCustomerFollowService.listPage(params,projectIds);
         return R.ok().put("page", page);
     }
 

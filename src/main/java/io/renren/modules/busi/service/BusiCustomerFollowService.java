@@ -5,6 +5,7 @@ import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
 import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +29,6 @@ public interface BusiCustomerFollowService extends IService<BusiCustomerFollowEn
     void saveFollow(BusiCustomerFollowEntity busiCustomerFollow, BusiCustomerEntity busiCustomerEntity);
 
 
-    PageUtils listPage(Map<String, Object> params);
+    PageUtils listPage(Map<String, Object> params, List<Integer> projectIds);
 }
 
