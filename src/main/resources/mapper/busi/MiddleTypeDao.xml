@@ -63,19 +63,13 @@
         SELECT t.*,t1.parent_id as chparent from busi_middle_type t LEFT JOIN (SELECT count(*),parent_id
         from busi_middle_type WHERE parent_id > 0
         GROUP BY parent_id) t1 on t1.parent_id = t.id WHERE t.parent_id is null and t.status > 0
-        and exists(select 1 from sys_user t0
-        inner join busi_user_project t00 on t0.user_id=t00.user_id
-        inner join busi_user_project t000 on t00.project_id=t000.project_id
-        where coalesce(t0.middle_type_id,0)>0 and t0.middle_type_id=t.id
-        and t000.user_id=#{userId})
+        and exists(select 1 from busi_user_project t0
+        where t0.project_id=t.project_id and t0.user_id=#{userId})
     </select>
     <select id="mdchild" resultType="MiddleTypeEntity">
         SELECT * from busi_middle_type t
-        where exists(select 1 from sys_user t0
-        inner join busi_user_project t00 on t0.user_id=t00.user_id
-        inner join busi_user_project t000 on t00.project_id=t000.project_id
-        where coalesce(t0.middle_type_id,0)>0 and t0.middle_type_id=t.id
-        and t000.user_id=#{userId})
+        where exists(select 1 from busi_user_project t0
+        where t0.project_id=t.project_id and t0.user_id=#{userId})
         <where>
             <if test=" parentId != null and parentId > 0 ">
                 and t.parent_id = #{parentId} and status > 0
