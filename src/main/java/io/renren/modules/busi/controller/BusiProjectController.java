@@ -11,6 +11,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,19 @@ public class BusiProjectController extends AbstractController {
 
         return R.ok().put("list", rsList);
     }
-
+    /**
+     * 列表
+     */
+    @RequestMapping("/list2000ByParentId")
+    public R list2000ByParentId(){
+        List<Integer> projectIds = getProjectIds();
+        List<BusiProjectEntity> rsList = new ArrayList<>();
+        for (Integer projectId : projectIds) {
+            List<BusiProjectEntity> list = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().lambda().eq(BusiProjectEntity::getParentId, projectId));
+            rsList.addAll(list);
+        }
+        return R.ok().put("list", rsList);
+    }
     /**
      * 列表
      */
