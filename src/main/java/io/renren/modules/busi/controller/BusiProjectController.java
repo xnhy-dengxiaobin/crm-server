@@ -64,7 +64,7 @@ public class BusiProjectController extends AbstractController {
      */
     @RequestMapping("/listGroup")
     public R listGroup(){
-        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().like("name","美程-"));
+        List<BusiProjectEntity> rsList = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("level",2));
         return R.ok().put("list", rsList);
     }
 

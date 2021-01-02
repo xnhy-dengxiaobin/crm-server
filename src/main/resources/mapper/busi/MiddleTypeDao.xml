@@ -82,4 +82,17 @@
             </if>
         </where>
     </select>
+    <select id="wxmdparent" resultType="MiddleTypeEntity">
+        SELECT t.*,t1.parent_id as chparent from busi_middle_type t LEFT JOIN (SELECT count(*),parent_id
+        from busi_middle_type WHERE parent_id > 0
+        GROUP BY parent_id) t1 on t1.parent_id = t.id WHERE t.parent_id is null and t.status > 0
+    </select>
+    <select id="wxmdchild" resultType="MiddleTypeEntity">
+        SELECT * from busi_middle_type
+        <where>
+            <if test=" parentId != null and parentId > 0 ">
+                and parent_id = #{parentId} and status > 0
+            </if>
+        </where>
+    </select>
 </mapper>

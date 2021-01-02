@@ -50,4 +50,13 @@ public class MiddleTypeServiceImpl extends ServiceImpl<MiddleTypeDao, MiddleType
             return getBaseMapper().mdparent(params);
         }
     }
+    @Override
+    public List<MiddleTypeEntity> qryWxList(Map<String, Object> params) {
+        long parentId = ParamResolvor.getLongAsDefault(params,"parentId",0);
+        if(parentId > 0) {
+            return getBaseMapper().wxmdchild(params);
+        }else{
+            return getBaseMapper().wxmdparent(params);
+        }
+    }
 }

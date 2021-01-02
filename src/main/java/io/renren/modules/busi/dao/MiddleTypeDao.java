@@ -24,4 +24,8 @@ public interface MiddleTypeDao extends BaseMapper<MiddleTypeEntity> {
     List<MiddleTypeEntity> mdparent(Map<String, Object> params);
 
     List<MiddleTypeEntity> mdchild(Map<String, Object> params);
+
+    List<MiddleTypeEntity> wxmdparent(Map<String, Object> params);
+
+    List<MiddleTypeEntity> wxmdchild(Map<String, Object> params);
 }
