@@ -39,6 +39,8 @@ public class MiddleTypeEntity implements Serializable {
 
 	private Integer parentId;
 
+	private Integer projectId;
+
 	/**
 	 *
 	 */

@@ -33,6 +33,7 @@ public class BusiCustomerController extends AbstractController {
      */
     @RequestMapping("/listByPhone")
     public R listByPhone(@RequestBody Map<String, Object> params){
+        params.put("userId", getUserId());
         List<BusiCustomerEntity> customers = busiCustomerService.queryByPhone(params);
 
         return R.ok().put("customers", customers);
@@ -143,10 +144,15 @@ public class BusiCustomerController extends AbstractController {
             busiCustomer.setMatchUserId(getUserId()+"");
             busiCustomerService.perfect(busiCustomer);
         }else {
+            BusiCustomerEntity one = busiCustomerService.getOne(new QueryWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getMobilePhone, busiCustomer.getMobilePhone()).ne(BusiCustomerEntity::getInvalid, 1));
+            if(null != one && one.getId() > 0){
+                return R.error("该手机号码已经存在, 不是新客户");
+            }
             busiCustomer.setSource("来电");
             busiCustomer.setMatchUserId(getUserId()+"");
             busiCustomer.setMatchUserTime(new Date());
             busiCustomer.setProjectId(getProjectId());
+            busiCustomer.setStatus(1);
             busiCustomerService.save(busiCustomer);
         }
         return R.ok();

@@ -30,6 +30,10 @@ public class ReceptionEntity implements Serializable {
 	 */
 	private Integer projectId;
 	/**
+	 * 项目id
+	 */
+	private String projectName;
+	/**
 	 * 接待客户的id
 	 */
 	private Integer customerId;

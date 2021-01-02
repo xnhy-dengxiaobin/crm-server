@@ -4,7 +4,7 @@
 <mapper namespace="io.renren.modules.busi.dao.BusiCustomerDao">
 
 	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.renren.modules.busi.entity.BusiCustomerEntity" id="busiCustomerMap">
+    <!--<resultMap type="io.renren.modules.busi.entity.BusiCustomerEntity" id="busiCustomerMap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="sex" column="sex"/>
@@ -49,13 +49,16 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="expiredTime" column="expired_time"/>
-    </resultMap>
+    </resultMap>-->
 
-  <select id="selectByPhone" parameterType="string" resultMap="busiCustomerMap">
-    select t1.*,t2.name as match_user_name,t2.head
+  <select id="selectByPhone" resultType="BusiCustomerEntity">
+    select t1.*,t2.name as match_user_name,t2.head,t3.short_name as project_name
     from busi_customer t1
     left join sys_user t2 on t1.match_user_id=t2.user_id
+    left join busi_project t3 on t1.project_id=t3.id
     where t1.mobile_phone like '%${mobilePhone}'
+    and exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
   </select>
   <select id="countNormal" resultType="long">
     select count(t1.id) from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1

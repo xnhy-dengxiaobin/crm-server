@@ -3,8 +3,8 @@
 
 <mapper namespace="io.renren.modules.busi.dao.ReceptionDao">
 
-	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.renren.modules.busi.entity.ReceptionEntity" id="receptionMap">
+    <!-- 可根据自己的需求，是否要使用 -->
+    <!--<resultMap type="io.renren.modules.busi.entity.ReceptionEntity" id="receptionMap">
         <result property="id" column="id"/>
         <result property="projectId" column="project_id"/>
 
@@ -27,25 +27,26 @@
         <result property="createTime" column="create_time"/>
         <result property="status" column="status"/>
         <result property="isNew" column="is_new"/>
-    </resultMap>
+    </resultMap>-->
 
-    <select id="slct" resultMap="receptionMap">
+    <select id="slct" resultType="ReceptionEntity">
         select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_name,
-        t2.source_mobile,t2.channel,t3.name as match_user_name,t3.head
+        t2.source_mobile,t2.channel,t3.name as match_user_name,t3.head,t4.short_name as project_name
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id
-        <where>
-            <if test=" id!=null and id !='' ">
-                and t1.id = #{id}
-            </if>
-            <if test=" matchUserName!=null and matchUserName !='' ">
-                and (t3.name like '%${matchUserName}%' or t3.first_letter like '%${matchUserName}')
-            </if>
-            <if test=" createTime !=null and createTime !='' ">
-                and datediff(t1.create_time, #{createTime}) = 0
-            </if>
-        </where>
+        inner join busi_project t4 on t1.project_id=t4.id
+        where exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test=" id!=null and id !='' ">
+            and t1.id = #{id}
+        </if>
+        <if test=" matchUserName!=null and matchUserName !='' ">
+            and (t3.name like '%${matchUserName}%' or t3.first_letter like '%${matchUserName}')
+        </if>
+        <if test=" createTime !=null and createTime !='' ">
+            and datediff(t1.create_time, #{createTime}) = 0
+        </if>
         limit #{offset},#{limit}
     </select>
     <select id="cnt" resultType="long">
@@ -53,20 +54,20 @@
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id
-        <where>
-            <if test=" id!=null and id !='' ">
-                and t1.id = #{id}
-            </if>
-            <if test=" matchUserName!=null and matchUserName !='' ">
-                and (t3.name like '%${matchUserName}%' or t3.first_letter like '%${matchUserName}')
-            </if>
-            <if test=" createTime !=null and createTime !='' ">
-                and datediff(t1.create_time, #{createTime}) = 0
-            </if>
-        </where>
+        where exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test=" id!=null and id !='' ">
+            and t1.id = #{id}
+        </if>
+        <if test=" matchUserName!=null and matchUserName !='' ">
+            and (t3.name like '%${matchUserName}%' or t3.first_letter like '%${matchUserName}')
+        </if>
+        <if test=" createTime !=null and createTime !='' ">
+            and datediff(t1.create_time, #{createTime}) = 0
+        </if>
     </select>
 
-    <select id="listBySalerId" resultMap="receptionMap">
+    <select id="listBySalerId" resultType="ReceptionEntity">
         select br.*,bc.name as customer_name from busi_reception br
         left join busi_customer bc on br.customer_id = bc.id
         <where>
@@ -116,7 +117,7 @@
         DATE_FORMAT(temp.date,'%m/%d') as dateAbscissa,
         temp.date as fullDate,
         IFNULL(u.num,0) as num
-        from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  DAY)AS 'date' FROM
+        from( SELECT date_sub(DATE(#{endDate}),INTERVAL numlist.id DAY)AS 'date' FROM
         (
         SELECT * from
         (SELECT i AS id FROM num ) a
@@ -148,7 +149,7 @@
         DATE_FORMAT(temp.date,'%Y\%m') as dateAbscissa,
         temp.date as fullDate,
         IFNULL(u.num,0) as num
-        from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  MONTH)AS 'date' FROM
+        from( SELECT date_sub(DATE(#{endDate}),INTERVAL numlist.id MONTH)AS 'date' FROM
         (
         SELECT * from
         (SELECT i AS id FROM num ) a
@@ -172,7 +173,7 @@
         </if>
 
         GROUP BY DATE_FORMAT(c.create_time,'%Y-%m')
-        ) u on DATE_FORMAT(temp.date,'%Y-%m')  = u.udate ORDER BY temp.date desc;
+        ) u on DATE_FORMAT(temp.date,'%Y-%m') = u.udate ORDER BY temp.date desc;
     </select>
 
     <select id="groupByDateCountYear" resultType="map">
@@ -180,7 +181,7 @@
         DATE_FORMAT(temp.date,'%Y') as dateAbscissa,
         temp.date as fullDate,
         IFNULL(u.num,0) as num
-        from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  YEAR)AS 'date' FROM
+        from( SELECT date_sub(DATE(#{endDate}),INTERVAL numlist.id YEAR)AS 'date' FROM
         (
         SELECT * from
         (SELECT i AS id FROM num ) a
@@ -204,11 +205,8 @@
         </if>
 
         GROUP BY DATE_FORMAT(c.create_time,'%Y')
-        ) u on DATE_FORMAT(temp.date,'%Y')  = u.udate ORDER BY temp.date desc;
+        ) u on DATE_FORMAT(temp.date,'%Y') = u.udate ORDER BY temp.date desc;
     </select>
-
-
-
 
 
 </mapper>

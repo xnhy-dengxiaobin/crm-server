@@ -109,8 +109,7 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
 
   @Override
   public List<BusiCustomerEntity> queryByPhone(Map<String, Object> params) {
-    String mobilePhone = params.get("mobilePhone").toString();
-    return getBaseMapper().selectByPhone(mobilePhone);
+    return getBaseMapper().selectByPhone(params);
   }
 
   @Override
