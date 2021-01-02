@@ -33,6 +33,7 @@ public class BusiCustomerController extends AbstractController {
      */
     @RequestMapping("/listByPhone")
     public R listByPhone(@RequestBody Map<String, Object> params){
+        params.put("userId", getUserId());
         List<BusiCustomerEntity> customers = busiCustomerService.queryByPhone(params);
 
         return R.ok().put("customers", customers);

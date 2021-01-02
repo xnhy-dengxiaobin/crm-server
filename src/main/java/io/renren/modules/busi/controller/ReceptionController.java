@@ -45,6 +45,7 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/lst")
     public R lst(@RequestBody Map<String, Object> params) {
+        params.put("userId", getUserId());
         PageUtils page = receptionService.qryPage(params);
 
         return R.ok().put("page", page);

@@ -20,7 +20,7 @@ public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
   IPage<BusiCustomerEntity> normalFollowPage(IPage page, String userId, @Param("projectIds") List<Integer> projectIds);
   IPage<BusiCustomerEntity> timeoutPage(IPage page, String userId,String projectId,String keywords);
   IPage<BusiCustomerEntity> publicPage(IPage page, @Param("projectIds") List<Integer> projectIds, String keywords, Integer stt, Long matchUserId);
-    List<BusiCustomerEntity> selectByPhone(String phone);
+    List<BusiCustomerEntity> selectByPhone(Map<String, Object> params);
   long countNormal(@Param("projectIds") List<Integer> projectIds);
   long countTimeout(@Param("projectIds") List<Integer> projectIds);
   long countRepetition(@Param("projectIds") List<Integer> projectIds);
