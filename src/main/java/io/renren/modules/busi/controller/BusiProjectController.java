@@ -46,6 +46,7 @@ public class BusiProjectController extends AbstractController {
      */
     @RequestMapping("/listParent")
     public R listParent(@RequestBody(required = false) SysUserEntity user){
+
 //        List<BusiProjectEntity> rsUsers = busiProjectService.list(new QueryWrapper<BusiProjectEntity>().eq("user_id", user.getUserId()));
 //        String userSring = "";
 //        for(BusiProjectEntity rsUser:rsUsers){
