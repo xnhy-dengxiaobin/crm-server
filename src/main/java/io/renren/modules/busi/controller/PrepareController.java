@@ -50,6 +50,7 @@ public class PrepareController extends AbstractController {
     @RequestMapping("/list")
     @RequiresPermissions("busi:prepare:list")
     public R list(@RequestParam Map<String, Object> params){
+        params.put("userId", getUserId());
         PageUtils page = prepareService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -150,6 +151,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/listPage4Admin")
     public R listPage4Admin(@RequestBody Map<String, Object> params){
+        params.put("userId", getUserId());
         PageUtils page = prepareService.listPage4Admin(params);
         return R.ok().put("page", page);
     }

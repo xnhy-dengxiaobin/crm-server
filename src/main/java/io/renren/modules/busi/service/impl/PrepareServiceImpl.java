@@ -179,7 +179,7 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         params.put("limit", limit); //将string转为long
 
         List<PrepareEntity> list = getBaseMapper().selectPage4Admin(params);
-        long cnt = getBaseMapper().cnt(params);
+        long cnt = getBaseMapper().count4Admin(params);
 
         Page<PrepareEntity> page = new Page<>();
         page.setCurrent(currentPage);

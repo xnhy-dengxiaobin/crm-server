@@ -3,7 +3,7 @@
 
 <mapper namespace="io.renren.modules.busi.dao.MiddleTypeDao">
 
-	<!-- 可根据自己的需求，是否要使用
+    <!-- 可根据自己的需求，是否要使用
     <resultMap type="io.renren.modules.busi.entity.MiddleTypeEntity" id="middleTypeMap">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
@@ -18,50 +18,67 @@
         t2.name as parent_name
         from busi_middle_type t1
         left join busi_middle_type t2 on t1.parent_id = t2.id
-        <where>
-            <if test=" id != null and id > 0 ">
-                and t1.id = #{id}
-            </if>
-            <if test="parentId!=null and parentId >0 ">
-                and t1.parent_id=#{parentId}
-            </if>
-            <if test="name!=null and name!='' ">
-                and t1.name like '%${name}%'
-            </if>
-            <if test="parentName!=null and parentName!='' ">
-                and t2.parent_name like '%${parentName}%'
-            </if>
-        </where>
+        where exists(select 1 from sys_user t0
+        inner join busi_user_project t00 on t0.user_id=t00.user_id
+        inner join busi_user_project t000 on t00.project_id=t000.project_id
+        where coalesce(t0.middle_type_id,0)>0 and t0.middle_type_id=t1.id
+        and t000.user_id=#{userId})
+        <if test=" id != null and id > 0 ">
+            and t1.id = #{id}
+        </if>
+        <if test="parentId!=null and parentId >0 ">
+            and t1.parent_id=#{parentId}
+        </if>
+        <if test="name!=null and name!='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test="parentName!=null and parentName!='' ">
+            and t2.parent_name like '%${parentName}%'
+        </if>
+        limit #{offset},#{limit}
     </select>
     <select id="cnt" resultType="int">
         select count(*)
         from busi_middle_type t1
         left join busi_middle_type t2 on t1.parent_id = t2.id
-        <where>
-            <if test=" id != null and id > 0 ">
-                and t1.id = #{id}
-            </if>
-            <if test="parentId!=null and parentId >0 ">
-                and t1.parent_id=#{parentId}
-            </if>
-            <if test="name!=null and name!='' ">
-                and t1.name like '%${name}%'
-            </if>
-            <if test="parentName!=null and parentName!='' ">
-                and t2.parent_name like '%${parentName}%'
-            </if>
-        </where>
+        where exists(select 1 from sys_user t0
+        inner join busi_user_project t00 on t0.user_id=t00.user_id
+        inner join busi_user_project t000 on t00.project_id=t000.project_id
+        where coalesce(t0.middle_type_id,0)>0 and t0.middle_type_id=t1.id
+        and t000.user_id=#{userId})
+        <if test=" id != null and id > 0 ">
+            and t1.id = #{id}
+        </if>
+        <if test="parentId!=null and parentId >0 ">
+            and t1.parent_id=#{parentId}
+        </if>
+        <if test="name!=null and name!='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test="parentName!=null and parentName!='' ">
+            and t2.parent_name like '%${parentName}%'
+        </if>
     </select>
     <select id="mdparent" resultType="MiddleTypeEntity">
         SELECT t.*,t1.parent_id as chparent from busi_middle_type t LEFT JOIN (SELECT count(*),parent_id
         from busi_middle_type WHERE parent_id > 0
         GROUP BY parent_id) t1 on t1.parent_id = t.id WHERE t.parent_id is null and t.status > 0
+        and exists(select 1 from sys_user t0
+        inner join busi_user_project t00 on t0.user_id=t00.user_id
+        inner join busi_user_project t000 on t00.project_id=t000.project_id
+        where coalesce(t0.middle_type_id,0)>0 and t0.middle_type_id=t.id
+        and t000.user_id=#{userId})
     </select>
     <select id="mdchild" resultType="MiddleTypeEntity">
-       SELECT * from busi_middle_type
+        SELECT * from busi_middle_type t
+        where exists(select 1 from sys_user t0
+        inner join busi_user_project t00 on t0.user_id=t00.user_id
+        inner join busi_user_project t000 on t00.project_id=t000.project_id
+        where coalesce(t0.middle_type_id,0)>0 and t0.middle_type_id=t.id
+        and t000.user_id=#{userId})
         <where>
             <if test=" parentId != null and parentId > 0 ">
-                and parent_id = #{parentId} and status > 0
+                and t.parent_id = #{parentId} and status > 0
             </if>
         </where>
     </select>

@@ -229,10 +229,7 @@ public class SysUserController extends AbstractController {
      */
     @GetMapping("/listMiddleMan")
     public R listMiddleMan(@RequestParam Map<String, Object> params) {
-        //只有超级管理员，才能查看所有管理员列表
-        if (getUserId() != Constant.SUPER_ADMIN) {
-            params.put("createUserId", getUserId());
-        }
+        params.put("userId", getUserId());
         PageUtils page = sysUserService.middleManPage(params);
 
         return R.ok().put("page", page);

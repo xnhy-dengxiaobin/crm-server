@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ import io.renren.common.utils.R;
  */
 @RestController
 @RequestMapping("busi/middletype")
-public class MiddleTypeController {
+public class MiddleTypeController extends AbstractController {
     @Autowired
     private MiddleTypeService middleTypeService;
 
@@ -37,6 +38,7 @@ public class MiddleTypeController {
     @RequestMapping("/list")
     @RequiresPermissions("busi:middletype:list")
     public R list(@RequestParam Map<String, Object> params) {
+        params.put("userId", getUserId());
         PageUtils page = middleTypeService.queryPage(params);
 
         return R.ok().put("page", page);
@@ -93,6 +95,7 @@ public class MiddleTypeController {
      */
     @RequestMapping("/lst")
     public R lst(@RequestBody Map<String, Object> params) {
+        params.put("userId", getUserId());
         List<MiddleTypeEntity> middleTypeEntities = middleTypeService.qryLst(params);
 
         return R.ok().put("list", middleTypeEntities);
