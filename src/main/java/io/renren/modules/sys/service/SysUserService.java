@@ -61,6 +61,11 @@ public interface SysUserService extends IService<SysUserEntity> {
 	void update(SysUserEntity user);
 
 	/**
+	 * 修改Wx用户
+	 */
+	void updateWx(SysUserEntity user);
+
+	/**
 	 * 修改团队
 	 */
 	void updateTeam(SysUserEntity user);

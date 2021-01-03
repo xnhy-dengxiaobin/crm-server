@@ -167,6 +167,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     }
 
     @Override
+    @Transactional
+    public void updateWx(SysUserEntity user) {
+        if (StringUtils.isBlank(user.getPassword())) {
+            user.setPassword(null);
+        } else {
+            user.setPassword(new Sha256Hash(user.getPassword(), user.getSalt()).toHex());
+        }
+
+        //拼音首字母
+        if (StringUtils.isNotEmpty(user.getName())) {
+            String s = PinyinHelper.toPinyin(user.getName(), PinyinStyleEnum.FIRST_LETTER, StringUtil.EMPTY);
+            user.setFirstLetter(s);
+        }
+
+        this.updateById(user);
+    }
+
+    @Override
     public void updateTeam(SysUserEntity user) {
         baseMapper.updateTeam(user.getTeamId(), user.getTeamName(), user.getUserId());
     }
