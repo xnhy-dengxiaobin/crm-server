@@ -416,6 +416,7 @@ public class HttpUtils {
             }
 
             String res = EntityUtils.toString(response.getEntity());
+            return res;
         } catch (Exception e) {
             LOG.error("", e);
         }
