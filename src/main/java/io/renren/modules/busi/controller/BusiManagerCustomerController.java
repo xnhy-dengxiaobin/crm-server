@@ -8,13 +8,8 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
-import io.renren.modules.busi.entity.BusiCustomerEntity;
-import io.renren.modules.busi.entity.BusiCustomerRoamEntity;
-import io.renren.modules.busi.entity.ReceptionEntity;
-import io.renren.modules.busi.service.BusiCustomerFollowService;
-import io.renren.modules.busi.service.BusiCustomerRoamService;
-import io.renren.modules.busi.service.BusiCustomerService;
-import io.renren.modules.busi.service.ReceptionService;
+import io.renren.modules.busi.entity.*;
+import io.renren.modules.busi.service.*;
 import io.renren.modules.sys.controller.AbstractController;
 import io.renren.modules.sys.entity.SysUserEntity;
 import io.renren.modules.sys.service.SysUserService;
@@ -46,6 +41,8 @@ public class BusiManagerCustomerController extends AbstractController {
   private BusiCustomerFollowService busiCustomerFollowService;
   @Autowired
   private BusiCustomerRoamService busiCustomerRoamService;
+  @Autowired
+  private BusiUserProjectService busiUserProjectService;
 
   /**
    * 列表
@@ -146,12 +143,12 @@ public class BusiManagerCustomerController extends AbstractController {
     if (t == 1) {
       maps = receptionService.groupByDateCountYear(endDate.toString(), projectIds);
     } else {
-      maps = busiCustomerService.groupByDateCountYear(endDate.toString(),projectIds);
+      maps = busiCustomerService.groupByDateCountYear(endDate.toString(), projectIds);
     }
     return R.ok().put("rs", maps);
   }
 
-  private R monthConut(String [] projectIds, Object endDate, int t) {
+  private R monthConut(String[] projectIds, Object endDate, int t) {
     if (endDate == null || endDate.equals("")) {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String format = sdf.format(new Date());
@@ -166,7 +163,7 @@ public class BusiManagerCustomerController extends AbstractController {
     return R.ok().put("rs", maps);
   }
 
-  private R weekCountS(String [] projectIds, Object endDate) {
+  private R weekCountS(String[] projectIds, Object endDate) {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     String paramDate;
     if (endDate != null && !endDate.equals("")) {
@@ -363,7 +360,7 @@ public class BusiManagerCustomerController extends AbstractController {
       .lambda()
       .gt(ReceptionEntity::getCreateTime, dateStart)
       .lt(ReceptionEntity::getCreateTime, dateEnd)
-      .in(ReceptionEntity::getProjectId,projectIds));
+      .in(ReceptionEntity::getProjectId, projectIds));
 
     int countNew = receptionService.count(new QueryWrapper<ReceptionEntity>()
       .lambda()
@@ -409,15 +406,17 @@ public class BusiManagerCustomerController extends AbstractController {
     List<Integer> projectIds = getProjectIds();
 
     return R.ok()
-        .put("timeoutCount", busiCustomerService
-          .countTimeout(projectIds))
-        .put("normalCount", busiCustomerService.countNormal(projectIds))
-        .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getProjectId, projectIds).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)))
-        .put("repetitionCount",busiCustomerService.countRepetition(projectIds))
-        .put("collideCount",busiCustomerService.countCollide(projectIds))
-        .put("invalidCount",busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
-                .lambda().in(BusiCustomerEntity::getProjectId,projectIds)
-                .eq(BusiCustomerEntity::getInvalid,1).eq(BusiCustomerEntity::getStatus,1)));
+      .put("timeoutCount", busiCustomerService
+        .countTimeout(projectIds))
+      .put("normalCount", busiCustomerService.countNormal(projectIds))
+      .put("recoveryCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getProjectId, projectIds).isNull(BusiCustomerEntity::getMatchUserId).eq(BusiCustomerEntity::getStatus, 2)))
+      .put("repetitionCount", busiCustomerService.countRepetition(projectIds))
+      .put("collideCount", busiCustomerService.countCollide(projectIds))
+      .put("invalidCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
+        .lambda().in(BusiCustomerEntity::getProjectId, projectIds)
+        .eq(BusiCustomerEntity::getInvalid, 1).eq(BusiCustomerEntity::getStatus, 1)))
+      .put("successCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getStatus, 1, 2).in(BusiCustomerEntity::getBusiStatus, 50, 60)))
+      .put("unSuccessCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getStatus, 1, 2).notIn(BusiCustomerEntity::getBusiStatus, 50, 60)));
 
   }
 
@@ -426,8 +425,8 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/groupNormalFollowList")
   public R groupNormalFollowList(@RequestParam Map<String, Object> params) {
-      List<Integer> projectIds = getProjectIds();
-      return R.ok().put("datas", sysUserService.queryNormalFollow(projectIds));
+    List<Integer> projectIds = getProjectIds();
+    return R.ok().put("datas", sysUserService.queryNormalFollow(projectIds));
   }
 
   /**
@@ -436,7 +435,29 @@ public class BusiManagerCustomerController extends AbstractController {
   @RequestMapping("/groupTimeoutList")
   public R groupTimeoutList(@RequestParam Map<String, Object> params) {
     List<Integer> projectIds = getProjectIds();
-    return R.ok().put("datas", sysUserService.queryTimeoutList(projectIds));
+    List<SysUserEntity> list = null;
+    Object ot = params.get("type");
+
+    if ("success".equals(ot)) {
+      //成交客户
+      list = sysUserService.querySuccessList(projectIds);
+    } else if ("unSuccess".equals(ot)) {
+      //未成交客户
+      list = sysUserService.queryUnSuccessList(projectIds);
+    } else {
+      //逾期客户
+      ot = "timeOut";
+      list = sysUserService.queryTimeoutList(projectIds);
+    }
+    for (SysUserEntity user : list) {
+      if (user.getUserId() == null) {
+        user.setUserId(-1l);
+        user.setUsername("公共客户");
+        user.setName("公共客户");
+      }
+    }
+
+    return R.ok().put("datas", list);
 
   }
 
@@ -456,11 +477,25 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/timeoutList")
   public R timeoutList(@RequestParam Map<String, Object> params) {
-    if (params.get("userId") == null || params.get("projectId") == null) {
+    if (params.get("userId") == null) {
       return R.error("参数异常");
     }
+    List<Integer> projectIds = new ArrayList<>();
+    if(params.get("projectId") == null){
+      projectIds = getProjectIds();
+    }else{
+      projectIds.add(Integer.parseInt(params.get("projectId").toString()));
+    }
+
     IPage<BusiCustomerEntity> iPage = new Query<BusiCustomerEntity>().getPage(params);
-    iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), params.get("projectId").toString(), null);
+    Object ot = params.get("type");
+    if ("success".equals(ot)) {
+      iPage = busiCustomerService.successPage(iPage, params.get("userId").toString(), projectIds, null);
+    } else if ("unSuccess".equals(ot)) {
+      iPage = busiCustomerService.unSuccessPage(iPage, params.get("userId").toString(), projectIds, null);
+    } else {
+      iPage = busiCustomerService.timeoutPage(iPage, params.get("userId").toString(), projectIds, null);
+    }
     return R.ok().put("page", new PageUtils(iPage));
   }
 
@@ -498,10 +533,10 @@ public class BusiManagerCustomerController extends AbstractController {
     if (params.get("projectId") == null) {
       return R.error("参数异常");
     }
-    params.put("invalid",1);
-    params.put("status",1);
+    params.put("invalid", 1);
+    params.put("status", 1);
     PageUtils pageUtils = busiCustomerService.queryPage(params);
-    return R.ok().put("page",pageUtils);
+    return R.ok().put("page", pageUtils);
   }
 
   /**
@@ -510,7 +545,7 @@ public class BusiManagerCustomerController extends AbstractController {
   @RequestMapping("/groupRepetitionList")
   public R groupRepetitionList(@RequestParam Map<String, Object> params) {
     List<Integer> projectIds = getProjectIds();
-    params.put("projectIds",projectIds);
+    params.put("projectIds", projectIds);
     PageUtils maps = busiCustomerService.groupRepetition(params);
     return R.ok().put("page", maps);
   }
@@ -521,7 +556,7 @@ public class BusiManagerCustomerController extends AbstractController {
   @RequestMapping("/collideList")
   public R collideList(@RequestParam Map<String, Object> params) {
     List<Integer> projectIds = getProjectIds();
-    params.put("projectIds",projectIds);
+    params.put("projectIds", projectIds);
     PageUtils maps = busiCustomerService.collideList(params);
     return R.ok().put("page", maps);
   }
@@ -586,9 +621,21 @@ public class BusiManagerCustomerController extends AbstractController {
     Object customerIdObj = params.get("customerIds");
     String[] userIds = userIdObj == null ? new String[]{} : userIdObj.toString().split(",");
     String[] customerIds = customerIdObj == null ? new String[]{} : customerIdObj.toString().split(",");
+
     if (userIds.length < 1 || customerIds.length < 1) {
       return R.ok();
     } else {
+      BusiCustomerEntity busiCustomerEntity = busiCustomerService.getById(customerIds[0]);
+      int k = busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getId,customerIds).ne(BusiCustomerEntity::getProjectId,busiCustomerEntity.getProjectId()));
+      if(k>0){
+        return R.error("只能选择同一个项目的客户进行分配");
+      }
+      BusiCustomerEntity e = busiCustomerService.getById(customerIds[0]);
+      int c = busiUserProjectService.count(new QueryWrapper<BusiUserProjectEntity>().lambda().in(BusiUserProjectEntity::getUserId,userIds).eq(BusiUserProjectEntity::getProjectId,e.getProjectId()));
+      if(c < userIds.length){
+        return R.error("选择的置业顾问没有该客户的权限");
+      }
+
       int i = 0;
       for (String customerId : customerIds) {
         if (i == userIds.length) {

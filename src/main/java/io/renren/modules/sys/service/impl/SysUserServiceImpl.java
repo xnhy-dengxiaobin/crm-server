@@ -193,6 +193,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserDao, SysUserEntity> i
     public List<SysUserEntity> queryTimeoutList(List<Integer> projectIds) {
         return baseMapper.queryTimeoutList(projectIds);
     }
+    @Override
+    public List<SysUserEntity> querySuccessList(List<Integer> projectIds){
+      return baseMapper.querySuccessList(projectIds);
+    }
+    @Override
+    public List<SysUserEntity> queryUnSuccessList(List<Integer> projectIds){
+      return baseMapper.queryUnSuccessList(projectIds);
+    }
 
     @Override
     public List<SysUserEntity> querySalesUserByProjectId(List<Integer> projectIds) {

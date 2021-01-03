@@ -32,17 +32,42 @@
     </if>
     and status = 1 group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
   </select>
-    <select id="queryTimeoutList" resultType="io.renren.modules.sys.entity.SysUserEntity">
+  <select id="queryTimeoutList" resultType="io.renren.modules.sys.entity.SysUserEntity">
     select * from (select match_user_id,count(1) as count from busi_customer
     WHERE DATEDIFF(now(),match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
     <if test="projectIds!=null">
-        and project_id in
-        <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
-            #{id}
-        </foreach>
+      and project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
     </if>
     and status = 1 group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
   </select>
+  <select id="querySuccessList" resultType="io.renren.modules.sys.entity.SysUserEntity">
+    select * from (select match_user_id,count(1) as count from busi_customer
+    WHERE 1=1
+    <if test="projectIds!=null">
+      and project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+    and status in(1,2) and busi_status in(50,60) group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
+  </select>
+
+  <select id="queryUnSuccessList" resultType="io.renren.modules.sys.entity.SysUserEntity">
+    select * from (select match_user_id,count(1) as count from busi_customer
+    WHERE 1=1
+    <if test="projectIds!=null">
+      and project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+    and status in(1,2) and busi_status not in(50,60)  group by match_user_id )as a left join sys_user on(sys_user.user_id=match_user_id)
+  </select>
+
+
     <select id="querySalesUserByProjectId" resultType="io.renren.modules.sys.entity.SysUserEntity">
         select DISTINCT t2.user_id,t2.username,t2.email,t2.mobile,t2.head,t2.name,t2.create_time,t3.id as is_signed
         from busi_user_project t1

@@ -19,7 +19,9 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
 
   IPage<BusiCustomerEntity> normalFollowPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds);
 
-  IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId, String projectId, String keywords);
+  IPage<BusiCustomerEntity> timeoutPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds, String keywords);
+  IPage<BusiCustomerEntity> successPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds, String keywords);
+  IPage<BusiCustomerEntity> unSuccessPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds, String keywords);
 
   IPage<BusiCustomerEntity> publicPage(IPage<BusiCustomerEntity> page,  List<Integer> projectIds, String keywords, Integer stt, Long matchUserId);
 

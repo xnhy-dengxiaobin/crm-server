@@ -18,7 +18,9 @@ import java.util.Map;
 @Mapper
 public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
   IPage<BusiCustomerEntity> normalFollowPage(IPage page, String userId, @Param("projectIds") List<Integer> projectIds);
-  IPage<BusiCustomerEntity> timeoutPage(IPage page, String userId,String projectId,String keywords);
+  IPage<BusiCustomerEntity> timeoutPage(IPage page, String userId,List<Integer> projectIds,String keywords);
+  IPage<BusiCustomerEntity> successPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds, String keywords);
+  IPage<BusiCustomerEntity> unSuccessPage(IPage<BusiCustomerEntity> page, String userId, List<Integer> projectIds, String keywords);
   IPage<BusiCustomerEntity> publicPage(IPage page, @Param("projectIds") List<Integer> projectIds, String keywords, Integer stt, Long matchUserId);
     List<BusiCustomerEntity> selectByPhone(Map<String, Object> params);
   long countNormal(@Param("projectIds") List<Integer> projectIds);

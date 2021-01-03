@@ -112,18 +112,73 @@
   </select>
   <select id="timeoutPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
     select t1.*,t2.name as projectName,t3.name as matchName from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
-    <if test="projectId!=null">
-      and t1.project_id=#{projectId}
+    <if test="projectIds!=null">
+      and t1.project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
     </if>
     <if test="userId!=null">
-      and t1.match_user_id = #{userId}
+      <if test="userId==-1">
+        and t1.match_user_id is null
+      </if>
+      <if test="userId!=-1">
+        and t1.match_user_id = #{userId}
+      </if>
+
     </if>
     <if test="keywords!=null and keywords.toString()!=''">
       and instr(t1.mobile_phone,#{keywords})
     </if>
-     and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
+    and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
 
   </select>
+  <select id="successPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+    select t1.*,t2.name as projectName,t3.name as matchName from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
+    <if test="projectIds!=null">
+      and t1.project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+    <if test="userId!=null">
+      <if test="userId == -1">
+        and t1.match_user_id is null
+      </if>
+      <if test="userId != -1">
+        and t1.match_user_id = #{userId}
+      </if>
+    </if>
+    <if test="keywords!=null and keywords.toString()!=''">
+      and instr(t1.mobile_phone,#{keywords})
+    </if>
+    and t1.status in(1,2) and t1.busi_status in(50,60)
+
+  </select>
+  <select id="unSuccessPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
+    select t1.*,t2.name as projectName,t3.name as matchName from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
+    <if test="projectIds!=null">
+      and t1.project_id in
+      <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+    <if test="userId!=null">
+      <if test="userId==-1">
+        and t1.match_user_id is null
+      </if>
+      <if test="userId!=-1">
+        and t1.match_user_id = #{userId}
+      </if>
+    </if>
+    <if test="keywords!=null and keywords.toString()!=''">
+      and instr(t1.mobile_phone,#{keywords})
+    </if>
+    and t1.status in(1,2) and t1.busi_status not in(50,60)
+
+  </select>
+
+
   <select id="publicPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
     select t1.*,t2.name as projectName,t3.name as oldMatchName, t4.name matchName from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.old_match_user_id=t3.user_id)
       left join sys_user t4 on (t1.match_user_id=t4.user_id)  where
