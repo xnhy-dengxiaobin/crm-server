@@ -93,7 +93,6 @@ public class BusiCustomerEntity implements Serializable {
   /**
    * 分配的职业顾问
    */
-  @TableField(exist = false)
   private String matchUserName;
   /**
    * 分配的职业顾问姓名
