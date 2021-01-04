@@ -96,6 +96,19 @@ public interface SysUserService extends IService<SysUserEntity> {
   List<SysUserEntity> queryTimeoutList(List<Integer> projectIds);
 
   /**
+   * 根据projectId 查询成交客户
+   * @param projectIds
+   * @return
+   */
+  List<SysUserEntity> querySuccessList(List<Integer> projectIds);
+  /**
+   * 根据projectId 查询未成交客户
+   * @param projectIds
+   * @return
+   */
+  List<SysUserEntity> queryUnSuccessList(List<Integer> projectIds);
+
+  /**
    * 根据projectId 查询置业顾问
    * @return
    */

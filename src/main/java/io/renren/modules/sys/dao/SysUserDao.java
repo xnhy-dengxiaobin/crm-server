@@ -55,6 +55,19 @@ public interface SysUserDao extends BaseMapper<SysUserEntity> {
   List<SysUserEntity> queryTimeoutList(@Param("projectIds") List<Integer> projectIds);
 
   /**
+   * 根据projectId 查询成交客户
+   * @param projectIds
+   * @return
+   */
+  List<SysUserEntity> querySuccessList(@Param("projectIds") List<Integer> projectIds);
+  /**
+   * 根据projectId 查询未成交客户
+   * @param projectIds
+   * @return
+   */
+  List<SysUserEntity> queryUnSuccessList(@Param("projectIds") List<Integer> projectIds);
+
+  /**
    * 根据projectId 查询置业顾问
    * @return
    */
