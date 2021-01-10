@@ -18,10 +18,11 @@ import java.util.concurrent.TimeoutException;
  */
 @Component
 @Slf4j
-public class RoomSyncJob implements ITask {
+public class ProjectSyncJob implements ITask {
     @Override
     public void run(String params) throws Exception {
-        List<EnnParam.Step> steps = EnnParam.mkSteps(new EnnParam.Step("grv", "cron/RoomSyncStep"));
+        log.debug("开始执行项目同步任务");
+        List<EnnParam.Step> steps = EnnParam.mkSteps(new EnnParam.Step("grv", "cron/ProjectSyncStep"));
         EnnParam ennParam = EnnParam.mkExecParam(steps);
         Map<String, String> param = new HashMap<>();
         DataUtil dataUtil = new DataUtil("sync", "sync", "crm");
@@ -38,7 +39,7 @@ public class RoomSyncJob implements ITask {
     }
 
     public static void main(String[] args) throws Exception {
-        RoomSyncJob job = new RoomSyncJob();
+        ProjectSyncJob job = new ProjectSyncJob();
         job.run("");
     }
 }
