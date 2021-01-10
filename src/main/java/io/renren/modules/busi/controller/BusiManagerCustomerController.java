@@ -43,6 +43,10 @@ public class BusiManagerCustomerController extends AbstractController {
   private BusiCustomerRoamService busiCustomerRoamService;
   @Autowired
   private BusiUserProjectService busiUserProjectService;
+  @Autowired
+  private BusiBookingService busiBookingService;
+
+
 
   /**
    * 列表
@@ -265,48 +269,26 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/listByDate")
   public R listByDate(@RequestBody Map<String, Object> params) throws ParseException {
-    String dateStart = null;
-    String dateEnd = null;
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     Object projectId = params.get("projectId");
-    Object date = params.get("date");
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
     } else {
-      if (date == null || date.equals("")) {
-        String format = sdf.format(new Date());
-        date = format;
-      }
-      Object unit = params.get("unit");
-      if (unit.toString().equals("day")) {
-        dateStart = date + " 00:00:00";
-        dateEnd = date + " 59:59:59";
-      } else if (unit.toString().equals("week")) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(sdf.parse(date.toString()));
-        calendar.add(calendar.DATE, -6);
-        dateStart = sdf.format(calendar.getTime()) + " 00:00:00";
-        dateEnd = date + " 59:59:59";
-      } else if (unit.toString().equals("month")) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        Date parse = format.parse(date.toString());
-        dateStart = format.format(parse) + "-01 00:00:00";
-        dateEnd = date + " 59:59:59";
-      } else if (unit.toString().equals("year")) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        Date parse = format.parse(date.toString());
-        String yearStr = format.format(parse);
-        dateStart = yearStr + "-01-01 00:00:00";
-        dateEnd = date + " 59:59:59";
-      }
-      params.put("startDate", dateStart);
-      params.put("endDate", dateEnd);
+      Map<String, String> stringStringMap = dateTo(params);
+      params.put("startDate", stringStringMap.get("startDate"));
+      params.put("endDate", stringStringMap.get("endDate"));
       PageUtils maps = receptionService.listBySalerId(params);
       return R.ok().put("page", maps);
     }
   }
 
+  /**
+   * 列表
+   */
+  @RequestMapping("/renchouCount")
+  public R rengouCount(@RequestParam Map<String, Object> params) throws ParseException {
 
+    return tongyongQuery(params, 2);
+  }
   /**
    * 分析统计
    *
@@ -314,45 +296,79 @@ public class BusiManagerCustomerController extends AbstractController {
    */
   @RequestMapping("/statisticsComInfo")
   public R statisticsComInfo(@RequestParam Map<String, Object> params) throws ParseException {
-    String dateStart = null;
-    String dateEnd = null;
-    Map<String, Integer> rs = null;
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    return tongyongQuery(params, 1);
+  }
+
+  public R tongyongQuery(Map<String, Object> params,int type) throws ParseException {
+
+    Map<String, Integer> rs;
     Object projectId = params.get("projectId");
-    Object date = params.get("date");
     if (null == projectId) {
       return R.error("请选择当前要查看的项目");
     } else {
       String[] ids = projectId.toString().split(",");
-      if (date == null || date.equals("")) {
-        String format = sdf.format(new Date());
-        date = format;
+      Map<String,String> map = dateTo(params);
+      if (type == 1) {
+        rs = getComInfo(map.get("startDate"), map.get("endDate"), ids);
+        return R.ok().put("rs", rs);
+      }else if (type == 2){
+        return R.ok().put("rs",getRenChouCount(map.get("startDate"), map.get("endDate"), ids));
       }
-      Object unit = params.get("unit");
-      if (unit.toString().equals("day")) {
-        dateStart = date + " 00:00:00";
-        dateEnd = date + " 59:59:59";
-      } else if (unit.toString().equals("week")) {
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(sdf.parse(date.toString()));
-        calendar.add(calendar.DATE, -6);
-        dateStart = sdf.format(calendar.getTime()) + " 00:00:00";
-        dateEnd = date + " 59:59:59";
-      } else if (unit.toString().equals("month")) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
-        Date parse = format.parse(date.toString());
-        dateStart = format.format(parse) + "-01 00:00:00";
-        dateEnd = date + " 59:59:59";
-      } else if (unit.toString().equals("year")) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy");
-        Date parse = format.parse(date.toString());
-        String yearStr = format.format(parse);
-        dateStart = yearStr + "-01-01 00:00:00";
-        dateEnd = date + " 59:59:59";
-      }
-      rs = getComInfo(dateStart, dateEnd, ids);
-      return R.ok().put("rs", rs);
+      return null;
     }
+  }
+
+  private Map<String,String> dateTo(Map<String, Object> params) throws ParseException {
+    String dateStart = null;
+    String dateEnd = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Object date = params.get("date");
+    if (date == null || date.equals("")) {
+      String format = sdf.format(new Date());
+      date = format;
+    }
+    Object unit = params.get("unit");
+    if (unit.toString().equals("day")) {
+      dateStart = date + " 00:00:00";
+      dateEnd = date + " 59:59:59";
+    } else if (unit.toString().equals("week")) {
+      Calendar calendar = new GregorianCalendar();
+      calendar.setTime(sdf.parse(date.toString()));
+      calendar.add(calendar.DATE, -6);
+      dateStart = sdf.format(calendar.getTime()) + " 00:00:00";
+      dateEnd = date + " 59:59:59";
+    } else if (unit.toString().equals("month")) {
+      SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+      Date parse = format.parse(date.toString());
+      dateStart = format.format(parse) + "-01 00:00:00";
+      dateEnd = date + " 59:59:59";
+    } else if (unit.toString().equals("year")) {
+      SimpleDateFormat format = new SimpleDateFormat("yyyy");
+      Date parse = format.parse(date.toString());
+      String yearStr = format.format(parse);
+      dateStart = yearStr + "-01-01 00:00:00";
+      dateEnd = yearStr + "-12-31 59:59:59";
+    }
+    Map<String,String> rs = new HashMap<>();
+    rs.put("startDate",dateStart);
+    rs.put("endDate",dateEnd);
+    return rs;
+  }
+
+  /**
+   * 查询认筹
+   * @param dateStart
+   * @param dateEnd
+   * @param projectIds
+   * @return
+   */
+  private List<Map<String,Object>> getRenChouCount(String dateStart, String dateEnd, String[] projectIds){
+    Map param = new HashMap();
+    param.put("dateStart",dateStart);
+    param.put("dateEnd",dateEnd);
+    param.put("projectIds",projectIds);
+    List<Map<String,Object>> map = busiBookingService.renchouGroup(param);
+    return map;
   }
 
   private Map<String, Integer> getComInfo(String dateStart, String dateEnd, String[] projectIds) {
