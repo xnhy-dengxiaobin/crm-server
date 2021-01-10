@@ -121,6 +121,20 @@ public class StatisticSyncJob implements ITask {
             }
         }
         log.debug("已发送退换房同步请求");
+
+        //状态变化日志
+        try {
+            List<EnnParam.Step> steps = EnnParam.mkSteps(new EnnParam.Step("grv", "cron/UpdateCustomerStatusStep"));
+            EnnParam ennParam = EnnParam.mkExecParam(steps);
+            Map<String, Object> result = dataUtil.exec(ennParam);
+        } catch (Exception e) {
+            if (e instanceof SocketTimeoutException) {
+                log.error("连接超时，可以忽略");
+            } else {
+                log.error("", e);
+            }
+        }
+        log.debug("已发送生成状态变更日志请求");
     }
 
     public static void main(String[] args) throws Exception {
