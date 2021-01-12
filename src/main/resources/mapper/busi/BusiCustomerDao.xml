@@ -432,11 +432,17 @@
     select t1.* from busi_customer t1
     where exists(select 1 from busi_user_project t0
         where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test="name!=null and name!=''">
+            and t1.name like '%${name}%'
+        </if>
         limit #{offset},#{limit}
     </select>
     <select id="countSourceCus" resultType="long">
     select count(*) from busi_customer t1
     where exists(select 1 from busi_user_project t0
         where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test="name!=null and name!=''">
+            and t1.name like '%${name}%'
+        </if>
     </select>
 </mapper>
