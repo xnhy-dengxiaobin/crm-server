@@ -175,21 +175,33 @@
         <include refid="condition"></include>
     </select>
     <select id="selectCheckList" resultType="PrepareEntity">
-        select t1.*,t2.name as user_name
+        select t1.*,t2.name as user_name,t2.mobile as middleUserMobile,
+        t3.name as middleTypeName
         from busi_prepare t1 left join sys_user t2 on t1.user_id=t2.user_id
-        <where>
-            <if test=" name!=null and name !='' ">
-                and t1.name like '%${name}%'
-            </if>
-            <if test=" createTime !=null and createTime !='' ">
-                and datediff(t1.created_time, #{createTime}) = 0 and t1.status > 0 and t1.customer_id is null
-            </if>
-        </where>
+        left join busi_middle_type t3 on t2.middle_type_id=t3.id
+        where t1.status > 0 and t1.customer_id is null
+        and exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test=" name!=null and name !='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test=" createTime !=null and createTime !='' ">
+            and datediff(t1.created_time, #{createTime}) = 0 and t1.status > 0 and t1.customer_id is null
+        </if>
         limit #{offset},#{limit}
     </select>
     <select id="checkCnt" resultType="long">
         select count(*)
-        from busi_prepare
-        where status > 0 and customer_id is null
+        from busi_prepare t1 left join sys_user t2 on t1.user_id=t2.user_id
+        left join busi_middle_type t3 on t2.middle_type_id=t3.id
+        where t1.status > 0 and t1.customer_id is null
+        and exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test=" name!=null and name !='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test=" createTime !=null and createTime !='' ">
+            and datediff(t1.created_time, #{createTime}) = 0 and t1.status > 0 and t1.customer_id is null
+        </if>
     </select>
 </mapper>

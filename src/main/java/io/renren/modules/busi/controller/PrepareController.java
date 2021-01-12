@@ -20,7 +20,6 @@ import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 
 
-
 /**
  * WX报备表
  *
@@ -38,7 +37,8 @@ public class PrepareController extends AbstractController {
      * 列表
      */
     @RequestMapping("/lst")
-    public R lst(@RequestBody Map<String, Object> params){
+    public R lst(@RequestBody Map<String, Object> params) {
+        params.put("userId", getUserId());
         PageUtils page = prepareService.qryPage(params);
 
         return R.ok().put("page", page);
@@ -49,7 +49,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/list")
     @RequiresPermissions("busi:prepare:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         params.put("userId", getUserId());
         PageUtils page = prepareService.queryPage(params);
 
@@ -62,8 +62,8 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/info/{id}")
     @RequiresPermissions("busi:prepare:info")
-    public R info(@PathVariable("id") Integer id){
-		PrepareEntity prepare = prepareService.getById(id);
+    public R info(@PathVariable("id") Integer id) {
+        PrepareEntity prepare = prepareService.getById(id);
 
         return R.ok().put("prepare", prepare);
     }
@@ -73,8 +73,8 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("busi:prepare:save")
-    public R save(@RequestBody PrepareEntity prepare){
-		prepareService.save(prepare);
+    public R save(@RequestBody PrepareEntity prepare) {
+        prepareService.save(prepare);
 
         return R.ok();
     }
@@ -83,10 +83,10 @@ public class PrepareController extends AbstractController {
      * wx保存
      */
     @RequestMapping("/wx/save")
-    public R wxsave(@RequestBody PrepareEntity prepare){
+    public R wxsave(@RequestBody PrepareEntity prepare) {
         prepare.setUserName(getUser().getName());
         String msg = prepareService.wxSave(prepare, getUserId());
-        if(msg.indexOf("拒收无效")>0){
+        if (msg.indexOf("拒收无效") > 0) {
             return R.error(msg);
         }
         return R.ok();
@@ -98,8 +98,8 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:prepare:update")
-    public R update(@RequestBody PrepareEntity prepare){
-		prepareService.updateById(prepare);
+    public R update(@RequestBody PrepareEntity prepare) {
+        prepareService.updateById(prepare);
 
         return R.ok();
     }
@@ -109,8 +109,8 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:prepare:delete")
-    public R delete(@RequestBody Integer[] ids){
-		prepareService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Integer[] ids) {
+        prepareService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }
@@ -120,7 +120,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/check")
     @RequiresPermissions("busi:prepare:check")
-    public R check(@RequestBody PrepareCheckEntity Checks){
+    public R check(@RequestBody PrepareCheckEntity Checks) {
         prepareService.check(Checks);
         return R.ok();
     }
@@ -129,7 +129,7 @@ public class PrepareController extends AbstractController {
      * 查询和客户相关联的列表
      */
     @RequestMapping("/lstPage")
-    public R lstPage(@RequestBody Map<String, Object> params){
+    public R lstPage(@RequestBody Map<String, Object> params) {
         params.put("userId", getUserId());
         PageUtils page = prepareService.lstPage(params);
         return R.ok().put("page", page);
@@ -139,7 +139,7 @@ public class PrepareController extends AbstractController {
      * 信息
      */
     @RequestMapping("/nf/{id}")
-    public R nf(@PathVariable("id") Integer id){
+    public R nf(@PathVariable("id") Integer id) {
         PrepareEntity prepare = prepareService.gtById(id);
 
         return R.ok().put("prepare", prepare);
@@ -150,7 +150,7 @@ public class PrepareController extends AbstractController {
      * 查询和客户相关联的列表
      */
     @RequestMapping("/listPage4Admin")
-    public R listPage4Admin(@RequestBody Map<String, Object> params){
+    public R listPage4Admin(@RequestBody Map<String, Object> params) {
         params.put("userId", getUserId());
         PageUtils page = prepareService.listPage4Admin(params);
         return R.ok().put("page", page);
@@ -161,7 +161,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/refresh")
     @RequiresPermissions("busi:prepare:update")
-    public R refreshExpired(@RequestBody Map<String, Object> params){
+    public R refreshExpired(@RequestBody Map<String, Object> params) {
         prepareService.refreshExpired(ParamResolvor.getCommonList(params, "ids"));
 
         return R.ok();

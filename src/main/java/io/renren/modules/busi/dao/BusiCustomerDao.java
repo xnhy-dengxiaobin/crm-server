@@ -39,4 +39,8 @@ public interface BusiCustomerDao extends BaseMapper<BusiCustomerEntity> {
 
   @Select("select * from busi_customer where source='来电' and not exists(select 1 from busi_reception where customer_id = busi_customer.id) and date_add(create_time,interval 2 day) < now()")
   List<BusiCustomerEntity> queryCallVisit();
+
+  List<Map> selectSourceCus(Map<String, Object> params);
+
+  Long countSourceCus(Map<String, Object> params);
 }
