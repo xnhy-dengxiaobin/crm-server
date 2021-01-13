@@ -45,7 +45,10 @@ public class BusiManagerCustomerController extends AbstractController {
   private BusiUserProjectService busiUserProjectService;
   @Autowired
   private BusiBookingService busiBookingService;
-
+  @Autowired
+  private BusiTradeService busiTradeService;
+  @Autowired
+  private BusiBookingService bookingService;
 
 
   /**
@@ -173,20 +176,7 @@ public class BusiManagerCustomerController extends AbstractController {
     if (endDate != null && !endDate.equals("")) {
       paramDate = endDate.toString();
     } else {
-      Date date = new Date();
-      Calendar calendar = Calendar.getInstance();
-      calendar.setFirstDayOfWeek(Calendar.SUNDAY);//设置星期一为一周开始的第一天
-      calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
-      Integer weekNum;
-      calendar.setTimeInMillis(date.getTime());//时间戳
-      weekNum = calendar.get(Calendar.WEEK_OF_YEAR);//获得当前日期属于今年的第几周
-      SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy");
-      String format = simpleDateFormat2.format(date);
-      int yyyy = Integer.parseInt(format);
-      //获得指定年的第几周的结束日期
-      calendar.setWeekDate(yyyy, weekNum, 1);
-      Date endtime = calendar.getTime();
-      paramDate = simpleDateFormat.format(endtime);
+      paramDate = getweek(simpleDateFormat);
     }
     List<Map> maps = busiCustomerService.groupByDateCountWeek(paramDate, projectIds);
     return R.ok().put("rs", maps);
@@ -281,13 +271,131 @@ public class BusiManagerCustomerController extends AbstractController {
     }
   }
 
+  @RequestMapping("/renchouDateCount")
+  public R renchouDateCount(@RequestParam Map<String, Object> params) throws ParseException {
+    R r = tongyongQuery(params, 3);
+    R r1 = tongyongQuery(params, 2);
+    R r2 = tongyongQuery(params, 4);
+    r.put("renchou",r1.get("renchou"));
+    r.put("qianyue",r2.get("qianyue"));
+    return r;
+  }
   /**
    * 列表
    */
   @RequestMapping("/renchouCount")
-  public R rengouCount(@RequestParam Map<String, Object> params) throws ParseException {
+  public R renchouCount(@RequestParam Map<String, String> params) {
+    Object projectId = params.get("projectId");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    }
+    String[] ids = projectId.toString().split(",");
+    String paramDate = buildEndDate(params);
 
-    return tongyongQuery(params, 2);
+    List<Map> maps = bookingService.groupByDateCount(paramDate, ids, params.get("unit"));
+    return R.ok().put("rs",maps);
+  }
+
+  @RequestMapping("/rengouCount")
+  public R rengouCount(@RequestParam Map<String, String> params) {
+    Object projectId = params.get("projectId");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    }
+    String[] ids = projectId.toString().split(",");
+    String paramDate = buildEndDate(params);
+
+    List<Map> maps = busiTradeService.groupByDateCount(paramDate, ids, params.get("unit"));
+    return R.ok().put("rs",maps);
+  }
+
+  @RequestMapping("/qianyueCount")
+  public R quanyueCount(@RequestParam Map<String, String> params) {
+    Object projectId = params.get("projectId");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    }
+    String[] ids = projectId.toString().split(",");
+    String paramDate = buildEndDate(params);
+
+    List<Map> maps = busiTradeService.qianyueGroupByDateCount(paramDate, ids, params.get("unit"));
+    return R.ok().put("rs",maps);
+  }
+  /**
+   * 分析统计
+   *
+   * @return
+   */
+  @RequestMapping("/rankingList")
+  public R rankingList(@RequestParam Map<String, Object> params) throws ParseException {
+    Object projectId = params.get("projectId");
+    if (null == projectId) {
+      return R.error("请选择当前要查看的项目");
+    }
+    String[] ids = projectId.toString().split(",");
+    Map<String, String> date = dateTo(params);
+    List<Map> maps = bookingService.rankingList(date.get("startDate"), date.get("endDate"), ids, params.get("type").toString());
+    return R.ok().put("list",maps);
+  }
+
+  /**
+   * 时间构建
+   * @param params
+   * @return
+   */
+  private String buildEndDate(@RequestParam Map<String, String> params) {
+    String paramDate;
+    if (params.get("unit").equals("week")) {
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      if (params.get("endDate") != null && !params.get("endDate").equals("")) {
+        paramDate = params.get("endDate").toString();
+      } else {
+        paramDate = getweek(simpleDateFormat);
+      }
+    } else {
+      if (params.get("endDate") == null || params.get("endDate").equals("")) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String format = sdf.format(new Date());
+        paramDate = format;
+      } else {
+        paramDate = params.get("endDate");
+      }
+    }
+    return paramDate;
+  }
+
+  /**
+   * 获取当前周开始
+   * @param simpleDateFormat
+   * @return
+   */
+  private String getweek(SimpleDateFormat simpleDateFormat) {
+    String paramDate;
+    Date date = new Date();
+    Calendar calendar = Calendar.getInstance();
+    calendar.setFirstDayOfWeek(Calendar.SUNDAY);//设置星期一为一周开始的第一天
+    calendar.setMinimalDaysInFirstWeek(4);//可以不用设置
+    Integer weekNum;
+    calendar.setTimeInMillis(date.getTime());//时间戳
+    weekNum = calendar.get(Calendar.WEEK_OF_YEAR);//获得当前日期属于今年的第几周
+    SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy");
+    String format = simpleDateFormat2.format(date);
+    int yyyy = Integer.parseInt(format);
+    //获得指定年的第几周的结束日期
+    calendar.setWeekDate(yyyy, weekNum, 1);
+    Date endtime = calendar.getTime();
+    paramDate = simpleDateFormat.format(endtime);
+    return paramDate;
+  }
+
+  @RequestMapping("/tongyongQuery")
+  public R tongyongQuery(@RequestParam Map<String, Object> params) throws ParseException {
+    R r = tongyongQuery(params, 3);
+    R r1 = tongyongQuery(params, 2);
+    R r2 = tongyongQuery(params, 4);
+    r.put("renchou",r1.get("renchou"));
+    r.put("qianyue",r2.get("qianyue"));
+    return r;
   }
   /**
    * 分析统计
@@ -308,11 +416,19 @@ public class BusiManagerCustomerController extends AbstractController {
     } else {
       String[] ids = projectId.toString().split(",");
       Map<String,String> map = dateTo(params);
+      Map param = new HashMap();
+      param.put("dateStart",map.get("startDate"));
+      param.put("dateEnd",map.get("endDate"));
+      param.put("projectIds",ids);
       if (type == 1) {
         rs = getComInfo(map.get("startDate"), map.get("endDate"), ids);
         return R.ok().put("rs", rs);
       }else if (type == 2){
-        return R.ok().put("rs",getRenChouCount(map.get("startDate"), map.get("endDate"), ids));
+        return R.ok().put("renchou",getRenChouCount(map.get("startDate"), map.get("endDate"), ids));
+      }else if (type == 3){
+        return R.ok().put("rengou",busiTradeService.rengouCount(param));
+      } else if (type == 4){
+        return R.ok().put("qianyue",busiTradeService.qianyueCount(param));
       }
       return null;
     }
@@ -340,8 +456,14 @@ public class BusiManagerCustomerController extends AbstractController {
     } else if (unit.toString().equals("month")) {
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
       Date parse = format.parse(date.toString());
+      Calendar a=Calendar.getInstance();
+      a.setTime(parse);
+      a.set(Calendar.DATE, 1);//把日期设置为当月第一天
+      a.roll(Calendar.DATE, -1);//日期回滚一天，也就是最后一天
+      int MaxDate=a.get(Calendar.DATE);
+      System.out.println("该月最大天数:"+MaxDate);
       dateStart = format.format(parse) + "-01 00:00:00";
-      dateEnd = date + " 59:59:59";
+      dateEnd = format.format(parse)+ MaxDate + " 59:59:59";
     } else if (unit.toString().equals("year")) {
       SimpleDateFormat format = new SimpleDateFormat("yyyy");
       Date parse = format.parse(date.toString());

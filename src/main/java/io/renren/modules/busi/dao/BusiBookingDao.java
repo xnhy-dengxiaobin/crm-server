@@ -17,4 +17,8 @@ import java.util.Map;
 @Mapper
 public interface BusiBookingDao extends BaseMapper<BusiBookingEntity> {
 	List<Map<String,Object>> renchouGroup(Map param);
+
+	List<Map> groupByDateCount(String endDate,String [] projectIds,String type);
+
+	List<Map> rankingList(String dateStart,String dateEnd,String [] projectIds,String type);
 }

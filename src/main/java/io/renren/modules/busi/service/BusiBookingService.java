@@ -19,5 +19,10 @@ public interface BusiBookingService extends IService<BusiBookingEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     List<Map<String,Object>> renchouGroup(Map param);
+
+    List<Map> groupByDateCount(String endDate,String [] projectIds,String type);
+
+    List<Map> rankingList(String startDate,String endDate,String [] projectIds,String type);
+
 }
 

@@ -32,4 +32,14 @@ public class BusiBookingServiceImpl extends ServiceImpl<BusiBookingDao, BusiBook
         return baseMapper.renchouGroup(param);
     }
 
+    @Override
+    public List<Map> groupByDateCount(String endDate,String [] projectIds,String type) {
+        return baseMapper.groupByDateCount(endDate,projectIds,type);
+    }
+
+    @Override
+    public List<Map> rankingList(String startDate, String endDate, String[] projectIds, String type) {
+        return baseMapper.rankingList(startDate,endDate,projectIds,type);
+    }
+
 }

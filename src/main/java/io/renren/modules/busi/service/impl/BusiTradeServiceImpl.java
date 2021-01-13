@@ -10,6 +10,7 @@ import io.renren.modules.busi.entity.BusiTradeEntity;
 import io.renren.modules.busi.service.BusiTradeService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -31,5 +32,26 @@ public class BusiTradeServiceImpl extends ServiceImpl<BusiTradeDao, BusiTradeEnt
 
         return new PageUtils(page);
     }
+
+    @Override
+    public Long rengouCount(Map param){
+        return baseMapper.rengouCount(param);
+    }
+
+    @Override
+    public Long qianyueCount(Map param){
+        return baseMapper.qianyueCount(param);
+    }
+
+    @Override
+    public List<Map> groupByDateCount(String endDate, String[] projectIds, String type) {
+        return baseMapper.groupByDateCount(endDate,projectIds,type);
+    }
+
+    @Override
+    public List<Map> qianyueGroupByDateCount(String endDate, String[] projectIds, String type) {
+        return baseMapper.qianyueGroupByDateCount(endDate,projectIds,type);
+    }
+
 
 }
