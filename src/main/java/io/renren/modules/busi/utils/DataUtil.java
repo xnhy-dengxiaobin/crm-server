@@ -5,6 +5,7 @@ import io.renren.common.utils.HttpUtils;
 import io.renren.common.utils.JsonUtil;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.bean.EnnParam;
+import io.renren.modules.busi.constant.Constant;
 import org.apache.commons.collections.MapUtils;
 import org.apache.http.HttpResponse;
 
@@ -16,6 +17,7 @@ public class DataUtil {
     public static boolean isLogin = false;
     public static Map<String, Object> user = new HashMap<>();
 
+    private String host;
     private String actionId;
     private String menuId;
     private String path;
@@ -24,6 +26,8 @@ public class DataUtil {
         this.actionId = actionId;
         this.menuId = menuId;
         this.path = path;
+
+        this.host = Constant.SYNC_HOST;
     }
 
     public DataUtil(String actionId, String menuId) {
@@ -59,7 +63,7 @@ public class DataUtil {
         EnnParam p = new EnnParam();
         p.put("userCode", userCode);
         p.put("password", password);
-        Map<String, Object> result = rmi("http://localhost:6041/sync-server/sso/login", p);
+        Map<String, Object> result = rmi(host + "sso/login", p, HttpUtils.CONNECTION_TIMEOUT, HttpUtils.SO_TIMEOUT);
         if (checkResult(result)) {
             user = ParamResolvor.getMap(result, "data");
             isLogin = true;
@@ -69,15 +73,15 @@ public class DataUtil {
         }
     }
 
-    private Map<String, Object> rmi(String url, EnnParam ennParam) throws Exception {
+    private Map<String, Object> rmi(String url, EnnParam ennParam, int cTimeout, int sTimeout) throws Exception {
         Map<String, String> param = mkParam(ennParam);
-        HttpResponse httpResponse = HttpUtils.doPost(url, param);
+        HttpResponse httpResponse = HttpUtils.doPost(url, param, cTimeout, sTimeout);
         Map<String, Object> result = HttpUtils.res2Map(httpResponse);
         return result;
     }
 
     public Map<String, Object> exec(EnnParam ennParam) throws Exception {
-        return rmi("http://localhost:6041/sync-server/core/execBusiness", ennParam);
+        return rmi(host + "core/execBusiness", ennParam, 5000, 5000);
     }
 
     public boolean checkResult(Map<String, Object> result) {

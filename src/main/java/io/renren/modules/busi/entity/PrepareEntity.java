@@ -61,6 +61,12 @@ public class PrepareEntity implements Serializable {
 	private String projectName;
 
 	/**
+	 * 意向项目名称
+	 */
+	@TableField(exist = false)
+	private String projectNames;
+
+	/**
 	 * 经纪人id
 	 */
 	private String userId;
