@@ -11,7 +11,9 @@ import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.*;
 import io.renren.modules.sys.controller.AbstractController;
+import io.renren.modules.sys.entity.SetupEntity;
 import io.renren.modules.sys.entity.SysUserEntity;
+import io.renren.modules.sys.service.SetupService;
 import io.renren.modules.sys.service.SysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,8 @@ public class BusiManagerCustomerController extends AbstractController {
   @Autowired
   private BusiBookingService bookingService;
 
+  @Autowired
+  private SetupService setupService;
 
   /**
    * 列表
@@ -793,7 +797,18 @@ public class BusiManagerCustomerController extends AbstractController {
         if (sysUserEntity == null) {
           sysUserEntity = new SysUserEntity();
         }
-        busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
+        SetupEntity setupEntity = setupService.getOne(new QueryWrapper<SetupEntity>().lambda().eq(SetupEntity::getKeyN,"逾期时间"));
+        Calendar calendar = Calendar.getInstance();
+        int day = 30;
+        if(setupEntity!=null){
+          try{
+            day = Integer.parseInt(setupEntity.getValue());
+          }catch (Exception e1){
+            logger.error("逾期时间出错，默认100天",e1);
+          }
+        }
+        calendar.add(Calendar.DAY_OF_MONTH, day);
+        busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getExpiredDate,calendar.getTime()).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
           .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime, new Date())
         );
 
