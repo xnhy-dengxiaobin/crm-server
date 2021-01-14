@@ -556,7 +556,7 @@ public class BusiManagerCustomerController extends AbstractController {
       .put("collideCount", busiCustomerService.countCollide(projectIds))
       .put("invalidCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
         .lambda().in(BusiCustomerEntity::getProjectId, projectIds)
-        .eq(BusiCustomerEntity::getInvalid, 1).eq(BusiCustomerEntity::getStatus, 1)))
+        .eq(BusiCustomerEntity::getInvalid, 1).eq(BusiCustomerEntity::getStatus, 3)))
       .put("successCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getStatus, 1, 2).in(BusiCustomerEntity::getBusiStatus, 50, 60)))
       .put("unSuccessCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getStatus, 1, 2).notIn(BusiCustomerEntity::getBusiStatus, 50, 60)));
 
