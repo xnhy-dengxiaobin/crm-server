@@ -121,6 +121,8 @@ public class BusiHouseEntity implements Serializable {
 	 * 销控日期 slcontroldate
 	 */
 	private Date controlDate;
+
+	private String  buildingId;
 	/**
 	 * 同步时间
 	 */
