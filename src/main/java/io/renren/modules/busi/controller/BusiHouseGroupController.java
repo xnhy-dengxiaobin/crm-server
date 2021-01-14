@@ -42,9 +42,9 @@ public class BusiHouseGroupController extends AbstractController {
         List<BusiHouseGroupEntity> list = busiHouseGroupService.list(new QueryWrapper<BusiHouseGroupEntity>().eq("parent_id", pid).eq("type", "栋"));
         if(getUser().getAppRole() == 2) {
             for (BusiHouseGroupEntity busiHouseGroupEntity : list) {
-                Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()));
+                Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId()));
                 QueryWrapper<BusiHouseEntity> busiHouseEntityQueryWrapper = new QueryWrapper<>();
-                busiHouseEntityQueryWrapper.lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId());
+                busiHouseEntityQueryWrapper.lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId());
                 busiHouseEntityQueryWrapper.lambda().and(wrapper -> wrapper.ne(BusiHouseEntity::getStatus, "1").or().eq(BusiHouseEntity::getControl, 1));
                 Integer ys = busiHouseService.count(busiHouseEntityQueryWrapper);
 
@@ -54,17 +54,17 @@ public class BusiHouseGroupController extends AbstractController {
         }
         if(getUser().getAppRole() == 1) {
             for (BusiHouseGroupEntity busiHouseGroupEntity : list) {
-                Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()));
+                Integer zs = busiHouseService.count(new QueryWrapper<BusiHouseEntity>().lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId()));
                 Integer ds = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
-                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"1").ne(BusiHouseEntity::getControl,1));
+                        .lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"1").ne(BusiHouseEntity::getControl,1));
                 Integer xk = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
-                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"10")
+                        .lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"10")
                         .and(wrapper -> wrapper.ne(BusiHouseEntity::getStatus, "1").or().eq(BusiHouseEntity::getControl, 1)));
 
                 Integer rg = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
-                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"20"));
+                        .lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"20"));
                 Integer qy = busiHouseService.count(new QueryWrapper<BusiHouseEntity>()
-                        .lambda().eq(BusiHouseEntity::getProjectId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"30"));
+                        .lambda().eq(BusiHouseEntity::getBuildingId, busiHouseGroupEntity.getId()).eq(BusiHouseEntity::getStatus,"30"));
                 busiHouseGroupEntity.setZs(zs);
                 busiHouseGroupEntity.setDs(ds);
                 busiHouseGroupEntity.setXk(xk);

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.busi.dao.BusiContractDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.busi.entity.BusiContractEntity" id="busiContractMap">
+        <result property="buguid" column="buguid"/>
+        <result property="projguid" column="projguid"/>
+        <result property="tradeguid" column="tradeguid"/>
+        <result property="saleguid" column="saleguid"/>
+        <result property="qsdate" column="qsdate"/>
+        <result property="ywbldate" column="ywbldate"/>
+        <result property="cstname" column="cstname"/>
+        <result property="csttel" column="csttel"/>
+        <result property="roominfo" column="roominfo"/>
+        <result property="ywy" column="ywy"/>
+        <result property="salestatus" column="salestatus"/>
+        <result property="status" column="status"/>
+        <result property="cjtotal" column="cjtotal"/>
+        <result property="rmbcjtotal" column="rmbcjtotal"/>
+        <result property="bz" column="bz"/>
+        <result property="roomguid" column="roomguid"/>
+        <result property="cstallguid" column="cstallguid"/>
+        <result property="saletype" column="saletype"/>
+        <result property="ajbank" column="ajbank"/>
+        <result property="ajtotal" column="ajtotal"/>
+        <result property="gjjbank" column="gjjbank"/>
+        <result property="gjjtotal" column="gjjtotal"/>
+        <result property="tjr" column="tjr"/>
+        <result property="bldarea" column="bldarea"/>
+        <result property="exrate" column="exrate"/>
+        <result property="payformname" column="payformname"/>
+        <result property="jzdate" column="jzdate"/>
+        <result property="jzamount" column="jzamount"/>
+        <result property="sjbctotal" column="sjbctotal"/>
+        <result property="iszxkbrht" column="iszxkbrht"/>
+        <result property="zxtotal" column="zxtotal"/>
+        <result property="tnarea" column="tnarea"/>
+        <result property="price" column="price"/>
+        <result property="tnprice" column="tnprice"/>
+        <result property="total" column="total"/>
+        <result property="calmode" column="calmode"/>
+        <result property="discntvalue" column="discntvalue"/>
+        <result property="discntremark" column="discntremark"/>
+        <result property="bldcjprice" column="bldcjprice"/>
+        <result property="tncjprice" column="tncjprice"/>
+        <result property="roomtotal" column="roomtotal"/>
+        <result property="zxbz" column="zxbz"/>
+        <result property="zxprice" column="zxprice"/>
+        <result property="fstotal" column="fstotal"/>
+        <result property="earnest" column="earnest"/>
+        <result property="areastatus" column="areastatus"/>
+        <result property="jzstatus" column="jzstatus"/>
+        <result property="jzpzdate" column="jzpzdate"/>
+        <result property="canceljzdate" column="canceljzdate"/>
+        <result property="canceljzpzdate" column="canceljzpzdate"/>
+        <result property="pzstatus" column="pzstatus"/>
+        <result property="isgeneratefail" column="isgeneratefail"/>
+        <result property="failreason" column="failreason"/>
+        <result property="djbldcjprice" column="djbldcjprice"/>
+        <result property="djtncjprice" column="djtncjprice"/>
+        <result property="djroomtotal" column="djroomtotal"/>
+        <result property="producttype" column="producttype"/>
+        <result property="syncTime" column="sync_time"/>
+    </resultMap>
+
+
+</mapper>

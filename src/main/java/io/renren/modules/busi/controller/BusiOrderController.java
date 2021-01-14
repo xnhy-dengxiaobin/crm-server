@@ -7,14 +7,11 @@ import io.renren.common.exception.RRException;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
-import io.renren.modules.busi.entity.BusiCustomerEntity;
+import io.renren.modules.busi.entity.BusiContractEntity;
 import io.renren.modules.busi.entity.BusiCustomerOrderEntity;
 import io.renren.modules.busi.entity.BusiOrderEntity;
 import io.renren.modules.busi.entity.BusiTradeEntity;
-import io.renren.modules.busi.service.BusiCustomerOrderService;
-import io.renren.modules.busi.service.BusiCustomerService;
-import io.renren.modules.busi.service.BusiOrderService;
-import io.renren.modules.busi.service.BusiTradeService;
+import io.renren.modules.busi.service.*;
 import io.renren.modules.busi.vo.BusiOrderVO;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -43,6 +42,8 @@ public class BusiOrderController {
     private BusiTradeService tradeService;
     @Autowired
     private BusiCustomerService customerService;
+    @Autowired
+    private BusiContractService busiContractService;
     /**
      * 催收列表
      */
@@ -58,19 +59,29 @@ public class BusiOrderController {
      *
      */
     @RequestMapping("/infoByRoomId/{id}/{status}")
-    public R infoByRoomId(@PathVariable("id") Integer id,@PathVariable("status") Integer status){
-        List<BusiTradeEntity> list1 = tradeService.list(new QueryWrapper<BusiTradeEntity>()
-                .lambda()
-                .eq(BusiTradeEntity::getRoomId, id)
-                .eq(BusiTradeEntity::getRoomStatus, status));
-
-        BusiTradeEntity busiTradeEntity = list1.get(0);
-        List<BusiOrderEntity> list = busiOrderService.list(new QueryWrapper<BusiOrderEntity>().lambda().eq(BusiOrderEntity::getRoomId, id).eq(BusiOrderEntity::getId,busiTradeEntity.getOrderId()));
-        BusiOrderEntity busiOrderEntity = list.get(0);
-        List<BusiCustomerOrderEntity> list2 = customerOrderService.list(new QueryWrapper<BusiCustomerOrderEntity>().lambda().eq(BusiCustomerOrderEntity::getOrderId, busiOrderEntity.getId()));
-        List<Integer> ids = list2.stream().map(BusiCustomerOrderEntity::getCustomerId).collect(Collectors.toList());
-        List<BusiCustomerEntity> list3 = customerService.list(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getId, ids));
-        return R.ok().put("trade", busiTradeEntity).put("order",busiOrderEntity).put("list",list3);
+    public R infoByRoomId(@PathVariable("id") String id,@PathVariable("status") Integer status){
+        if (status == 3){
+            BusiTradeEntity one = tradeService.getOne(new QueryWrapper<BusiTradeEntity>().lambda().eq(BusiTradeEntity::getRoomguid, id));
+            return R.ok().put("rs", one);
+        }else if(status == 4){
+            BusiContractEntity one = busiContractService.getOne(new QueryWrapper<BusiContractEntity>().lambda().eq(BusiContractEntity::getRoomguid, id));
+            return R.ok().put("rs", one);
+        }
+        return null;
+//        List<BusiTradeEntity> list1 = tradeService.list(new QueryWrapper<BusiTradeEntity>()
+//                .lambda()
+//                .eq(BusiTradeEntity::getRoomguid, id));
+////                .eq(BusiTradeEntity::getRoomStatus, status));
+//
+//        BusiTradeEntity busiTradeEntity = list1.get(0);
+//        List<BusiOrderEntity> list = busiOrderService.list(new QueryWrapper<BusiOrderEntity>()
+//                .lambda().eq(BusiOrderEntity::getRoomId, id)
+//                .eq(BusiOrderEntity::getId,busiTradeEntity.getOrderId()));
+//        BusiOrderEntity busiOrderEntity = list.get(0);
+//        List<BusiCustomerOrderEntity> list2 = customerOrderService.list(new QueryWrapper<BusiCustomerOrderEntity>().lambda().eq(BusiCustomerOrderEntity::getOrderId, busiOrderEntity.getId()));
+//        List<Integer> ids = list2.stream().map(BusiCustomerOrderEntity::getCustomerId).collect(Collectors.toList());
+//        List<BusiCustomerEntity> list3 = customerService.list(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getId, ids));
+//        return R.ok().put("trade", busiTradeEntity).put("order",busiOrderEntity).put("list",list3);
     }
     /**
      * 列表
