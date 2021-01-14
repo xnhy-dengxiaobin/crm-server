@@ -68,7 +68,7 @@
             #{id}
         </foreach>
     </if>
-    and t1.status =1 and t1.match_user_id is not null and  DATEDIFF(now(),t1.match_user_time) &lt;= (select `value` from sys_setup where key_n='逾期时间')
+    and t1.status =1 and t1.match_user_id is not null and  expired_date>=now()
   </select>
   <select id="countTimeout" resultType="long">
     select count(t1.id) from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
@@ -78,7 +78,7 @@
             #{id}
         </foreach>
     </if>
-    and t1.status =1 and t1.match_user_id is not null and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
+    and t1.status =1 and t1.match_user_id is not null and  expired_date&lt;now()
   </select>
 
     <select id="countRepetition" resultType="long">
@@ -108,7 +108,7 @@
 <!--    <if test="keywords!=null and keywords.toString()!=''">-->
 <!--      and instr(t1.mobile_phone,#{keywords})-->
 <!--    </if>-->
-    and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) &lt;= (select `value` from sys_setup where key_n='逾期时间')
+    and t1.status =1 and  t1.expired_date>=now()
   </select>
   <select id="timeoutPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
     select t1.*,t2.name as projectName,t3.name as matchName from busi_customer t1 left join busi_project t2 on(t1.project_id = t2.id) left join sys_user t3 on (t1.match_user_id=t3.user_id) where 1=1
@@ -130,7 +130,7 @@
     <if test="keywords!=null and keywords.toString()!=''">
       and instr(t1.mobile_phone,#{keywords})
     </if>
-    and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
+    and t1.status =1 and t1.expired_date&lt;now()
 
   </select>
   <select id="successPage" resultType="io.renren.modules.busi.entity.BusiCustomerEntity">
@@ -193,7 +193,7 @@
         </foreach>
     </if>
       <if test="stt==1">
-          and t1.status =1 and  DATEDIFF(now(),t1.match_user_time) > (select `value` from sys_setup where key_n='逾期时间')
+          and t1.status =1 and  expired_date&lt;now()
       </if>
       <if test="stt==2">
           and t1.match_user_id is null and t1.status =2
@@ -201,7 +201,7 @@
       <if test="stt==3">
           and t1.status =1
           and t1.match_user_id is not null
-          and (select `value` from sys_setup where key_n='逾期时间') >= DATEDIFF(now(),t1.match_user_time)
+          and expired_date>=now()
       </if>
       <if test="stt==4">
           and t1.status in (1,2)
