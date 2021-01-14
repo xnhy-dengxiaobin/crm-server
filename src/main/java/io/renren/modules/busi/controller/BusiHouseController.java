@@ -40,7 +40,7 @@ public class BusiHouseController {
     public R listByGroupId(@PathVariable("gid") Integer gid){
 
         List<BusiHouseEntity> list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>()
-                .lambda().eq(BusiHouseEntity::getGroupId, gid).orderByAsc(BusiHouseEntity::getFloor));
+                .lambda().eq(BusiHouseEntity::getGroupId, gid).orderByAsc(BusiHouseEntity::getNo));
         return R.ok().put("list", list);
     }
     /**
