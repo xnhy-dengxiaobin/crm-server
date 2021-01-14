@@ -94,9 +94,19 @@ public class BusiCustomerController extends AbstractController {
      * 列表
      */
     @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestBody Map<String, Object> params){
         PageUtils page = busiCustomerService.queryPage(params);
 
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/listSourceCus")
+    public R listSourceCus(@RequestBody Map<String, Object> params){
+        params.put("userId", getUserId());
+        PageUtils page = busiCustomerService.querySourceCus(params);
         return R.ok().put("page", page);
     }
 

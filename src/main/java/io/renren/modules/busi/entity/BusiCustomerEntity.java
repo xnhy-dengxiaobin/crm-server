@@ -142,7 +142,16 @@ public class BusiCustomerEntity implements Serializable {
 	 */
 	private String sourceUserName;
 
-
+	/**
+	 * 报备时间
+	 */
+	@TableField(exist = false)
+	private Date sourceCreatedTime;
+	/**
+	 * 报备保护期
+	 */
+	@TableField(exist = false)
+	private Date sourceExpired;
 	/**
 	 * 客户来源联系方式
 	 */

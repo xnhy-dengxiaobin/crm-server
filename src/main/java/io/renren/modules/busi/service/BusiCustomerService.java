@@ -101,5 +101,6 @@ public interface BusiCustomerService extends IService<BusiCustomerEntity> {
   PageUtils collideList(Map<String, Object> params);
 
 
+  PageUtils querySourceCus(Map<String, Object> params);
 }
 

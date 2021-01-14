@@ -220,4 +220,20 @@ public class BusiCustomerServiceImpl extends ServiceImpl<BusiCustomerDao, BusiCu
     }
   }
 
+  @Override
+  public PageUtils querySourceCus(Map<String, Object> params) {
+    long currentPage = ParamResolvor.getLongAsDefault(params, "page", 1);
+    long limit = ParamResolvor.getLongAsDefault(params, "limit", 10);
+    long offset = (currentPage - 1) * limit;
+    params.put("offset", offset);
+    params.put("limit", limit); //将string转为long
+    List<Map> list = getBaseMapper().selectSourceCus(params);
+    Long cnt = getBaseMapper().countSourceCus(params);
+    Page<Map> page = new Page<>();
+    page.setCurrent(currentPage);
+    page.setSize(limit);
+    page.setTotal(cnt);
+    page.setRecords(list);
+    return new PageUtils(page);
+  }
 }

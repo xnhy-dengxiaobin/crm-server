@@ -137,6 +137,12 @@ public class HttpUtils {
         return doPost(url, null, null, bodys, CONNECTION_TIMEOUT, SO_TIMEOUT);
     }
 
+    public static HttpResponse doPost(String url, Map<String, String> bodys,
+                                      int connectionTimeout,
+                                      int soTimeout) {
+        return doPost(url, null, null, bodys, connectionTimeout, soTimeout);
+    }
+
     public static HttpResponse doPost(String url, Map<String, String> headers, Map<String, String> bodys) {
         return doPost(url, headers, null, bodys, CONNECTION_TIMEOUT, SO_TIMEOUT);
     }
@@ -176,6 +182,10 @@ public class HttpUtils {
 
     public static HttpResponse doPost(String url, String body) {
         return doPost(url, null, null, body, CONNECTION_TIMEOUT, SO_TIMEOUT);
+    }
+
+    public static HttpResponse doPost(String url, String body,int connectionTimeout,int soTimeout) {
+        return doPost(url, null, null, body, connectionTimeout, soTimeout);
     }
 
     public static HttpResponse doPost(String url, Map<String, String> headers, String body) {

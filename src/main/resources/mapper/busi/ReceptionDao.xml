@@ -30,12 +30,14 @@
     </resultMap>-->
 
     <select id="slct" resultType="ReceptionEntity">
-        select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_name,
-        t2.source_mobile,t2.channel,t3.name as match_user_name,t3.head,t4.short_name as project_name
+        select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_id,t2.source_name,t5.expired,
+        t5.created_time as prepared_time,t2.source_user_id, t2.source_user_name,t2.source_mobile,t2.channel,
+        t3.head,t4.short_name as project_name
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id
         inner join busi_project t4 on t1.project_id=t4.id
+        left join busi_prepare t5 on t2.id = t5.customer_id
         where exists(select 1 from busi_user_project t0
         where t0.project_id=t1.project_id and t0.user_id=#{userId})
         <if test=" id!=null and id !='' ">
@@ -54,6 +56,7 @@
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id
+        left join busi_prepare t5 on t2.id = t5.customer_id
         where exists(select 1 from busi_user_project t0
         where t0.project_id=t1.project_id and t0.user_id=#{userId})
         <if test=" id!=null and id !='' ">

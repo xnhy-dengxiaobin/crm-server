@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.erp.dao.BusiReportWqyDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.erp.entity.BusiReportWqyEntity" id="busiReportWqyMap">
+        <result property="id" column="id"/>
+        <result property="roominfo" column="roominfo"/>
+        <result property="cstname" column="cstname"/>
+        <result property="tel" column="tel"/>
+        <result property="rgdate" column="rgdate"/>
+        <result property="yqdate" column="yqdate"/>
+        <result property="rmbcjtotal" column="rmbcjtotal"/>
+        <result property="ordertype" column="ordertype"/>
+        <result property="username" column="username"/>
+        <result property="tradeguid" column="tradeguid"/>
+        <result property="projguid" column="projguid"/>
+        <result property="qsdate" column="qsdate"/>
+        <result property="orderguid" column="orderguid"/>
+        <result property="oppguid" column="oppguid"/>
+        <result property="syncTime" column="sync_time"/>
+    </resultMap>
+
+
+</mapper>

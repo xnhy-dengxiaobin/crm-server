@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.busi.dao.BusiBookingDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.busi.entity.BusiBookingEntity" id="busiBookingMap">
+        <result property="bookingguid" column="bookingguid"/>
+        <result property="buguid" column="buguid"/>
+        <result property="projguid" column="projguid"/>
+        <result property="oppguid" column="oppguid"/>
+        <result property="bgndate" column="bgndate"/>
+        <result property="enddate" column="enddate"/>
+        <result property="projnum" column="projnum"/>
+        <result property="roomnum" column="roomnum"/>
+        <result property="bz" column="bz"/>
+        <result property="total" column="total"/>
+        <result property="userguid" column="userguid"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="closedate" column="closedate"/>
+        <result property="reason" column="reason"/>
+        <result property="roomguid" column="roomguid"/>
+        <result property="closeyy" column="closeyy"/>
+        <result property="sourceguid" column="sourceguid"/>
+        <result property="createdby" column="createdby"/>
+        <result property="createdbyguid" column="createdbyguid"/>
+        <result property="createdon" column="createdon"/>
+        <result property="iscreatoruse" column="iscreatorUse"/>
+        <result property="cstallguid" column="cstallguid"/>
+        <result property="cstname" column="cstname"/>
+        <result property="cstguid1" column="cstguid1"/>
+        <result property="cstguid2" column="cstguid2"/>
+        <result property="cstguid3" column="cstguid3"/>
+        <result property="cstguid4" column="cstguid4"/>
+        <result property="roominfo" column="roominfo"/>
+        <result property="bldguid" column="bldguid"/>
+        <result property="ywy" column="ywy"/>
+        <result property="bldarea" column="bldarea"/>
+        <result property="tnarea" column="tnarea"/>
+        <result property="ssamount" column="ssamount"/>
+    </resultMap>
+
+    <select id="renchouGroup" resultType="map">
+        select count(1) count,if(closeyy is null,'排号',closeyy) as name  from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+        inner join busi_project bp2 on bp.parent_id = bp2.id and
+        <if test="projectIds!=null">
+            bp2.id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        where createdon &lt; #{dateEnd} and createdon &gt; #{dateStart}   GROUP BY closeyy
+    </select>
+
+
+    <select id="groupByDateCount" resultType="map">
+        <if test="type == 'day'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%m-%d') as dateAbscissa
+            ,(select count(1) from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE(bb.bgndate) = date and (bb.closeyy is null or bb.closeyy ='转认购') ) count
+
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  day)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+
+        <if test="type == 'week'">
+            SELECT
+            WEEK(date,6),endDate  as fullDate, CONCAT(DATE_FORMAT(date,'%m-%d'),DATE_FORMAT( date_add(DATE(endDate),INTERVAL  1  day),'%m-%d')) as dateAbscissa
+            ,
+            (select count(1) from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where WEEK(bb.bgndate,6) = WEEK(date,6) and (DATE_FORMAT(bb.bgndate,'%Y') = yearDate or DATE_FORMAT(bb.bgndate,'%Y') = yearDate2 )
+            and (bb.closeyy is null or bb.closeyy ='转认购') ) count
+            from(
+            select numlist2.date,date_add(DATE(date),INTERVAL  -1  week) endDate,(CASE dn WHEN 53 THEN DATE_FORMAT(DATE_ADD(date, INTERVAL -1 YEAR),'%Y')  ELSE DATE_FORMAT(date,'%Y') END) as yearDate ,  DATE_FORMAT(date,'%Y') as yearDate2 from (
+            SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  week)AS 'date', week(date_sub(DATE(#{endDate}),INTERVAL numlist.id week),6) dn,id FROM
+            (
+            SELECT i AS id FROM num where i &lt;=7 ORDER BY i asc
+            ) AS numlist
+            ) numlist2
+            ) temp
+        </if>
+
+        <if test="type == 'month'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%Y %m') as dateAbscissa
+           ,(select count(1) from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE_FORMAT(bb.bgndate,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and (bb.closeyy is null or bb.closeyy ='转认购') ) count
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  MONTH)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+
+        <if test="type == 'year'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%Y') as dateAbscissa
+            ,(select count(1) from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE_FORMAT(bb.bgndate,'%Y') = DATE_FORMAT(date,'%Y') and (bb.closeyy is null or bb.closeyy ='转认购') ) count
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  YEAR)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+    </select>
+
+    <select id="rankingList" resultType="map">
+
+        <if test="type == 'rc'">
+            select ywy,count(1) count from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where bgndate &lt;= #{dateEnd} and #{dateStart} &lt;= bgndate and (closeyy is null or closeyy ='转认购') GROUP BY ywy ORDER BY count desc;
+        </if>
+
+        <if test="type == 'rg'">
+            select ywy,count(1) count from busi_trade bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where  qsdate &lt;= #{dateEnd} and #{dateStart} &lt;= qsdate
+            GROUP BY ywy ORDER BY count desc;
+        </if>
+
+        <if test="type == 'qy'">
+            select ywy,count(1) count from busi_contract bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where  qsdate &lt;= #{dateEnd} and #{dateStart} &lt;= qsdate
+            GROUP BY ywy ORDER BY count desc;
+        </if>
+    </select>
+</mapper>

@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,9 @@ public class BusiCommandLineRunner implements CommandLineRunner {
 
     @Autowired
     private SysConfigService sysConfigService;
+
+    @Value("${crm.sync.host}")
+    private String syncHost;
 
     @Override
     public void run(String... args) throws Exception {
@@ -33,6 +37,9 @@ public class BusiCommandLineRunner implements CommandLineRunner {
         Constant.prepareValidPeriod = Integer.valueOf(StringUtils.isEmpty(prepareValidPeriod) ? "2" : prepareValidPeriod);
         Constant.salerGranteePeriod = Integer.valueOf(StringUtils.isEmpty(salerGranteePeriod) ? "30" : salerGranteePeriod);
         Constant.customerStatusLog = JsonUtil.readJsonObject(str, Map.class);
+
+        Constant.SYNC_HOST = syncHost;
+
         log.debug("crm服务启动成功");
     }
 }

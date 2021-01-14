@@ -106,3 +106,5 @@ crm:
   log:
     path: D:/logs
   upload-path: uploads/
+  sync:
+    host: https://scmczd.net/sync-server/

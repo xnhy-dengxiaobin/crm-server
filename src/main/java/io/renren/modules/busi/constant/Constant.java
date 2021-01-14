@@ -19,4 +19,6 @@ public class Constant {
     public static Map<String, Object> customerStatusLog = new HashedMap();
 
     public static final String MANNUL_REJECT_REASON = "其它渠道带客户到访，以带看为准。";
+
+    public static String SYNC_HOST = "";
 }

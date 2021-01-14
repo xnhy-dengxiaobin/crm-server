@@ -51,3 +51,5 @@ crm:
     log:
         path: D:/enn/logs
     upload-path: D:/enn/uploads/
+    sync:
+        host: https://scmczd.net/sync-server/

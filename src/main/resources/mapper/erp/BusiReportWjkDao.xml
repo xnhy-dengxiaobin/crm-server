@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.erp.dao.BusiReportWjkDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.erp.entity.BusiReportWjkEntity" id="busiReportWjkMap">
+        <result property="id" column="id"/>
+        <result property="roominfo" column="roominfo"/>
+        <result property="cstname" column="cstname"/>
+        <result property="tel" column="tel"/>
+        <result property="qstime" column="qstime"/>
+        <result property="yqdate" column="yqdate"/>
+        <result property="rmbtotal" column="rmbtotal"/>
+        <result property="qktotal" column="qktotal"/>
+        <result property="salestatus" column="salestatus"/>
+        <result property="username" column="username"/>
+        <result property="projguid" column="projguid"/>
+        <result property="qsdate" column="qsdate"/>
+        <result property="roomguid" column="roomguid"/>
+        <result property="tradeguid" column="tradeguid"/>
+        <result property="saleguid" column="saleguid"/>
+        <result property="type" column="type"/>
+        <result property="syncTime" column="sync_time"/>
+    </resultMap>
+
+    <select id="listYqWjk" resultType="BusiReportWjkEntity">
+        select DISTINCT t1.roominfo,t1.qktotal,cstname,tel,qstime,yqdate,rmbtotal,salestatus,username,projguid,qsdate,roomguid,tradeguid,saleguid
+        from ( select roominfo ,sum(qktotal) as qktotal from busi_report_wjk where yqdate > 0 and username like '%${mobilePhone}' GROUP BY roominfo) t1
+        left join busi_report_wjk t2 on t1.roominfo = t2.roominfo where t2.yqdate > 0 ORDER BY t2.qsdate desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="listYqWjkCount" resultType="long">
+        select count(1) count
+        from ( select roominfo ,sum(qktotal) as qktotal from busi_report_wjk where yqdate > 0 and username like '%${mobilePhone}' GROUP BY roominfo) t1
+    </select>
+
+</mapper>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.busi.dao.BusiTradeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.busi.entity.BusiTradeEntity" id="busiTradeMap">
+        <result property="id" column="id"/>
+        <result property="guid" column="guid"/>
+        <result property="roomId" column="room_id"/>
+        <result property="projectId" column="project_id"/>
+        <result property="roomStatus" column="room_status"/>
+        <result property="status" column="status"/>
+        <result property="closeReason" column="close_reason"/>
+        <result property="orderId" column="order_id"/>
+        <result property="salerId" column="saler_id"/>
+        <result property="createdTime" column="created_time"/>
+        <result property="cstAllGuid" column="cst_all_guid"/>
+        <result property="cstAllName" column="cst_all_name"/>
+        <result property="syncTime" column="sync_time"/>
+        <result property="syncFlag" column="sync_flag"/>
+    </resultMap>
+
+    <select id="rengouCount" resultType="long">
+
+        select count(1) count from busi_trade  bt inner join busi_project bp on bt.projguid = bp.guid
+        inner join busi_project bp2 on bp.parent_id = bp2.id and
+        <if test="projectIds!=null">
+            bp2.id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        where qsdate &lt; #{dateEnd} and qsdate &gt; #{dateStart}
+    </select>
+
+    <select id="qianyueCount" resultType="long">
+        select count(1) count from busi_contract  bt inner join busi_project bp on bt.projguid = bp.guid
+        inner join busi_project bp2 on bp.parent_id = bp2.id and
+        <if test="projectIds!=null">
+            bp2.id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        and bt.status ='激活'
+        where qsdate &lt; #{dateEnd} and qsdate &gt; #{dateStart}
+    </select>
+
+    <select id="groupByDateCount" resultType="map">
+        <if test="type == 'day'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%m-%d') as dateAbscissa
+            ,(select count(1) from busi_trade bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE(bb.qsdate) = date ) count
+
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  day)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+
+        <if test="type == 'week'">
+            SELECT
+            WEEK(date,6),endDate  as fullDate, CONCAT(DATE_FORMAT(date,'%m-%d'),DATE_FORMAT( date_add(DATE(endDate),INTERVAL  1  day),'%m-%d')) as dateAbscissa
+            ,
+            (select count(1) from busi_trade bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where WEEK(bb.qsdate,6) = WEEK(date,6) and (DATE_FORMAT(bb.qsdate,'%Y') = yearDate or DATE_FORMAT(bb.qsdate,'%Y') = yearDate2 )
+            ) count
+            from(
+            select numlist2.date,date_add(DATE(date),INTERVAL  -1  week) endDate,(CASE dn WHEN 53 THEN DATE_FORMAT(DATE_ADD(date, INTERVAL -1 YEAR),'%Y')  ELSE DATE_FORMAT(date,'%Y') END) as yearDate ,  DATE_FORMAT(date,'%Y') as yearDate2 from (
+            SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  week)AS 'date', week(date_sub(DATE(#{endDate}),INTERVAL numlist.id week),6) dn,id FROM
+            (
+            SELECT i AS id FROM num where i &lt;=7 ORDER BY i asc
+            ) AS numlist
+            ) numlist2
+            ) temp
+        </if>
+
+        <if test="type == 'month'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%Y %m') as dateAbscissa
+            ,(select count(1) from busi_trade bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE_FORMAT(bb.qsdate,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') ) count
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  MONTH)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+
+        <if test="type == 'year'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%Y') as dateAbscissa
+            ,(select count(1) from busi_trade bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE_FORMAT(bb.qsdate,'%Y') = DATE_FORMAT(date,'%Y') ) count
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  YEAR)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+    </select>
+
+    <select id="qianyueGroupByDateCount" resultType="map">
+        <if test="type == 'day'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%m-%d') as dateAbscissa
+            ,(select count(1) from busi_contract bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE(bb.qsdate) = date ) count
+
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  day)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+
+        <if test="type == 'week'">
+            SELECT
+            WEEK(date,6),endDate  as fullDate, CONCAT(DATE_FORMAT(date,'%m-%d'),DATE_FORMAT( date_add(DATE(endDate),INTERVAL  1  day),'%m-%d')) as dateAbscissa
+            ,
+            (select count(1) from busi_contract bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where WEEK(bb.qsdate,6) = WEEK(date,6) and (DATE_FORMAT(bb.qsdate,'%Y') = yearDate or DATE_FORMAT(bb.qsdate,'%Y') = yearDate2 )
+            ) count
+            from(
+            select numlist2.date,date_add(DATE(date),INTERVAL  -1  week) endDate,(CASE dn WHEN 53 THEN DATE_FORMAT(DATE_ADD(date, INTERVAL -1 YEAR),'%Y')  ELSE DATE_FORMAT(date,'%Y') END) as yearDate ,  DATE_FORMAT(date,'%Y') as yearDate2 from (
+            SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  week)AS 'date', week(date_sub(DATE(#{endDate}),INTERVAL numlist.id week),6) dn,id FROM
+            (
+            SELECT i AS id FROM num where i &lt;=7 ORDER BY i asc
+            ) AS numlist
+            ) numlist2
+            ) temp
+        </if>
+
+        <if test="type == 'month'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%Y %m') as dateAbscissa
+            ,(select count(1) from busi_contract bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE_FORMAT(bb.qsdate,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') ) count
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  MONTH)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+
+        <if test="type == 'year'">
+            SELECT
+            date as fullDate ,DATE_FORMAT(date,'%Y') as dateAbscissa
+            ,(select count(1) from busi_contract bb inner join busi_project bp on bb.projguid = bp.guid
+            inner join busi_project bp2 on bp.parent_id = bp2.id and
+            <if test="projectIds!=null">
+                bp2.id in
+                <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            where DATE_FORMAT(bb.qsdate,'%Y') = DATE_FORMAT(date,'%Y') ) count
+            from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  YEAR)AS 'date' FROM
+            (
+            SELECT * from
+            (SELECT i AS id FROM num ORDER BY i asc) a
+            where a.id &lt;=7
+            ) AS numlist
+            ) temp;
+        </if>
+    </select>
+</mapper>

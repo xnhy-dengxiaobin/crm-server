@@ -44,7 +44,13 @@ public class ReceptionEntity implements Serializable {
 	@TableField(exist = false)
 	private String source;
 	@TableField(exist = false)
+	private Integer sourceId;
+	@TableField(exist = false)
 	private String sourceName;
+	@TableField(exist = false)
+	private Integer sourceUserId;
+	@TableField(exist = false)
+	private String sourceUserName;
 	@TableField(exist = false)
 	private String sourceMobile;
 	@TableField(exist = false)

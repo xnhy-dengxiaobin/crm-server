@@ -14,6 +14,7 @@
         <result property="mobile3" column="mobile3"/>
         <result property="projectId" column="project_id"/>
         <result property="projectName" column="project_name"/>
+        <result property="projectNames" column="project_names"/>
         <result property="userId" column="user_id"/>
         <result property="middleName" column="middle_name"/>
         <result property="middleUserMobile" column="middle_user_mobile"/>
@@ -75,7 +76,20 @@
             and t2.busi_status like '%${customerStatus}%'
         </if>
         <if test="prepareStatus!=null and prepareStatus !='' ">
-            and t1.status = #{prepareStatus}
+            <if test="prepareStatus == 0">
+                and t1.status = #{prepareStatus}
+            </if>
+            <if test="prepareStatus == 10">
+                and t1.status = #{prepareStatus}
+            </if>
+            <if test="prepareStatus == 20">
+                and t1.status = 10 and t1.match_user_id is null
+            </if>
+            <if test="prepareStatus == -1">
+                <![CDATA[
+                and t1.status < 0
+                ]]>
+            </if>
         </if>
 
         <if test="busiStatus!=null and busiStatus.size > 0">
@@ -136,10 +150,16 @@
     </select>
 
     <select id="selectPage4Admin" resultMap="prepareMap">
-        select t1.*,t2.busi_status,t2.busi_status_updated_time,t3.name as project_name
+        select t1.*,t2.busi_status,t2.busi_status_updated_time,t3.name as project_name,
+        t5.name as middle_type_name,
+        (select group_concat(t02.name) from busi_customer_project t01 inner join
+        busi_project t02 on t01.project_id=t02.id
+        where t01.customer_id=t2.id) as project_names
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
+        left join sys_user t4 on t1.user_id=t4.user_id
+        left join busi_middle_type t5 on t4.middle_type_id=t5.id
         where exists(select 1 from busi_user_project t0
         where t0.project_id=t1.project_id and t0.user_id=#{userId})
         <include refid="condition"></include>
@@ -155,21 +175,33 @@
         <include refid="condition"></include>
     </select>
     <select id="selectCheckList" resultType="PrepareEntity">
-        select t1.*,t2.name as user_name
+        select t1.*,t2.name as user_name,t2.mobile as middleUserMobile,
+        t3.name as middleTypeName
         from busi_prepare t1 left join sys_user t2 on t1.user_id=t2.user_id
-        <where>
-            <if test=" name!=null and name !='' ">
-                and t1.name like '%${name}%'
-            </if>
-            <if test=" createTime !=null and createTime !='' ">
-                and datediff(t1.created_time, #{createTime}) = 0 and t1.status > 0 and t1.customer_id is null
-            </if>
-        </where>
+        left join busi_middle_type t3 on t2.middle_type_id=t3.id
+        where t1.status > 0 and t1.customer_id is null
+        and exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test=" name!=null and name !='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test=" createTime !=null and createTime !='' ">
+            and datediff(t1.created_time, #{createTime}) = 0 and t1.status > 0 and t1.customer_id is null
+        </if>
         limit #{offset},#{limit}
     </select>
     <select id="checkCnt" resultType="long">
         select count(*)
-        from busi_prepare
-        where status > 0 and customer_id is null
+        from busi_prepare t1 left join sys_user t2 on t1.user_id=t2.user_id
+        left join busi_middle_type t3 on t2.middle_type_id=t3.id
+        where t1.status > 0 and t1.customer_id is null
+        and exists(select 1 from busi_user_project t0
+        where t0.project_id=t1.project_id and t0.user_id=#{userId})
+        <if test=" name!=null and name !='' ">
+            and t1.name like '%${name}%'
+        </if>
+        <if test=" createTime !=null and createTime !='' ">
+            and datediff(t1.created_time, #{createTime}) = 0 and t1.status > 0 and t1.customer_id is null
+        </if>
     </select>
 </mapper>
