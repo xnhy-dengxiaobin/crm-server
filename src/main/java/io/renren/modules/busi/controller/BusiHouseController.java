@@ -39,7 +39,8 @@ public class BusiHouseController {
     @RequestMapping("/listByGroupId/{gid}")
     public R listByGroupId(@PathVariable("gid") Integer gid){
 
-        List<BusiHouseEntity> list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>().eq("group_id", gid));
+        List<BusiHouseEntity> list = busiHouseService.list(new QueryWrapper<BusiHouseEntity>()
+                .lambda().eq(BusiHouseEntity::getGroupId, gid).orderByAsc(BusiHouseEntity::getFloor));
         return R.ok().put("list", list);
     }
     /**
