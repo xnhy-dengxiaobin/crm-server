@@ -807,9 +807,10 @@ public class BusiManagerCustomerController extends AbstractController {
             logger.error("逾期时间出错，默认100天",e1);
           }
         }
+        SysUserEntity user = sysUserService.getById(userId);
         calendar.add(Calendar.DAY_OF_MONTH, day);
         busiCustomerService.update(new UpdateWrapper<BusiCustomerEntity>().lambda().eq(BusiCustomerEntity::getId, customerId).set(BusiCustomerEntity::getExpiredDate,calendar.getTime()).set(BusiCustomerEntity::getOldMatchUserId, sysUserEntity.getUserId())
-          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime, new Date())
+          .set(BusiCustomerEntity::getOldMatchUserName, sysUserEntity.getName()).set(BusiCustomerEntity::getStatus, 1).set(BusiCustomerEntity::getMatchUserName,user.getName()).set(BusiCustomerEntity::getMatchUserId, userId).set(BusiCustomerEntity::getMatchUserTime, new Date())
         );
 
         i++;
