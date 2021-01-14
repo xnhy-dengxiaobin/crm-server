@@ -4,22 +4,21 @@
 <mapper namespace="io.renren.modules.busi.dao.BusiTradeDao">
 
 	<!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="io.renren.modules.busi.entity.BusiTradeEntity" id="busiTradeMap">
-        <result property="id" column="id"/>
-        <result property="guid" column="guid"/>
-        <result property="roomId" column="room_id"/>
-        <result property="projectId" column="project_id"/>
-        <result property="roomStatus" column="room_status"/>
-        <result property="status" column="status"/>
-        <result property="closeReason" column="close_reason"/>
-        <result property="orderId" column="order_id"/>
-        <result property="salerId" column="saler_id"/>
-        <result property="createdTime" column="created_time"/>
-        <result property="cstAllGuid" column="cst_all_guid"/>
-        <result property="cstAllName" column="cst_all_name"/>
-        <result property="syncTime" column="sync_time"/>
-        <result property="syncFlag" column="sync_flag"/>
-    </resultMap>
+    <!--<resultMap type="io.renren.modules.busi.entity.BusiTradeEntity" id="busiTradeMap">-->
+        <!--<result property="guid" column="buguid"/>-->
+        <!--<result property="roomId" column="room_id"/>-->
+        <!--<result property="projectId" column="project_id"/>-->
+        <!--<result property="roomStatus" column="room_status"/>-->
+        <!--<result property="status" column="status"/>-->
+        <!--<result property="closeReason" column="close_reason"/>-->
+        <!--<result property="orderId" column="order_id"/>-->
+        <!--<result property="salerId" column="saler_id"/>-->
+        <!--<result property="createdTime" column="created_time"/>-->
+        <!--<result property="cstAllGuid" column="cst_all_guid"/>-->
+        <!--<result property="cstAllName" column="cst_all_name"/>-->
+        <!--<result property="syncTime" column="sync_time"/>-->
+        <!--<result property="syncFlag" column="sync_flag"/>-->
+    <!--</resultMap>-->
 
     <select id="rengouCount" resultType="long">
 
@@ -31,7 +30,7 @@
                 #{id}
             </foreach>
         </if>
-        where qsdate &lt; #{dateEnd} and qsdate &gt; #{dateStart}
+        where qsdate &lt;= #{dateEnd} and qsdate &gt;= #{dateStart}
     </select>
 
     <select id="qianyueCount" resultType="long">
@@ -44,7 +43,7 @@
             </foreach>
         </if>
         and bt.status ='激活'
-        where qsdate &lt; #{dateEnd} and qsdate &gt; #{dateStart}
+        where qsdate &lt;= #{dateEnd} and qsdate &gt;= #{dateStart}
     </select>
 
     <select id="groupByDateCount" resultType="map">

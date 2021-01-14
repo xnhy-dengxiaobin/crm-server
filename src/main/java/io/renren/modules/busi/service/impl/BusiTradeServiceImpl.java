@@ -21,11 +21,11 @@ public class BusiTradeServiceImpl extends ServiceImpl<BusiTradeDao, BusiTradeEnt
     public PageUtils queryPage(Map<String, Object> params) {
         QueryWrapper<BusiTradeEntity> wrapper = new QueryWrapper<>();
         if(params.get("roomId") != null){
-            wrapper.lambda().eq(BusiTradeEntity::getRoomId,params.get("roomId"));
+            wrapper.lambda().eq(BusiTradeEntity::getRoomguid,params.get("roomId"));
         }
-        if(params.get("roomStatus") != null){
-            wrapper.lambda().eq(BusiTradeEntity::getRoomStatus,params.get("roomStatus"));
-        }
+//        if(params.get("roomStatus") != null){
+//            wrapper.lambda().eq(BusiTradeEntity::getStatus,params.get("roomStatus"));
+//        }
         IPage<BusiTradeEntity> page = this.page(
                 new Query<BusiTradeEntity>().getPage(params),wrapper
         );

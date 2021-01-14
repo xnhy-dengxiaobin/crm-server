@@ -42,7 +42,7 @@
     </resultMap>
 
     <select id="renchouGroup" resultType="map">
-        select count(1) count,if(closeyy is null,'排号',closeyy) as name  from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
+        select count(1) count,if(closeyy is null or closeyy = '','排号',closeyy) as name  from busi_booking bb inner join busi_project bp on bb.projguid = bp.guid
         inner join busi_project bp2 on bp.parent_id = bp2.id and
         <if test="projectIds!=null">
             bp2.id in
@@ -50,7 +50,7 @@
                 #{id}
             </foreach>
         </if>
-        where createdon &lt; #{dateEnd} and createdon &gt; #{dateStart}   GROUP BY closeyy
+        where createdon &lt;= #{dateEnd} and createdon &gt;= #{dateStart}   GROUP BY closeyy
     </select>
 
 
