@@ -3,12 +3,15 @@ package io.renren.modules.busi.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.ParamResolvor;
+import io.renren.modules.busi.bean.BusiStatusEnum;
 import io.renren.modules.busi.constant.Constant;
+import io.renren.modules.busi.dao.BusiCustomerDao;
 import io.renren.modules.busi.dao.BusiUserProjectDao;
 import io.renren.modules.busi.dao.CustomerStatusLogDao;
 import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.CustomerStatusLogService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,9 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
 
     @Autowired
     private BusiUserProjectDao busiUserProjectDao;
+
+    @Autowired
+    private BusiCustomerDao busiCustomerDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -88,6 +94,30 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
     @Transactional(rollbackFor = Exception.class)
     public String wxSave(PrepareEntity prepare, long userId) {
         String msg = "";
+        List<BusiCustomerEntity> customers = busiCustomerDao.selectByMap(new HashedMap() {{
+            put("mobile_phone", prepare.getMobile());
+        }});
+        if (CollectionUtils.isNotEmpty(customers)) {
+            BusiCustomerEntity cus = customers.get(0);
+            if (cus.getInvalid() == 0) {
+                msg = "拒收无效";
+                prepare.setStatus(BusiStatusEnum.PREPARE_REJECT.getCode());
+                prepare.setUserId(userId + "");
+                prepare.setCreatedTime(new Date());
+                prepare.setStatusUpdatedTime(new Date());
+                prepare.setUpdatedTime(new Date());
+                prepare.setReason("案场老客户");
+                getBaseMapper().insert(prepare);
+
+                //增加状态变更日志
+                CustomerStatusLogEntity customerStatusLogEntity = customerStatusLogService.prepareReject(prepare.getCustomerId(), prepare.getId(), prepare.getReason(), false);
+                customerStatusLogEntity.setUserId(Long.valueOf(userId).intValue());
+                customerStatusLogDao.insert(customerStatusLogEntity);
+
+                return msg;
+            }
+        }
+
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("mobile", prepare.getMobile());
         params.put("user_id", userId);
@@ -159,7 +189,8 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
 
-        List<PrepareEntity> slct = getBaseMapper().selectCheckList(params);;
+        List<PrepareEntity> slct = getBaseMapper().selectCheckList(params);
+        ;
         Long cnt = getBaseMapper().checkCnt(params);
         Page<PrepareEntity> page = new Page<>();
         page.setCurrent(currentPage);

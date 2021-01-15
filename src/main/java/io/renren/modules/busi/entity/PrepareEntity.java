@@ -148,4 +148,9 @@ public class PrepareEntity implements Serializable {
 	 * 保护期截至日期
 	 */
 	private Date expired;
+
+	/**
+	 * 拒收原因
+	 */
+	private String reason;
 }

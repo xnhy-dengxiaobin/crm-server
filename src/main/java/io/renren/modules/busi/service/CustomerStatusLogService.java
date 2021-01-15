@@ -64,7 +64,7 @@ public interface CustomerStatusLogService extends IService<CustomerStatusLogEnti
     default CustomerStatusLogEntity prepareReject(Integer customerId, Integer prepareId, String reason, boolean isRepeat) {
         CustomerStatusLogEntity customerStatusLogEntity = new CustomerStatusLogEntity();
         String action = ActionEnum.PREPARE.getLabel();
-        String status = BusiStatusEnum.PREPARE_AUDITING.getLabel();
+        String status = BusiStatusEnum.PREPARE_REJECT.getLabel();
         if (isRepeat) {
             action = ActionEnum.RE_PREPARE.getLabel();
         }
