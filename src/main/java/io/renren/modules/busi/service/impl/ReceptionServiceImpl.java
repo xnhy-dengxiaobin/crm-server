@@ -16,6 +16,7 @@ import io.renren.modules.busi.exception.BusiException;
 import io.renren.modules.busi.service.CustomerStatusLogService;
 import io.renren.modules.busi.service.ReceptionService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,32 +70,56 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
         //属于当前经纪人->检查客户状态，是来访且在保护期内:更新经纪人保护期，是来访在保护期外：提示无效，在来访之上：不用做什么
         //不属于当前经纪人->提示项目老客户
         if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
-            //如果是渠道带过来的，首先检查客户是不是该渠道的
+            busiCustomerEntity.setId(cus.getId());
+            busiCustomerEntity.setComeCount((cus.getComeCount() == null ? 0 : cus.getComeCount()) + 1);
             if (prepareId > 0) {
-                //不是该渠道的，报错
                 PrepareEntity prepareEntity = prepareDao.gtById(busiCustomerEntity.getSourceUserId(), Long.valueOf(prepareId).intValue());
                 if (null == prepareEntity) {
-                    throw new BusiException("项目老客户");
+                    throw new BusiException("您没有报备过这个客户");
                 }
 
-                //是该渠道的，客户状态是来访并且已过保护期
-                if (cus.getBusiStatus() <= 30) {
-                    if (new Date().after(prepareEntity.getExpired())) {
-                        throw new BusiException("已过保护期");
+                //如果是渠道带过来的，首先检查客户是不是该渠道的
+                List<PrepareEntity> prepares = prepareDao.selectByMap(new HashedMap() {{
+                    put("customer_id", cus.getId());
+                }});
+                boolean mine = false;
+                for (PrepareEntity p : prepares) {
+                    if (!p.getId().equals(prepareId) && p.getStatus() == BusiStatusEnum.PREPARE_OK.getCode()) {
+                        throw new BusiException("该客户已由别的经纪人带访并且还处于保护期内");
                     }
+                    if (p.getId().equals(prepareId) && p.getStatus() == BusiStatusEnum.PREPARE_OK.getCode()) {
+                        mine = true;
+                    }
+                }
 
-                    //客户状态是来访，在保护期内，更新保护期
-                    PrepareEntity pp = new PrepareEntity();
-                    pp.setId(prepareEntity.getId());
-                    Date expired = DateUtils.addDateDays(new Date(), 30);
-                    pp.setExpired(expired);
+                //已经带访过客户
+                //客户状态是来访，在保护期内，更新保护期
+                PrepareEntity pp = new PrepareEntity();
+                pp.setId(prepareEntity.getId());
+                Date expired = DateUtils.addDateDays(new Date(), 30);
+                pp.setExpired(expired);
+                pp.setStatus(BusiStatusEnum.PREPARE_OK.getCode());
+                pp.setMatchUserId(busiCustomerEntity.getMatchUserId());
+                pp.setMatchUserName(busiCustomerEntity.getMatchUserName());
+                //以前不是自己带访的，关联客户
+                if (!mine) {
+                    pp.setCustomerId(cus.getId());
                     prepareDao.updateById(pp);
 
-                    //记录保护期更新日志
-                    CustomerStatusLogEntity customerStatusLogEntity = customerStatusLogService.periodChangeVisited(cus.getId(), prepareId, expired);
-                    customerStatusLogEntity.setUserId(receptionEntity.getReceptionistId());
-                    customerStatusLogDao.insert(customerStatusLogEntity);
+                    //添加转介路径
+                    BusiCustomerRoamEntity roamEntity = new BusiCustomerRoamEntity();
+                    roamEntity.setUserId(busiCustomerEntity.getSourceUserId());
+                    roamEntity.setCustomerId(cus.getId());
+                    roamEntity.setRemark("经纪人" + busiCustomerEntity.getSourceUserName() + "带访");
+                    roamEntity.setCreateTime(new Date());
+                    busiCustomerRoamDao.insert(roamEntity);
                 }
+                prepareDao.updateById(pp);
+
+                //记录保护期更新日志
+                CustomerStatusLogEntity customerStatusLogEntity = customerStatusLogService.periodChangeVisited(cus.getId(), prepareId, expired);
+                customerStatusLogEntity.setUserId(receptionEntity.getReceptionistId());
+                customerStatusLogDao.insert(customerStatusLogEntity);
             }
 
             if (!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
@@ -223,13 +248,13 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
 
     @Override
-    public List<Map> groupByDateCountMonth(String endDate,String [] projectIds) {
+    public List<Map> groupByDateCountMonth(String endDate, String[] projectIds) {
         List<Map> maps = baseMapper.groupByDateCountMonth(endDate, projectIds);
         return maps;
     }
 
     @Override
-    public List<Map> groupByDateCountYear(String endDate,String [] projectIds) {
+    public List<Map> groupByDateCountYear(String endDate, String[] projectIds) {
         List<Map> maps = baseMapper.groupByDateCountYear(endDate, projectIds);
         return maps;
     }

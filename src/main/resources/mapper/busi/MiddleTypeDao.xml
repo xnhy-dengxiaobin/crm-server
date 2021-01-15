@@ -30,7 +30,7 @@
             and t1.name like '%${name}%'
         </if>
         <if test="parentName!=null and parentName!='' ">
-            and t2.parent_name like '%${parentName}%'
+            and t2.name like '%${parentName}%'
         </if>
         limit #{offset},#{limit}
     </select>
@@ -50,7 +50,7 @@
             and t1.name like '%${name}%'
         </if>
         <if test="parentName!=null and parentName!='' ">
-            and t2.parent_name like '%${parentName}%'
+            and t2.name like '%${parentName}%'
         </if>
     </select>
     <select id="mdparent" resultType="MiddleTypeEntity">

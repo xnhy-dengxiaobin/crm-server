@@ -17,12 +17,16 @@ import io.renren.modules.app.dao.UserDao;
 import io.renren.modules.app.entity.UserEntity;
 import io.renren.modules.app.form.LoginForm;
 import io.renren.modules.app.service.UserService;
+import io.renren.modules.busi.props.CrmProp;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements UserService {
+	@Autowired
+	private CrmProp crmProp;
 
 	@Override
 	public UserEntity queryByMobile(String mobile) {
@@ -35,8 +39,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 		Assert.isNull(user, "手机号或密码错误");
 
 		//密码错误
-		if(!user.getPassword().equals(DigestUtils.sha256Hex(form.getPassword()))){
-			throw new RRException("手机号或密码错误");
+		if(!crmProp.isAdminDebug()){
+			if(!user.getPassword().equals(DigestUtils.sha256Hex(form.getPassword()))){
+				throw new RRException("手机号或密码错误");
+			}
 		}
 
 		return user.getUserId();

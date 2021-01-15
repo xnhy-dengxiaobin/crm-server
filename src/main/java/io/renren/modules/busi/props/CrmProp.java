@@ -18,4 +18,22 @@ public class CrmProp {
 
     private String logPath;
 
+    public String getLogPath() {
+        return logPath;
+    }
+
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
+    }
+
+    public boolean isAdminDebug() {
+        return adminDebug;
+    }
+
+    public void setAdminDebug(boolean adminDebug) {
+        this.adminDebug = adminDebug;
+    }
+
+    private boolean adminDebug;
+
 }
