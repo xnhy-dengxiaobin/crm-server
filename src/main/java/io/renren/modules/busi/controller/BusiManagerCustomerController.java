@@ -557,8 +557,14 @@ public class BusiManagerCustomerController extends AbstractController {
       .put("invalidCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
         .lambda().in(BusiCustomerEntity::getProjectId, projectIds)
         .eq(BusiCustomerEntity::getInvalid, 1).eq(BusiCustomerEntity::getStatus, 1)))
-      .put("successCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getStatus, 1, 2).in(BusiCustomerEntity::getBusiStatus, 50, 60)))
-      .put("unSuccessCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>().lambda().in(BusiCustomerEntity::getStatus, 1, 2).notIn(BusiCustomerEntity::getBusiStatus, 50, 60)));
+      .put("successCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
+              .lambda().in(BusiCustomerEntity::getStatus, 1, 2)
+              .in(BusiCustomerEntity::getBusiStatus, 50, 60)
+              .in(BusiCustomerEntity::getProjectId, projectIds)))
+      .put("unSuccessCount", busiCustomerService.count(new QueryWrapper<BusiCustomerEntity>()
+              .lambda().in(BusiCustomerEntity::getStatus, 1, 2)
+              .notIn(BusiCustomerEntity::getBusiStatus, 50, 60)
+              .in(BusiCustomerEntity::getProjectId, projectIds)));
 
   }
 
