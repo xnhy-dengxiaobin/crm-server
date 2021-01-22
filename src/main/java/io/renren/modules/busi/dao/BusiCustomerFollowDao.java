@@ -1,9 +1,8 @@
 package io.renren.modules.busi.dao;
 
-import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.renren.modules.busi.entity.BusiCustomerFollowEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.Map;
 @Mapper
 public interface BusiCustomerFollowDao extends BaseMapper<BusiCustomerFollowEntity> {
   Integer toDayCount(String projectId, LocalDate localDate);
-  List<BusiCustomerFollowEntity> listPage(Map<String, Object> params, @Param("projectIds") List<Integer> projectIds);
+  List<BusiCustomerFollowEntity> listPage(Map<String, Object> params);
 
   Integer listPageCount(Map<String, Object> params);
 }

@@ -77,7 +77,8 @@ public class BusiCustomerFollowServiceImpl extends ServiceImpl<BusiCustomerFollo
         long offset = (currentPage - 1) * limit;
         params.put("offset", offset);
         params.put("limit", limit); //将string转为long
-        List<BusiCustomerFollowEntity> list = getBaseMapper().listPage(params,projectIds);
+        params.put("projectIds",projectIds);
+        List<BusiCustomerFollowEntity> list = getBaseMapper().listPage(params);
         Integer cnt = getBaseMapper().listPageCount(params);
         Page<BusiCustomerFollowEntity> page = new Page<>();
         page.setCurrent(currentPage);
