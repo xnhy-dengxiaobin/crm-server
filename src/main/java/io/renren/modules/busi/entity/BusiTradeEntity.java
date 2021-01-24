@@ -253,5 +253,5 @@ public class BusiTradeEntity implements Serializable {
 	 *
 	 */
 	private Date syncTime;
-
+  private int dataPrepared;
 }

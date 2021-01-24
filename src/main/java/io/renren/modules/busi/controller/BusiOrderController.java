@@ -13,6 +13,8 @@ import io.renren.modules.busi.entity.BusiOrderEntity;
 import io.renren.modules.busi.entity.BusiTradeEntity;
 import io.renren.modules.busi.service.*;
 import io.renren.modules.busi.vo.BusiOrderVO;
+import io.renren.modules.busi.vo.BusiTradeVO;
+import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,7 +35,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("busi/busiorder")
-public class BusiOrderController {
+public class BusiOrderController extends AbstractController {
     @Autowired
     private BusiOrderService busiOrderService;
     @Autowired
@@ -44,14 +46,17 @@ public class BusiOrderController {
     private BusiCustomerService customerService;
     @Autowired
     private BusiContractService busiContractService;
+    @Autowired
+    private BusiTradeService busiTradeService;
     /**
      * 催收列表
      */
     @RequestMapping("/dataPreparedList")
     @RequiresPermissions("busi:order:prompt:list")
     public R prompt(@RequestBody Map<String, Object> params) {
-      IPage<BusiOrderVO> page = new Query<BusiOrderVO>().getPage(params);
-      busiOrderService.promptPage(page,params.get("condition")==null?"":params.get("condition").toString());
+      List<Integer> ids = getPurviewProjectIds();
+      IPage<BusiTradeVO> page = new Query<BusiTradeVO>().getPage(params);
+      busiOrderService.promptPage(ids,page,params.get("condition")==null?"":params.get("condition").toString());
       return R.ok().put("page", new PageUtils(page));
     }
 
@@ -159,13 +164,13 @@ public class BusiOrderController {
     return R.ok();
   }
   /**
-   * 删除
+   * 催收完成
    */
   @RequestMapping("/complete")
   @RequiresPermissions("busi:order:prompt:confirm")
-  public R complete(@RequestBody Integer[] ids) {
-    busiOrderService.update(new UpdateWrapper<BusiOrderEntity>().lambda().set(BusiOrderEntity::getDataPrepared,0).in(BusiOrderEntity::getId,ids));
+  public R complete(@RequestBody String[] ids) {
 
+    busiTradeService.update(new UpdateWrapper<BusiTradeEntity>().lambda().set(BusiTradeEntity::getDataPrepared,0).in(BusiTradeEntity::getTradeguid,ids));
     return R.ok();
   }
 

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.modules.busi.entity.BusiOrderEntity;
 import io.renren.modules.busi.vo.BusiOrderVO;
+import io.renren.modules.busi.vo.BusiTradeVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -21,11 +22,12 @@ public interface BusiOrderDao extends BaseMapper<BusiOrderEntity> {
 
   Integer listPageCount(Map<String, Object> params);
 
-  @Select("<script>select * from (\n" +
-    "select t1.id orderId,t1.floor_area,t1.total_prices_ds,t1.pay_form,t1.type,GROUP_CONCAT(CONCAT(t3.name,\"【\",t3.sex,\"】\",t3.mobile_phone)) customerInfo from busi_order t1 inner join busi_customer_order t2 on (t1.id=t2.order_id) inner join busi_customer t3 on (t2.customer_id=t3.id) inner join busi_project t4 on(t4.id = t1.project_id) where t1.data_prepared=1 \n" +
-    "group by t1.id \n" +
-    ")t where 1=1 \n" +
-    "  and customerInfo LIKE CONCAT('%',#{condition},'%')\n" +
+  @Select("<script>select * from busi_trade where data_prepared=1 <if test=\"ids!=null\">\n" +
+    "           and project_id in\n" +
+    "            <foreach collection=\"ids\" item=\"id\" index=\"index\" open=\"(\" close=\")\" separator=\",\">\n" +
+    "                #{id}\n" +
+    "            </foreach>\n" +
+    "        </if> and payformname!='一次性付款' and (cstname LIKE CONCAT('%',#{condition},'%') or csttel LIKE CONCAT('%',#{condition},'%')) order by qsdate desc \n" +
     "</script>")
-  IPage<BusiOrderVO> promptPage(IPage iPage,String condition);
+  IPage<BusiTradeVO> promptPage(List<Integer> ids,IPage iPage, String condition);
 }
