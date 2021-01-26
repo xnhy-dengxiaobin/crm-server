@@ -2,6 +2,7 @@ package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.renren.common.exception.RRException;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
@@ -151,6 +152,10 @@ public class BusiCustomerController extends AbstractController {
     @RequestMapping("/update")
     public R update(@RequestBody BusiCustomerEntity busiCustomer){
         if (busiCustomer.getId() != null) {
+            BusiCustomerEntity byId = busiCustomerService.getById(busiCustomer.getId());
+            if(!byId.getMatchUserId().equals(getUserId()+"")){
+                throw new RRException("客户归宿异常");
+            }
             busiCustomer.setMatchUserId(getUserId()+"");
             busiCustomerService.perfect(busiCustomer);
         }else {
