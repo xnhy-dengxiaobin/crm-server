@@ -2,6 +2,7 @@ package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 import io.renren.common.utils.R;
@@ -134,6 +135,7 @@ public class BusiCustomerController extends AbstractController {
      * 保存
      */
     @RequestMapping("/save")
+    @SysLog("保存客户")
     public R save(@RequestBody BusiCustomerEntity busiCustomer){
         BusiCustomerEntity cus = busiCustomerService.getBaseMapper().selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomer.getMobilePhone()));
         if(null != cus && cus.getId() > 0){
@@ -149,6 +151,7 @@ public class BusiCustomerController extends AbstractController {
      * 修改
      */
     @RequestMapping("/update")
+    @SysLog("修改客户")
     public R update(@RequestBody BusiCustomerEntity busiCustomer){
         if (busiCustomer.getId() != null) {
             busiCustomer.setMatchUserId(getUserId()+"");
@@ -173,6 +176,7 @@ public class BusiCustomerController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:busicustomer:delete")
+    @SysLog("删除客户")
     public R delete(@RequestBody Integer[] ids){
 		busiCustomerService.removeByIds(Arrays.asList(ids));
 

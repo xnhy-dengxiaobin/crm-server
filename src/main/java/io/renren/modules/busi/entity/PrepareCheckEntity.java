@@ -28,4 +28,6 @@ public class PrepareCheckEntity implements Serializable {
 	 */
 	private Integer status;
 
+	private Integer operId;
+
 }

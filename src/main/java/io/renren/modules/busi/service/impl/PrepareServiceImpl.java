@@ -10,6 +10,8 @@ import io.renren.modules.busi.dao.BusiUserProjectDao;
 import io.renren.modules.busi.dao.CustomerStatusLogDao;
 import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.CustomerStatusLogService;
+import io.renren.modules.sys.dao.SysUserDao;
+import io.renren.modules.sys.entity.SysUserEntity;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +45,12 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
 
     @Autowired
     private BusiCustomerDao busiCustomerDao;
+
+    @Autowired
+    private PrepareDao prepareDao;
+
+    @Autowired
+    private SysUserDao sysUserDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -80,7 +88,52 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean check(PrepareCheckEntity checks) {
+        SysUserEntity user = sysUserDao.selectById(checks.getOperId());
+
+        /**
+         * 有效的
+         * （1）无效操作，直接更新为无效
+         * （2）有效操作，将相同客户的其它有效报备置为无效
+         */
         for (Integer id : checks.getIds()) {
+            if(checks.getStatus() > 0){
+                PrepareEntity prepareEntity = prepareDao.selectById(id);
+                if(prepareEntity!= null){
+                    Map<String, Object> params = new HashedMap();
+                    params.put("mobile", prepareEntity.getMobile());
+                    List<PrepareEntity> prepareEntities = prepareDao.selectByMap(params);
+                    if(CollectionUtils.isNotEmpty(prepareEntities)){
+                        for(PrepareEntity p : prepareEntities){
+                            if(p.getStatus() == 10){
+                                PrepareEntity pe = new PrepareEntity();
+                                pe.setId(p.getId());
+                                pe.setStatus(BusiStatusEnum.PREPARE_MANNUL_REJECT.getCode());
+                                pe.setUpdatedTime(new Date());
+                                getBaseMapper().updateById(pe);
+
+                                //状态变更日志
+                                CustomerStatusLogEntity log = customerStatusLogService.mannulReject(null, p.getId(), "判客无效");
+                                log.setUserId(user.getUserId().intValue());
+                                log.setUserName(user.getName());
+                                customerStatusLogService.getBaseMapper().insert(log);
+                            }
+                        }
+                    }
+                }
+
+                //状态变更日志
+                CustomerStatusLogEntity log = customerStatusLogService.mannulReceive(null, id, user.getName());
+                log.setUserId(user.getUserId().intValue());
+                log.setUserName(user.getName());
+                customerStatusLogService.getBaseMapper().insert(log);
+            }else{
+                //状态变更日志
+                CustomerStatusLogEntity log = customerStatusLogService.mannulReject(null, id, "判客无效");
+                log.setUserId(user.getUserId().intValue());
+                log.setUserName(user.getName());
+                customerStatusLogService.getBaseMapper().insert(log);
+            }
+
             PrepareEntity pe = new PrepareEntity();
             pe.setId(id);
             pe.setStatus(checks.getStatus());

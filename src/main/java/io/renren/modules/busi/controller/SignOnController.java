@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.renren.common.annotation.SysLog;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -65,6 +66,7 @@ public class SignOnController extends AbstractController {
      * 保存
      */
     @RequestMapping("/save")
+    @SysLog("保存签到")
     public R save(@RequestBody SignOnEntity signOn){
         String today = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         List<SignOnEntity> signOns = signOnService.getBaseMapper().selectByMap(new HashMap<String, Object>(){{

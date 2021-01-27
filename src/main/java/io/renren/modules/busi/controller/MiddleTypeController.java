@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import io.renren.common.annotation.SysLog;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class MiddleTypeController extends AbstractController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("busi:middletype:save")
+    @SysLog("保存渠道")
     public R save(@RequestBody MiddleTypeEntity middleType) {
         middleTypeService.save(middleType);
 
@@ -72,6 +74,7 @@ public class MiddleTypeController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:middletype:update")
+    @SysLog("修改渠道")
     public R update(@RequestBody MiddleTypeEntity middleType) {
         middleTypeService.updateById(middleType);
 
@@ -83,6 +86,7 @@ public class MiddleTypeController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:middletype:delete")
+    @SysLog("删除渠道")
     public R delete(@RequestBody Integer[] ids) {
         middleTypeService.removeByIds(Arrays.asList(ids));
 

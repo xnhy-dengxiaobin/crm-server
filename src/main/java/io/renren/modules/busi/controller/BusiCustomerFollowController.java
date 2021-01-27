@@ -1,6 +1,7 @@
 package io.renren.modules.busi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.modules.busi.entity.BusiCustomerEntity;
@@ -79,6 +80,7 @@ public class BusiCustomerFollowController extends AbstractController {
      * 保存
      */
     @RequestMapping("/save")
+    @SysLog("保存跟进记录")
     public R save(@RequestBody BusiCustomerFollowEntity busiCustomerFollow){
         SysUserEntity user = getUser();
         busiCustomerFollow.setCreateName(user.getName());
@@ -118,6 +120,7 @@ public class BusiCustomerFollowController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:busicustomerfollow:update")
+    @SysLog("修改跟进记录")
     public R update(@RequestBody BusiCustomerFollowEntity busiCustomerFollow){
 		busiCustomerFollowService.updateById(busiCustomerFollow);
 
@@ -129,6 +132,7 @@ public class BusiCustomerFollowController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:busicustomerfollow:delete")
+    @SysLog("删除跟进记录")
     public R delete(@RequestBody Integer[] ids){
 		busiCustomerFollowService.removeByIds(Arrays.asList(ids));
 

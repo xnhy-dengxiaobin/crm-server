@@ -1,5 +1,6 @@
 package io.renren.modules.busi.controller;
 
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.common.utils.R;
@@ -91,6 +92,7 @@ public class ReceptionController extends AbstractController {
      * 保存
      */
     @RequestMapping("/save")
+    @SysLog("保存接待")
     public R save(@RequestBody Map<String, Object> params) {
         try {
             Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
@@ -145,6 +147,7 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:reception:update")
+    @SysLog("修改接待")
     public R update(@RequestBody ReceptionEntity reception) {
         receptionService.updateById(reception);
 
@@ -156,6 +159,7 @@ public class ReceptionController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:reception:delete")
+    @SysLog("删除接待")
     public R delete(@RequestBody Integer[] ids) {
         receptionService.removeByIds(Arrays.asList(ids));
 

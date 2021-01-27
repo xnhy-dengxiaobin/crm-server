@@ -3,6 +3,7 @@ package io.renren.modules.busi.controller;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import io.renren.common.annotation.SysLog;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.entity.PrepareCheckEntity;
 import io.renren.modules.sys.controller.AbstractController;
@@ -83,6 +84,7 @@ public class PrepareController extends AbstractController {
      * wx保存
      */
     @RequestMapping("/wx/save")
+    @SysLog("小程序报备")
     public R wxsave(@RequestBody PrepareEntity prepare) {
         prepare.setUserName(getUser().getName());
         String msg = prepareService.wxSave(prepare, getUserId());
@@ -98,6 +100,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("busi:prepare:update")
+    @SysLog("修改报备")
     public R update(@RequestBody PrepareEntity prepare) {
         prepareService.updateById(prepare);
 
@@ -109,6 +112,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("busi:prepare:delete")
+    @SysLog("删除报备")
     public R delete(@RequestBody Integer[] ids) {
         prepareService.removeByIds(Arrays.asList(ids));
 
@@ -120,8 +124,10 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/check")
     @RequiresPermissions("busi:prepare:check")
-    public R check(@RequestBody PrepareCheckEntity Checks) {
-        prepareService.check(Checks);
+    @SysLog("判客状态")
+    public R check(@RequestBody PrepareCheckEntity checks) {
+        checks.setOperId(getUserId().intValue());
+        prepareService.check(checks);
         return R.ok();
     }
 
@@ -161,6 +167,7 @@ public class PrepareController extends AbstractController {
      */
     @RequestMapping("/refresh")
     @RequiresPermissions("busi:prepare:update")
+    @SysLog("刷新有效期")
     public R refreshExpired(@RequestBody Map<String, Object> params) {
         prepareService.refreshExpired(ParamResolvor.getCommonList(params, "ids"));
 
