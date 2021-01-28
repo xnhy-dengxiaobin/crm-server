@@ -223,7 +223,7 @@ public class BusiManagerCustomerController extends AbstractController {
       weekNum--;
       Map<String, Object> map = new HashMap<>();
       map.put("startDate", dateStart + " 00:00:00");
-      map.put("endDate", dateEnd + " 59:59:59");
+      map.put("endDate", dateEnd + " 23:59:59");
       map.put("fullDate", dateEnd);
       map.put("dateAbscissa", simpleDateFormat3.format(starttime) + "" + simpleDateFormat3.format(endtime));
       rsList.add(map);
@@ -450,13 +450,13 @@ public class BusiManagerCustomerController extends AbstractController {
     Object unit = params.get("unit");
     if (unit.toString().equals("day")) {
       dateStart = date + " 00:00:00";
-      dateEnd = date + " 59:59:59";
+      dateEnd = date + " 23:59:59";
     } else if (unit.toString().equals("week")) {
       Calendar calendar = new GregorianCalendar();
       calendar.setTime(sdf.parse(date.toString()));
       calendar.add(calendar.DATE, -6);
       dateStart = sdf.format(calendar.getTime()) + " 00:00:00";
-      dateEnd = date + " 59:59:59";
+      dateEnd = date + " 23:59:59";
     } else if (unit.toString().equals("month")) {
       SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
       Date parse = format.parse(date.toString());
@@ -467,13 +467,13 @@ public class BusiManagerCustomerController extends AbstractController {
       int MaxDate=a.get(Calendar.DATE);
       System.out.println("该月最大天数:"+MaxDate);
       dateStart = format.format(parse) + "-01 00:00:00";
-      dateEnd = format.format(parse)+ MaxDate + " 59:59:59";
+      dateEnd = format.format(parse)+ "-"+MaxDate + " 23:59:59";
     } else if (unit.toString().equals("year")) {
       SimpleDateFormat format = new SimpleDateFormat("yyyy");
       Date parse = format.parse(date.toString());
       String yearStr = format.format(parse);
       dateStart = yearStr + "-01-01 00:00:00";
-      dateEnd = yearStr + "-12-31 59:59:59";
+      dateEnd = yearStr + "-12-31 23:59:59";
     }
     Map<String,String> rs = new HashMap<>();
     rs.put("startDate",dateStart);

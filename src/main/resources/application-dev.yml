@@ -13,7 +13,7 @@ spring:
         type: com.alibaba.druid.pool.DruidDataSource
         druid:
             driver-class-name: com.mysql.cj.jdbc.Driver
-            url: jdbc:mysql://118.31.108.64:6603/nzc-crm?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+            url: jdbc:mysql://222.210.108.61:6603/nzc-crm?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
             username: crm
             password: crm@123!
             initial-size: 10
