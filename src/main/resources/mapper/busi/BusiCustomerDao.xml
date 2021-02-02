@@ -245,6 +245,20 @@
                 #{id}
             </foreach>
         </if>) ldx
+        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '全民营销'  and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qmyx
+        ,(select count(1) from busi_customer b where DATE(b.create_time) = date and source = '来电'  and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ld
         from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  day)AS 'date' FROM
             (
                 SELECT * from
@@ -286,6 +300,20 @@
                 #{id}
             </foreach>
         </if>) ldx
+        ,(select count(1) from busi_customer b where WEEK(b.create_time,6) = WEEK(date,6) and (DATE_FORMAT(b.create_time,'%Y') = yearDate or DATE_FORMAT(b.create_time,'%Y') = yearDate2 ) and source = '全民营销' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qmyx
+        ,(select count(1) from busi_customer b where WEEK(b.create_time,6) = WEEK(date,6) and (DATE_FORMAT(b.create_time,'%Y') = yearDate or DATE_FORMAT(b.create_time,'%Y') = yearDate2 ) and source = '来电' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ld
         from(
         select numlist2.date,date_add(DATE(date),INTERVAL  -1  week) endDate,(CASE dn WHEN 53 THEN DATE_FORMAT(DATE_ADD(date, INTERVAL -1 YEAR),'%Y')  ELSE DATE_FORMAT(date,'%Y') END) as yearDate ,  DATE_FORMAT(date,'%Y') as yearDate2 from (
         SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  week)AS 'date', week(date_sub(DATE(#{endDate}),INTERVAL numlist.id week),6) dn,id FROM
@@ -327,6 +355,20 @@
                 #{id}
             </foreach>
         </if>) ldx
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '全民营销' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qmyx
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y-%m') = DATE_FORMAT(date,'%Y-%m') and source = '来电' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ld
         from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  MONTH)AS 'date' FROM
         (
         SELECT * from
@@ -367,6 +409,20 @@
                 #{id}
             </foreach>
         </if>) ldx
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '全民营销' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) qmyx
+        ,(select count(1) from busi_customer b where DATE_FORMAT(b.create_time,'%Y') = DATE_FORMAT(date,'%Y') and source = '来电' and
+        <if test="projectIds!=null">
+            b.project_id in
+            <foreach collection="projectIds" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>) ld
         from(   SELECT date_sub(DATE(#{endDate}),INTERVAL  numlist.id  YEAR)AS 'date' FROM
         (
         SELECT * from

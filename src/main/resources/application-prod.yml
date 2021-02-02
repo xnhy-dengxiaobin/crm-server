@@ -1,9 +1,17 @@
+server:
+    tomcat:
+        uri-encoding: UTF-8
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 8888
+    servlet:
+        context-path: /crm
 spring:
     datasource:
         type: com.alibaba.druid.pool.DruidDataSource
         druid:
             driver-class-name: com.mysql.cj.jdbc.Driver
-            url: jdbc:mysql://localhost/nzc-crm?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+            url: jdbc:mysql://222.210.108.61:6603/nzc-crm?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
             username: crm
             password: crm@123!
             initial-size: 10
@@ -51,5 +59,3 @@ crm:
     log:
         path: D:/enn/logs
     upload-path: D:/enn/uploads/
-    sync:
-        host: https://scmczd.net/sync-server/
