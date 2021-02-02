@@ -101,10 +101,3 @@ wx:
     sub-mch-key:
     key-path: classpath:cert/apiclient_cert.p12
     notify-url: https://www.nongzhichu.top/fruit-server/wx/pay/notify
-
-crm:
-  log:
-    path: D:/logs
-  upload-path: uploads/
-  sync:
-    host: https://scmczd.net/sync-server/
