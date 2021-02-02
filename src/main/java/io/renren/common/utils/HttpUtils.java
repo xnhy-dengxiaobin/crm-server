@@ -111,6 +111,9 @@ public class HttpUtils {
                                       int connectionTimeout,
                                       int soTimeout) {
         try {
+            LOG.debug("post请求：url={}, headers={}, querys={}, bodys={}, connectionTimeout={}, soTimeout={}",
+                    url, headers, querys, bodys, connectionTimeout, soTimeout);
+
             HttpClient httpClient = wrapClient(url, connectionTimeout, soTimeout);
 
             HttpPost request = new HttpPost(buildUrl(url, "", querys));
@@ -164,6 +167,9 @@ public class HttpUtils {
                                       int connectionTimeout,
                                       int soTimeout) {
         try {
+            LOG.debug("post请求：url={}, headers={}, body={}, connectionTimeout={}, soTimeout={}",
+                    url, headers, querys, body, connectionTimeout, soTimeout);
+
             HttpClient httpClient = wrapClient(url, connectionTimeout, soTimeout);
 
             HttpPost request = new HttpPost(buildUrl(url, "", querys));

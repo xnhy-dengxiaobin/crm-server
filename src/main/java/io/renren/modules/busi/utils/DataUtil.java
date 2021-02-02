@@ -28,6 +28,7 @@ public class DataUtil {
         this.path = path;
 
         this.host = Constant.SYNC_HOST;
+        //this.host = "https://scmczd.net/data-server/";
     }
 
     public DataUtil(String actionId, String menuId) {
