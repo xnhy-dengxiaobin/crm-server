@@ -32,7 +32,7 @@
     <select id="slct" resultType="ReceptionEntity">
         select t1.*,t2.name as customer_name,t2.mobile_phone,t2.source,t2.source_id,t2.source_name,t5.expired,
         t5.created_time as prepared_time,t2.source_user_id, t2.source_user_name,t2.source_mobile,t2.channel,
-        t3.head,t4.short_name as project_name
+        t3.head,t4.short_name as project_name,t3.user_id as match_user_id, t3.name as match_user_name
         from busi_reception t1
         inner join busi_customer t2 on t1.customer_id = t2.id
         inner join sys_user t3 on t1.saler_id=t3.user_id
