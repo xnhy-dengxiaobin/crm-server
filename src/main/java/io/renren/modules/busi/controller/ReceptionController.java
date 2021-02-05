@@ -97,7 +97,7 @@ public class ReceptionController extends AbstractController {
         try {
             Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
             int prepareId = ParamResolvor.getIntAsDefault(params, "prepareId", 0);
-            if (prepareId <= 0 && ParamResolvor.getString(customerMap, "source") == "渠道客户") {
+            if (prepareId <= 0 && "渠道客户".equals(ParamResolvor.getString(customerMap, "source"))) {
                 //说明不是扫码的的渠道客户，不允许
                 throw new BusiException("渠道客户请先报备，再扫码带访");
             }
