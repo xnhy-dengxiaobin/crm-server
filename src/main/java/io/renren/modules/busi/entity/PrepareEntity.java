@@ -153,4 +153,10 @@ public class PrepareEntity implements Serializable {
 	 * 拒收原因
 	 */
 	private String reason;
+
+	/**
+	 * 分配人
+	 */
+	@TableField(exist = false)
+	private String assigner;
 }
