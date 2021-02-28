@@ -138,7 +138,10 @@ public class StatisticSyncJob implements ITask {
     }
 
     public static void main(String[] args) throws Exception {
-        StatisticSyncJob job = new StatisticSyncJob();
-        job.run("");
+        DataUtil dataUtil = new DataUtil("sync", "sync", "crm");
+        dataUtil.login("admin", "111111");
+        List<EnnParam.Step> steps = EnnParam.mkSteps(new EnnParam.Step("grv", "cron/TradeSyncStep"));
+        EnnParam ennParam = EnnParam.mkExecParam(steps);
+        Map<String, Object> result = dataUtil.exec(ennParam);
     }
 }

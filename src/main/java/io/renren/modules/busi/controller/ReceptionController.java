@@ -96,6 +96,11 @@ public class ReceptionController extends AbstractController {
     public R save(@RequestBody Map<String, Object> params) {
         try {
             Map<String, Object> customerMap = ParamResolvor.getMap(params, "customer");
+            int prepareId = ParamResolvor.getIntAsDefault(params, "prepareId", 0);
+            if (prepareId <= 0 && "渠道客户".equals(ParamResolvor.getString(customerMap, "source"))) {
+                //说明不是扫码的的渠道客户，不允许
+                throw new BusiException("渠道客户请先报备，再扫码带访");
+            }
 
             Map<String, Object> receptionMap = ParamResolvor.getMap(params, "reception");
             ReceptionEntity receptionEntity = new ReceptionEntity();
@@ -131,8 +136,6 @@ public class ReceptionController extends AbstractController {
             busiCustomerRoamEntity.setUserId(getUserId().intValue());
             busiCustomerRoamEntity.setRemark("分配，被" + getUser().getName() + "分配至" + matchUser.getName());
             busiCustomerRoamEntity.setCreateTime(new Date());
-
-            int prepareId = ParamResolvor.getIntAsDefault(params, "prepareId", 0);
 
             receptionService.saveReception(receptionEntity, busiCustomerEntity, busiCustomerRoamEntity, prepareId);
 

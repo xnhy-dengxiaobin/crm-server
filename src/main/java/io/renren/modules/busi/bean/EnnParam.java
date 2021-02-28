@@ -2,6 +2,7 @@ package io.renren.modules.busi.bean;
 
 import lombok.Data;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class EnnParam extends HashMap<String, Object>{
     public static EnnParam mkQueryParam(List<String> datasetIds, Map<String, Map<String, Object>> dataParam, boolean hideLoading) {
         EnnParam param = new EnnParam();
         param.put("datasetIds", datasetIds);
-        param.put("dataParam", dataParam);
+        param.put("dataParam", MapUtils.isEmpty(dataParam)? new HashMap<>(): dataParam);
         param.put("hideLoading", hideLoading);
         return param;
     }
@@ -37,7 +38,7 @@ public class EnnParam extends HashMap<String, Object>{
 
     public static EnnParam mkSaveParam(List<Map<String, Object>> datas, boolean hideLoading) {
         EnnParam param = new EnnParam();
-        param.put("datas", datas);
+        param.put("datas", CollectionUtils.isEmpty(datas)? new ArrayList<>(): datas);
         param.put("hideLoading", false);
         return param;
     }
@@ -51,8 +52,8 @@ public class EnnParam extends HashMap<String, Object>{
                                        List<Map<String, Object>> datas, boolean hideLoading) {
         EnnParam param = new EnnParam();
         param.put("steps", steps);
-        param.put("datas", datas);
-        param.put("dataParam", dataParam);
+        param.put("datas", CollectionUtils.isEmpty(datas)? new ArrayList<>(): datas);
+        param.put("dataParam", MapUtils.isEmpty(dataParam)? new HashMap<>(): dataParam);
         param.put("hideLoading", hideLoading);
         param.put("buttonId", 3);
         return param;
