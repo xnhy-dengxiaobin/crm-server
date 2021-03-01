@@ -21,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service("receptionService")
@@ -63,7 +60,13 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
     @Override
     public void saveReception(ReceptionEntity receptionEntity, BusiCustomerEntity busiCustomerEntity,
                               BusiCustomerRoamEntity busiCustomerRoamEntity, Integer prepareId) {
-        BusiCustomerEntity cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", busiCustomerEntity.getMobilePhone()));
+        List<BusiCustomerEntity> cusList = busiCustomerDao.selectList(new QueryWrapper<BusiCustomerEntity>()
+                .eq("mobile_phone", busiCustomerEntity.getMobilePhone())
+                .eq("status", 1));
+        BusiCustomerEntity cus = null;
+        if(CollectionUtils.isNotEmpty(cusList)){
+            cus = cusList.get(0);
+        }
 
         //如果没有客户，说明是初次到访，将其它相同电话号码的客户报备置为手工无效；添加状态变更日志人工确客：接收；添加经纪人保护期。
         //如果客户已经存在->
@@ -84,9 +87,9 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
                 }
 
                 //如果是渠道带过来的，首先检查客户是不是该渠道的
-                List<PrepareEntity> prepares = prepareDao.selectByMap(new HashedMap() {{
-                    put("customer_id", cus.getId());
-                }});
+                Map<String, Object> prepareMap = new HashMap<>();
+                prepareMap.put("customer_id", cus.getId());
+                List<PrepareEntity> prepares = prepareDao.selectByMap(prepareMap);
                 boolean mine = false;
                 for (PrepareEntity p : prepares) {
                     if (!p.getId().equals(prepareId) && p.getStatus() == BusiStatusEnum.PREPARE_OK.getCode()) {

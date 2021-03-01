@@ -75,6 +75,7 @@ public class BusiCustomerController extends AbstractController {
         queryWrapper.lambda()
                     .le(BusiCustomerEntity::getFollowNextDate,getEndTime())
                     .eq(BusiCustomerEntity::getMatchUserId,getUserId())
+                    .eq(BusiCustomerEntity::getInvalid,0)
 //                    .eq(BusiCustomerEntity::getProjectId,getProjectId())
                     .orderByDesc(BusiCustomerEntity::getFollowNextDate);
         IPage<BusiCustomerEntity> page = busiCustomerService.page(

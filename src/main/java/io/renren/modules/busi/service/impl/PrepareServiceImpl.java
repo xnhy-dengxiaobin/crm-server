@@ -5,9 +5,7 @@ import io.renren.common.utils.DateUtils;
 import io.renren.common.utils.ParamResolvor;
 import io.renren.modules.busi.bean.BusiStatusEnum;
 import io.renren.modules.busi.constant.Constant;
-import io.renren.modules.busi.dao.BusiCustomerDao;
-import io.renren.modules.busi.dao.BusiUserProjectDao;
-import io.renren.modules.busi.dao.CustomerStatusLogDao;
+import io.renren.modules.busi.dao.*;
 import io.renren.modules.busi.entity.*;
 import io.renren.modules.busi.service.CustomerStatusLogService;
 import io.renren.modules.sys.dao.SysUserDao;
@@ -26,7 +24,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.Query;
 
-import io.renren.modules.busi.dao.PrepareDao;
 import io.renren.modules.busi.service.PrepareService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +48,9 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
 
     @Autowired
     private SysUserDao sysUserDao;
+
+    @Autowired
+    private MiddleTypeDao middleTypeDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -93,11 +93,15 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
         /**
          * 有效的
          * （1）无效操作，直接更新为无效
-         * （2）有效操作，将相同客户的其它有效报备置为无效
+         * （2）有效操作，将相同客户的其它有效报备置为无效，修改报备的customer_id；
+         *      修改客户的source_id、source_name、source_user_id、source_user_name和source_mobile
          */
         for (Integer id : checks.getIds()) {
-            if(checks.getStatus() > 0){
-                PrepareEntity prepareEntity = prepareDao.selectById(id);
+            PrepareEntity prepareEntity = prepareDao.selectById(id);
+            BusiCustomerEntity cus = new BusiCustomerEntity();
+            if(checks.getStatus() > 0){ //有效操作
+                cus = busiCustomerDao.selectOne(new QueryWrapper<BusiCustomerEntity>().eq("mobile_phone", prepareEntity.getMobile()));
+
                 if(prepareEntity!= null){
                     Map<String, Object> params = new HashedMap();
                     params.put("mobile", prepareEntity.getMobile());
@@ -121,12 +125,34 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
                     }
                 }
 
+                if(null != cus.getId() && cus.getId() > 0){ //如果已经分配过客户
+                    SysUserEntity sysUserEntity = sysUserDao.selectById(prepareEntity.getUserId());
+                    MiddleTypeEntity middleTypeEntity = middleTypeDao.selectById(sysUserEntity.getMiddleTypeId());
+                    cus.setSourceName(middleTypeEntity.getName());
+                    cus.setSourceId(middleTypeEntity.getId());
+                    cus.setSourceUserId(sysUserEntity.getUserId().intValue());
+                    cus.setSourceUserName(sysUserEntity.getName());
+                    cus.setSourceMobile(sysUserEntity.getMobile());
+                    busiCustomerDao.updateById(cus);
+                }
+
                 //状态变更日志
-                CustomerStatusLogEntity log = customerStatusLogService.mannulReceive(null, id, user.getName());
+                CustomerStatusLogEntity log = customerStatusLogService.mannulReceive(cus.getId(), id, user.getName());
                 log.setUserId(user.getUserId().intValue());
                 log.setUserName(user.getName());
                 customerStatusLogService.getBaseMapper().insert(log);
             }else{
+                if(null != prepareEntity.getCustomerId() && prepareEntity.getCustomerId() > 0){
+                    cus = new BusiCustomerEntity();
+                    cus.setId(prepareEntity.getCustomerId());
+                    cus.setSourceName("");
+                    cus.setSourceId(0);
+                    cus.setSourceUserId(0);
+                    cus.setSourceUserName("");
+                    cus.setSourceMobile("");
+                    busiCustomerDao.updateById(cus);
+                }
+
                 //状态变更日志
                 CustomerStatusLogEntity log = customerStatusLogService.mannulReject(null, id, "判客无效");
                 log.setUserId(user.getUserId().intValue());
@@ -137,6 +163,9 @@ public class PrepareServiceImpl extends ServiceImpl<PrepareDao, PrepareEntity> i
             PrepareEntity pe = new PrepareEntity();
             pe.setId(id);
             pe.setStatus(checks.getStatus());
+            pe.setCustomerId(cus.getId());
+            pe.setMatchUserId(cus.getMatchUserId());
+            pe.setMatchUserName(cus.getMatchUserName());
             pe.setUpdatedTime(new Date());
             getBaseMapper().updateById(pe);
         }

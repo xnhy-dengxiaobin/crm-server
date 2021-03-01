@@ -150,11 +150,16 @@
     </select>
 
     <select id="selectPage4Admin" resultMap="prepareMap">
-        select t1.*,t2.busi_status,t2.busi_status_updated_time,t3.name as project_name,
+        select t1.id,t1.name,t1.sex,t1.mobile,t1.project_id,t1.user_id,t1.user_name,t1.customer_id,t1.status,
+        t1.status_updated_time,t1.created_time,t1.updated_time,t1.expired,t1.reason,t1.updater_id,t1.updater_name,
+        t1.memo,t1.appointment,t2.match_user_id,t2.match_user_name,t2.match_user_time,
+        t2.busi_status,t2.busi_status_updated_time,t3.name as project_name,
         t5.name as middle_type_name,
         (select group_concat(t02.name) from busi_customer_project t01 inner join
         busi_project t02 on t01.project_id=t02.id
-        where t01.customer_id=t2.id) as project_names
+        where t01.customer_id=t2.id) as project_names,
+        (select t61.name as assigner from busi_customer_roam t6 inner join sys_user t61 on t6.user_id=t61.user_id
+        where t6.customer_id=t1.customer_id order by t6.create_time desc limit 1) as assigner
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
@@ -170,6 +175,8 @@
         from busi_prepare t1
         left join busi_customer t2 on t1.customer_id = t2.id
         inner join busi_project t3 on t1.project_id = t3.id
+        left join sys_user t4 on t1.user_id=t4.user_id
+        left join busi_middle_type t5 on t4.middle_type_id=t5.id
         where exists(select 1 from busi_user_project t0
         where t0.project_id=t1.project_id and t0.user_id=#{userId})
         <include refid="condition"></include>
