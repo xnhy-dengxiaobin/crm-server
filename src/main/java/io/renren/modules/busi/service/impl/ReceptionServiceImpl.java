@@ -71,7 +71,12 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
         //不属于当前经纪人->提示项目老客户
         if ((null != cus && cus.getId() > 0) || busiCustomerEntity.getId() > 0) {
             busiCustomerEntity.setId(cus.getId());
-            busiCustomerEntity.setComeCount((cus.getComeCount() == null ? 0 : cus.getComeCount()) + 1);
+
+            //需要修改的信息
+            BusiCustomerEntity updatingCus = new BusiCustomerEntity();
+            updatingCus.setId(cus.getId());
+            updatingCus.setComeCount((cus.getComeCount() == null ? 0 : cus.getComeCount()) + 1);
+
             if (prepareId > 0) {
                 PrepareEntity prepareEntity = prepareDao.gtById(busiCustomerEntity.getSourceUserId(), Long.valueOf(prepareId).intValue());
                 if (null == prepareEntity) {
@@ -124,17 +129,19 @@ public class ReceptionServiceImpl extends ServiceImpl<ReceptionDao, ReceptionEnt
 
             if (!busiCustomerEntity.getMatchUserId().equals(cus.getMatchUserId())) {
                 //换了置业顾问，重新设置分配时间
-                busiCustomerEntity.setMatchUserTime(new Date());
+                updatingCus.setMatchUserTime(new Date());
+
                 //换了置业顾问，增加转介路径
                 busiCustomerRoamEntity.setCustomerId(cus.getId());
                 busiCustomerRoamDao.insert(busiCustomerRoamEntity);
             }
 
-            busiCustomerDao.updateById(busiCustomerEntity);
             if (null == busiCustomerEntity.getId() || busiCustomerEntity.getId() <= 0) {
                 busiCustomerEntity.setId(cus.getId());
             }
             receptionEntity.setIsNew(0);//老客户
+
+            busiCustomerDao.updateById(updatingCus);
         } else {
             Date now = new Date();
             busiCustomerEntity.setMatchUserTime(now);
