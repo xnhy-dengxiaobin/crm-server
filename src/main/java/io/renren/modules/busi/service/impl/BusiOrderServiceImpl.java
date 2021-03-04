@@ -10,7 +10,6 @@ import io.renren.common.utils.Query;
 import io.renren.modules.busi.dao.BusiOrderDao;
 import io.renren.modules.busi.entity.BusiOrderEntity;
 import io.renren.modules.busi.service.BusiOrderService;
-import io.renren.modules.busi.vo.BusiOrderVO;
 import io.renren.modules.busi.vo.BusiTradeVO;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +49,10 @@ public class BusiOrderServiceImpl extends ServiceImpl<BusiOrderDao, BusiOrderEnt
   @Override
   public IPage<BusiTradeVO> promptPage(List<Integer> ids,IPage<BusiTradeVO> iPage, String condition) {
     return baseMapper.promptPage(ids,iPage,condition);
+  }
+  @Override
+  public IPage<BusiTradeVO> promptPageApp(IPage<BusiTradeVO> iPage, String ywy) {
+    return baseMapper.promptPageApp(iPage,ywy);
   }
 
 }

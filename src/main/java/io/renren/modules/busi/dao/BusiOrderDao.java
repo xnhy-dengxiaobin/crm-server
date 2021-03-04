@@ -3,7 +3,6 @@ package io.renren.modules.busi.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.renren.modules.busi.entity.BusiOrderEntity;
-import io.renren.modules.busi.vo.BusiOrderVO;
 import io.renren.modules.busi.vo.BusiTradeVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -30,4 +29,8 @@ public interface BusiOrderDao extends BaseMapper<BusiOrderEntity> {
     "        </if> and payformname!='一次性付款' and (cstname LIKE CONCAT('%',#{condition},'%') or csttel LIKE CONCAT('%',#{condition},'%')) order by qsdate desc \n" +
     "</script>")
   IPage<BusiTradeVO> promptPage(List<Integer> ids,IPage iPage, String condition);
+
+  @Select("<script>select * from busi_trade where data_prepared=1 and payformname!='一次性付款' and ywy=#{ywy} order by qsdate desc \n" +
+          "</script>")
+  IPage<BusiTradeVO> promptPageApp(IPage iPage, String ywy);
 }

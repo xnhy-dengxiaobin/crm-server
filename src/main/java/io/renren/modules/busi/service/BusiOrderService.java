@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.renren.common.utils.PageUtils;
 import io.renren.modules.busi.entity.BusiOrderEntity;
-import io.renren.modules.busi.vo.BusiOrderVO;
 import io.renren.modules.busi.vo.BusiTradeVO;
 
 import java.util.List;
@@ -23,5 +22,7 @@ public interface BusiOrderService extends IService<BusiOrderEntity> {
   PageUtils listPage(Map<String, Object> params);
 
   IPage<BusiTradeVO> promptPage(List<Integer> ids,IPage<BusiTradeVO> iPage, String condition);
+
+  IPage<BusiTradeVO> promptPageApp(IPage<BusiTradeVO> iPage, String ywy);
 }
 

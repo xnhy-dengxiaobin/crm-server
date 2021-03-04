@@ -12,15 +12,11 @@ import io.renren.modules.busi.entity.BusiCustomerOrderEntity;
 import io.renren.modules.busi.entity.BusiOrderEntity;
 import io.renren.modules.busi.entity.BusiTradeEntity;
 import io.renren.modules.busi.service.*;
-import io.renren.modules.busi.vo.BusiOrderVO;
 import io.renren.modules.busi.vo.BusiTradeVO;
 import io.renren.modules.sys.controller.AbstractController;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +44,17 @@ public class BusiOrderController extends AbstractController {
     private BusiContractService busiContractService;
     @Autowired
     private BusiTradeService busiTradeService;
+
+    /**
+     * 催收列表
+     */
+    @RequestMapping("/appDataPreparedList")
+    public R promptApp(@RequestParam Map<String, Object> params) {
+        IPage<BusiTradeVO> page = new Query<BusiTradeVO>().getPage(params);
+        busiOrderService.promptPageApp(page,getUser().getName());
+        return R.ok().put("page", new PageUtils(page));
+    }
+
     /**
      * 催收列表
      */
